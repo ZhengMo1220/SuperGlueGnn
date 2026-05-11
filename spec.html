@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SuperGlue 專案規格書</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-light: #eff6ff;
+    --secondary: #7c3aed;
+    --success: #16a34a;
+    --warning: #d97706;
+    --danger: #dc2626;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #f0f4f8;
+    color: var(--gray-800);
+    line-height: 1.6;
+  }
+
+  /* ── SIDEBAR NAV ── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 240px; height: 100vh;
+    background: var(--gray-900);
+    color: #cbd5e1;
+    overflow-y: auto;
+    z-index: 100;
+    padding: 0 0 2rem;
+  }
+  .sidebar-logo {
+    padding: 1.5rem 1.2rem 1rem;
+    font-size: 1rem; font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #374151;
+    letter-spacing: .5px;
+  }
+  .sidebar-logo span { color: #60a5fa; }
+  .nav-section { padding: .8rem 1.2rem .3rem; font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; }
+  .nav-link {
+    display: block;
+    padding: .45rem 1.2rem .45rem 1.6rem;
+    font-size: .85rem; color: #9ca3af;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: all .15s;
+  }
+  .nav-link:hover, .nav-link.active { color: #fff; border-left-color: #60a5fa; background: rgba(96,165,250,.08); }
+
+  /* ── MAIN CONTENT ── */
+  .main { margin-left: 240px; padding: 2rem 2.5rem 4rem; max-width: 1100px; }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+    color: white; border-radius: 16px;
+    padding: 2.5rem 2.5rem 2rem;
+    margin-bottom: 2rem;
+  }
+  .page-header h1 { font-size: 1.9rem; font-weight: 800; margin-bottom: .4rem; }
+  .page-header p { opacity: .85; font-size: 1rem; }
+  .badge-row { display: flex; gap: .6rem; margin-top: 1rem; flex-wrap: wrap; }
+  .badge { padding: .25rem .75rem; border-radius: 999px; font-size: .75rem; font-weight: 600; background: rgba(255,255,255,.15); }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 2.5rem; }
+  .section-title {
+    font-size: 1.25rem; font-weight: 700;
+    color: var(--gray-900);
+    border-left: 4px solid var(--primary);
+    padding-left: .75rem;
+    margin-bottom: 1.2rem;
+  }
+  .section-subtitle {
+    font-size: 1rem; font-weight: 600;
+    color: var(--gray-700);
+    margin: 1.4rem 0 .7rem;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: white; border-radius: 12px;
+    padding: 1.5rem; margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+  }
+  .card-header {
+    display: flex; align-items: center; gap: .75rem;
+    margin-bottom: 1rem;
+  }
+  .card-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+  }
+  .icon-blue { background: #dbeafe; }
+  .icon-purple { background: #ede9fe; }
+  .icon-green { background: #dcfce7; }
+  .icon-orange { background: #ffedd5; }
+  .icon-red { background: #fee2e2; }
+  .icon-gray { background: var(--gray-100); }
+
+  .card-title { font-size: 1rem; font-weight: 700; color: var(--gray-900); }
+  .card-subtitle { font-size: .8rem; color: var(--gray-600); font-family: monospace; }
+
+  /* ── PIPELINE DIAGRAM ── */
+  .pipeline {
+    display: flex; align-items: center; flex-wrap: wrap;
+    gap: .5rem; padding: 1.5rem;
+    background: var(--gray-50); border-radius: 12px;
+    border: 1px solid var(--gray-200);
+  }
+  .pipe-box {
+    background: white; border: 2px solid;
+    border-radius: 10px; padding: .6rem 1rem;
+    text-align: center; min-width: 110px;
+    font-size: .82rem; font-weight: 600;
+  }
+  .pipe-blue { border-color: #3b82f6; color: #1d4ed8; background: #eff6ff; }
+  .pipe-purple { border-color: #8b5cf6; color: #6d28d9; background: #f5f3ff; }
+  .pipe-green { border-color: #22c55e; color: #15803d; background: #f0fdf4; }
+  .pipe-orange { border-color: #f97316; color: #c2410c; background: #fff7ed; }
+  .pipe-arrow { font-size: 1.2rem; color: var(--gray-400); }
+  .pipe-label { font-size: .7rem; color: var(--gray-600); margin-top: .2rem; font-weight: 400; }
+
+  /* ── TABLE ── */
+  .spec-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  .spec-table th {
+    background: var(--gray-800); color: white;
+    padding: .6rem 1rem; text-align: left;
+    font-weight: 600; font-size: .82rem;
+  }
+  .spec-table th:first-child { border-radius: 8px 0 0 0; }
+  .spec-table th:last-child { border-radius: 0 8px 0 0; }
+  .spec-table td { padding: .6rem 1rem; border-bottom: 1px solid var(--gray-100); vertical-align: top; }
+  .spec-table tr:last-child td { border-bottom: none; }
+  .spec-table tr:nth-child(even) td { background: var(--gray-50); }
+  .spec-table tr:hover td { background: #eff6ff; }
+  .param-name { font-family: monospace; font-weight: 600; color: var(--primary); font-size: .9rem; }
+  .default-val { font-family: monospace; background: var(--gray-100); padding: .1rem .4rem; border-radius: 4px; font-size: .82rem; }
+  .tag { display: inline-block; padding: .1rem .5rem; border-radius: 4px; font-size: .72rem; font-weight: 600; }
+  .tag-required { background: #fee2e2; color: #dc2626; }
+  .tag-optional { background: #dcfce7; color: #16a34a; }
+  .tag-flag { background: #dbeafe; color: #1d4ed8; }
+  .tag-important { background: #ffedd5; color: #c2410c; }
+
+  /* ── CODE BLOCK ── */
+  pre {
+    background: #0f172a; color: #e2e8f0;
+    border-radius: 10px; padding: 1.2rem 1.4rem;
+    overflow-x: auto; font-size: .85rem;
+    line-height: 1.7; font-family: 'Consolas', 'Courier New', monospace;
+  }
+  .code-label {
+    font-size: .72rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .5px; color: var(--gray-600);
+    margin-bottom: .35rem;
+  }
+  .hl-green { color: #86efac; }
+  .hl-blue { color: #93c5fd; }
+  .hl-yellow { color: #fde68a; }
+  .hl-orange { color: #fdba74; }
+  .hl-gray { color: #94a3b8; }
+  .hl-red { color: #fca5a5; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: 10px; padding: 1rem 1.2rem;
+    display: flex; gap: .75rem; align-items: flex-start;
+    margin: 1rem 0;
+  }
+  .callout-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: .05rem; }
+  .callout-blue { background: #eff6ff; border: 1px solid #bfdbfe; }
+  .callout-orange { background: #fff7ed; border: 1px solid #fed7aa; }
+  .callout-green { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .callout-red { background: #fef2f2; border: 1px solid #fecaca; }
+  .callout-body { font-size: .88rem; color: var(--gray-700); }
+  .callout-body strong { color: var(--gray-900); }
+
+  /* ── OUTPUT FORMAT BOX ── */
+  .output-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 700px) { .output-grid { grid-template-columns: 1fr; } }
+  .output-box { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 10px; padding: 1rem; }
+  .output-box h4 { font-size: .85rem; font-weight: 700; color: var(--gray-700); margin-bottom: .6rem; font-family: monospace; }
+  .output-field { display: flex; justify-content: space-between; align-items: baseline; padding: .25rem 0; border-bottom: 1px dashed var(--gray-200); font-size: .82rem; }
+  .output-field:last-child { border-bottom: none; }
+  .field-name { font-family: monospace; color: var(--primary); font-weight: 600; }
+  .field-type { color: var(--gray-600); font-size: .75rem; }
+
+  /* ── WORKFLOW STEPS ── */
+  .steps { counter-reset: step; }
+  .step {
+    display: flex; gap: 1rem;
+    counter-increment: step;
+    margin-bottom: 1.2rem;
+  }
+  .step-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--primary); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .85rem; flex-shrink: 0;
+    margin-top: .15rem;
+  }
+  .step-content { flex: 1; }
+  .step-title { font-weight: 700; color: var(--gray-900); margin-bottom: .3rem; }
+  .step-desc { font-size: .88rem; color: var(--gray-600); }
+
+  /* ── COLOR LEGEND ── */
+  .color-legend { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .color-item { display: flex; align-items: center; gap: .5rem; font-size: .85rem; }
+  .color-swatch { width: 24px; height: 14px; border-radius: 4px; }
+
+  /* ── FILE TREE ── */
+  .file-tree {
+    background: #0f172a; color: #e2e8f0;
+    border-radius: 10px; padding: 1.2rem 1.4rem;
+    font-family: monospace; font-size: .85rem; line-height: 1.8;
+  }
+  .ft-dir { color: #93c5fd; font-weight: 600; }
+  .ft-key { color: #86efac; }
+  .ft-normal { color: #cbd5e1; }
+  .ft-comment { color: #64748b; }
+
+  /* ── DIVIDER ── */
+  hr { border: none; border-top: 1px solid var(--gray-200); margin: 2rem 0; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<nav class="sidebar">
+  <div class="sidebar-logo">Super<span>Glue</span> 規格書</div>
+
+  <div class="nav-section">系統概覽</div>
+  <a href="#overview" class="nav-link">整體架構</a>
+  <a href="#pipeline" class="nav-link">推理 Pipeline</a>
+  <a href="#files" class="nav-link">檔案結構</a>
+
+  <div class="nav-section">核心檔案</div>
+  <a href="#match-pairs" class="nav-link">match_pairs.py</a>
+  <a href="#matching" class="nav-link">models/matching.py</a>
+  <a href="#superpoint" class="nav-link">models/superpoint.py</a>
+  <a href="#superglue" class="nav-link">models/superglue.py</a>
+  <a href="#utils" class="nav-link">models/utils.py</a>
+
+  <div class="nav-section">資料格式</div>
+  <a href="#pairs-format" class="nav-link">pairs.txt 格式</a>
+  <a href="#npz-format" class="nav-link">.npz 輸出格式</a>
+  <a href="#viz-format" class="nav-link">視覺化說明</a>
+
+  <div class="nav-section">你的場景</div>
+  <a href="#bullpen" class="nav-link">Bullpen 資料集</a>
+  <a href="#commands" class="nav-link">常用指令</a>
+  <a href="#next-steps" class="nav-link">後續步驟</a>
+</nav>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<main class="main">
+
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+  <h1>SuperGlue 專案規格書</h1>
+  <p>針對 Bullpen_CalibrationBar 資料集的完整技術說明與操作指南</p>
+  <div class="badge-row">
+    <span class="badge">CVPR 2020</span>
+    <span class="badge">PyTorch 2.11 + CUDA 12.8</span>
+    <span class="badge">RTX 5080</span>
+    <span class="badge">推理（Inference Only）</span>
+    <span class="badge">uv 虛擬環境</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     一、系統概覽
+══════════════════════════════════════════════ -->
+<div class="section" id="overview">
+  <div class="section-title">一、系統概覽</div>
+
+  <div class="card">
+    <p>SuperGlue 是一個<strong>特徵點匹配系統</strong>：給定兩張影像，找出彼此之間在空間上對應的像素位置（特徵點對）。整個系統是兩個神經網路的串接：</p>
+    <br>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+      <div style="background:#eff6ff; border-radius:10px; padding:1rem;">
+        <div style="font-weight:700; color:#1d4ed8; margin-bottom:.4rem;">① SuperPoint（前端）</div>
+        <div style="font-size:.85rem; color:#374151;">CNN，在每張圖上找出最顯著的角點（關鍵點），並計算每個點的 256 維特徵向量（描述子）。類似「每個點的指紋」。</div>
+      </div>
+      <div style="background:#f5f3ff; border-radius:10px; padding:1rem;">
+        <div style="font-weight:700; color:#6d28d9; margin-bottom:.4rem;">② SuperGlue（中端）</div>
+        <div style="font-size:.85rem; color:#374151;">圖神經網路（GNN），接收兩張圖的所有描述子，透過 attention 機制讓特徵互相參考，最後用最優傳輸算法找出最佳匹配。</div>
+      </div>
+    </div>
+    <br>
+    <p style="font-size:.88rem; color:var(--gray-600);">應用場景：<strong>相機定位、三維重建（SfM）、影像配準、視覺里程計</strong>。你的場景：找出前方相機（cf）與側邊相機（cs）拍攝的標定棒在兩個視角之間的對應點。</p>
+  </div>
+</div>
+
+
+<!-- ── PIPELINE ── -->
+<div class="section" id="pipeline">
+  <div class="section-title">二、推理 Pipeline（資料流向）</div>
+
+  <div class="card">
+    <div class="pipeline">
+      <div class="pipe-box pipe-blue">
+        📷 影像對<br>
+        <div class="pipe-label">cf/1.jpg + cs/1.jpg</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-box pipe-blue">
+        🔍 SuperPoint<br>
+        <div class="pipe-label">跑兩次（每張各一次）</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-box pipe-orange">
+        📍 關鍵點 + 描述子<br>
+        <div class="pipe-label">N×2 + N×256</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-box pipe-purple">
+        🔗 SuperGlue<br>
+        <div class="pipe-label">GNN 18 層 Attention</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-box pipe-green">
+        ✅ 匹配結果<br>
+        <div class="pipe-label">matches + confidence</div>
+      </div>
+    </div>
+
+    <br>
+
+    <table class="spec-table">
+      <tr>
+        <th>步驟</th><th>模型</th><th>輸入</th><th>輸出</th><th>關鍵超參數</th>
+      </tr>
+      <tr>
+        <td>1. 影像前處理</td>
+        <td><code>utils.read_image()</code></td>
+        <td>彩色/灰階 JPG</td>
+        <td>灰階 float32 tensor</td>
+        <td><code>--resize</code></td>
+      </tr>
+      <tr>
+        <td>2. 關鍵點偵測</td>
+        <td>SuperPoint</td>
+        <td>灰階影像 [1×1×H×W]</td>
+        <td>keypoints [N×2], scores [N], descriptors [256×N]</td>
+        <td><code>--max_keypoints</code>, <code>--keypoint_threshold</code>, <code>--nms_radius</code></td>
+      </tr>
+      <tr>
+        <td>3. GNN 匹配</td>
+        <td>SuperGlue</td>
+        <td>兩張圖的 keypoints + descriptors</td>
+        <td>matches0 [N], matching_scores0 [N]</td>
+        <td><code>--sinkhorn_iterations</code>, <code>--match_threshold</code></td>
+      </tr>
+      <tr>
+        <td>4. 結果儲存</td>
+        <td>—</td>
+        <td>matches, conf</td>
+        <td><code>*_matches.npz</code></td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>5. 視覺化（選用）</td>
+        <td><code>make_matching_plot()</code></td>
+        <td>兩張圖 + 匹配點對</td>
+        <td><code>*_matches.png</code></td>
+        <td><code>--viz</code>, <code>--fast_viz</code></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+<!-- ── FILES ── -->
+<div class="section" id="files">
+  <div class="section-title">三、檔案結構</div>
+  <div class="card">
+    <div class="file-tree">
+<span class="ft-dir">SuperGlueGnn/</span>
+├── <span class="ft-key">match_pairs.py</span>          <span class="ft-comment">← 主程式：批次匹配 + 評估</span>
+├── <span class="ft-normal">demo_superglue.py</span>       <span class="ft-comment">← 即時 webcam / 影片 demo</span>
+├── <span class="ft-normal">superglue_viewer.py</span>     <span class="ft-comment">← PyQt5 結果瀏覽 UI</span>
+├── <span class="ft-dir">models/</span>
+│   ├── <span class="ft-key">matching.py</span>             <span class="ft-comment">← Pipeline 整合（SuperPoint + SuperGlue）</span>
+│   ├── <span class="ft-key">superpoint.py</span>           <span class="ft-comment">← 關鍵點偵測 CNN</span>
+│   ├── <span class="ft-key">superglue.py</span>            <span class="ft-comment">← GNN 匹配網路</span>
+│   ├── <span class="ft-key">utils.py</span>                <span class="ft-comment">← 讀圖、視覺化、評估工具</span>
+│   └── <span class="ft-dir">weights/</span>
+│       ├── <span class="ft-normal">superpoint_v1.pth</span>   <span class="ft-comment">← SuperPoint 預訓練權重（~5MB）</span>
+│       ├── <span class="ft-normal">superglue_indoor.pth</span> <span class="ft-comment">← 室內模型（ScanNet 訓練，~48MB）</span>
+│       └── <span class="ft-normal">superglue_outdoor.pth</span><span class="ft-comment">← 戶外模型（MegaDepth 訓練，~48MB）</span>
+├── <span class="ft-dir">Bullpen_CalibrationBar/</span>     <span class="ft-comment">← 你的自訂資料集</span>
+│   ├── <span class="ft-dir">cf/</span>                     <span class="ft-comment">← Camera Front 影像（1.jpg ~ 21.jpg）</span>
+│   ├── <span class="ft-dir">cs/</span>                     <span class="ft-comment">← Camera Side 影像（1.jpg ~ 21.jpg）</span>
+│   ├── <span class="ft-key">pairs.txt</span>               <span class="ft-comment">← 配對清單（已生成）</span>
+│   └── <span class="ft-dir">output/</span>                 <span class="ft-comment">← 輸出結果目錄</span>
+├── <span class="ft-dir">assets/</span>                     <span class="ft-comment">← 官方範例資料集</span>
+├── <span class="ft-dir">.venv/</span>                      <span class="ft-comment">← uv 虛擬環境（已建立）</span>
+└── <span class="ft-normal">spec.html</span>               <span class="ft-comment">← 本文件</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     核心檔案規格
+══════════════════════════════════════════════ -->
+
+<!-- ── match_pairs.py ── -->
+<div class="section" id="match-pairs">
+  <div class="section-title">四、match_pairs.py — 主程式規格</div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-blue">🚀</div>
+      <div>
+        <div class="card-title">match_pairs.py</div>
+        <div class="card-subtitle">批次影像匹配 + 可選評估 + 可選視覺化</div>
+      </div>
+    </div>
+
+    <p style="font-size:.9rem; color:var(--gray-700); margin-bottom:1.2rem;">讀取一份配對清單（pairs.txt），對每一對影像執行 SuperPoint + SuperGlue，輸出匹配數值（.npz）和視覺化圖（.png）。這是你<strong>最常用的入口</strong>。</p>
+
+    <div class="section-subtitle">📥 輸入 / 輸出</div>
+    <div class="output-grid">
+      <div class="output-box">
+        <h4>輸入</h4>
+        <div class="output-field"><span class="field-name">pairs.txt</span><span class="field-type">配對清單</span></div>
+        <div class="output-field"><span class="field-name">影像目錄</span><span class="field-type">JPG / PNG</span></div>
+        <div class="output-field"><span class="field-name">模型權重</span><span class="field-type">.pth（自動載入）</span></div>
+      </div>
+      <div class="output-box">
+        <h4>輸出（每對影像）</h4>
+        <div class="output-field"><span class="field-name">*_matches.npz</span><span class="field-type">匹配數值資料</span></div>
+        <div class="output-field"><span class="field-name">*_matches.png</span><span class="field-type">視覺化圖（加 --viz）</span></div>
+        <div class="output-field"><span class="field-name">*_evaluation.npz</span><span class="field-type">評估指標（加 --eval）</span></div>
+        <div class="output-field"><span class="field-name">*_evaluation.png</span><span class="field-type">評估視覺化（加兩者）</span></div>
+      </div>
+    </div>
+
+    <div class="section-subtitle">⚙️ 所有參數說明</div>
+    <table class="spec-table">
+      <tr><th>參數</th><th>預設值</th><th>類型</th><th>說明 / 你的場景建議</th></tr>
+
+      <tr><td colspan="4" style="background:#1f2937; color:#9ca3af; font-size:.75rem; font-weight:600; padding:.4rem 1rem; letter-spacing:.5px;">── 路徑設定 ──</td></tr>
+      <tr>
+        <td><span class="param-name">--input_pairs</span></td>
+        <td><span class="default-val">assets/scannet_sample_pairs_with_gt.txt</span></td>
+        <td><span class="tag tag-required">必填</span></td>
+        <td>配對清單路徑。你的場景：<code>Bullpen_CalibrationBar/pairs.txt</code></td>
+      </tr>
+      <tr>
+        <td><span class="param-name">--input_dir</span></td>
+        <td><span class="default-val">assets/scannet_sample_images/</span></td>
+        <td><span class="tag tag-required">必填</span></td>
+        <td>影像根目錄。你的場景：<code>Bullpen_CalibrationBar</code>（pairs.txt 裡的路徑相對於此）</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">--output_dir</span></td>
+        <td><span class="default-val">dump_match_pairs/</span></td>
+        <td><span class="tag tag-optional">選填</span></td>
+        <td>輸出目錄。建議：<code>Bullpen_CalibrationBar/output</code></td>
+      </tr>
+      <tr>
+        <td><span class="param-name">--max_length</span></td>
+        <td><span class="default-val">-1（全部）</span></td>
+        <td><span class="tag tag-optional">選填</span></td>
+        <td>最多處理幾對。測試時設 <code>2</code>，確認沒問題再跑全部</td>
+      </tr>
+
+      <tr><td colspan="4" style="background:#1f2937; color:#9ca3af; font-size:.75rem; font-weight:600; padding:.4rem 1rem; letter-spacing:.5px;">── 影像處理 ──</td></tr>
+      <tr>
+        <td><span class="param-name">--resize</span></td>
+        <td><span class="default-val">640 480</span></td>
+        <td><span class="tag tag-optional">選填</span></td>
+        <td>
+          縮放模式三選一：<br>
+          <code>640 480</code> → 強制指定寬×高<br>
+          <code>1280</code> → 最長邊縮到 1280<br>
+          <code>-1</code> → 不縮放（原圖）<br>
+          <strong>建議起步：640 480，匹配少時試 1280</strong>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="param-name">--resize_float</span></td>
+        <td><span class="default-val">不啟用</span></td>
+        <td><span class="tag tag-flag">旗標</span></td>
+        <td>縮放時用浮點數精度。戶外場景官方建議加此旗標</td>
+      </tr>
+
+      <tr><td colspan="4" style="background:#1f2937; color:#9ca3af; font-size:.75rem; font-weight:600; padding:.4rem 1rem; letter-spacing:.5px;">── 模型選擇（SuperPoint） ──</td></tr>
+      <tr>
+        <td><span class="param-name">--max_keypoints</span></td>
+        <td><span class="default-val">1024</span></td>
+        <td><span class="tag tag-optional">選填</span></td>
+        <td>每張圖最多偵測幾個關鍵點。-1 = 不限。<strong>匹配少時試 2048 或 4096</strong></td>
+      </tr>
+      <tr>
+        <td><span class="param-name">--keypoint_threshold</span></td>
+        <td><span class="default-val">0.005</span></td>
+        <td><span class="tag tag-optional">選填</span></td>
+        <td>關鍵點偵測閾值。<strong>越低 = 偵測越多點</strong>（但也更多雜訊）</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">--nms_radius</span></td>
+        <td><span class="default-val">4</span></td>
+        <td><span class="tag tag-optional">選填</span></td>
+        <td>非極大值抑制半徑（像素）。戶外建議改 3</td>
+      </tr>
+
+      <tr><td colspan="4" style="background:#1f2937; color:#9ca3af; font-size:.75rem; font-weight:600; padding:.4rem 1rem; letter-spacing:.5px;">── 模型選擇（SuperGlue） ──</td></tr>
+      <tr>
+        <td><span class="param-name">--superglue</span></td>
+        <td><span class="default-val">indoor</span></td>
+        <td><span class="tag tag-important">⚠️ 重要</span></td>
+        <td>
+          <code>indoor</code>：室內場景（ScanNet 訓練）<br>
+          <code>outdoor</code>：戶外場景（MegaDepth 訓練）<br>
+          <strong>你的 Bullpen 是戶外 → 用 outdoor</strong>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="param-name">--sinkhorn_iterations</span></td>
+        <td><span class="default-val">20</span></td>
+        <td><span class="tag tag-optional">選填</span></td>
+        <td>Sinkhorn 最優傳輸迭代次數。越高越精確但越慢，20 已夠用</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">--match_threshold</span></td>
+        <td><span class="default-val">0.2</span></td>
+        <td><span class="tag tag-optional">選填</span></td>
+        <td><strong>越低 = 保留更多（但較不確定）的匹配</strong>。範圍 0.1～0.5</td>
+      </tr>
+
+      <tr><td colspan="4" style="background:#1f2937; color:#9ca3af; font-size:.75rem; font-weight:600; padding:.4rem 1rem; letter-spacing:.5px;">── 輸出控制 ──</td></tr>
+      <tr>
+        <td><span class="param-name">--viz</span></td>
+        <td><span class="default-val">不啟用</span></td>
+        <td><span class="tag tag-flag">旗標</span></td>
+        <td>輸出視覺化圖片（.png）。<strong>建議每次都加</strong></td>
+      </tr>
+      <tr>
+        <td><span class="param-name">--fast_viz</span></td>
+        <td><span class="default-val">不啟用</span></td>
+        <td><span class="tag tag-flag">旗標</span></td>
+        <td>用 OpenCV 繪圖（比 Matplotlib 快很多）。需搭配 --viz。<strong>建議加</strong></td>
+      </tr>
+      <tr>
+        <td><span class="param-name">--show_keypoints</span></td>
+        <td><span class="default-val">不啟用</span></td>
+        <td><span class="tag tag-flag">旗標</span></td>
+        <td>在圖上顯示所有偵測到的關鍵點（含未匹配的）。除錯用</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">--eval</span></td>
+        <td><span class="default-val">不啟用</span></td>
+        <td><span class="tag tag-flag">旗標</span></td>
+        <td>啟用定量評估（需要 GT：K 內參 + T 姿態）。<strong>目前先不用</strong></td>
+      </tr>
+      <tr>
+        <td><span class="param-name">--cache</span></td>
+        <td><span class="default-val">不啟用</span></td>
+        <td><span class="tag tag-flag">旗標</span></td>
+        <td>跳過已有 .npz 的配對。重跑時節省時間</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">--force_cpu</span></td>
+        <td><span class="default-val">不啟用</span></td>
+        <td><span class="tag tag-flag">旗標</span></td>
+        <td>強制用 CPU。預設自動偵測並使用 GPU（你有 RTX 5080，不需加）</td>
+      </tr>
+    </table>
+
+    <div class="callout callout-orange" style="margin-top:1rem;">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body"><strong>旗標組合限制：</strong><code>--fast_viz</code> 必須搭配 <code>--viz</code>；<code>--opencv_display</code> 必須同時搭配 <code>--viz</code> 和 <code>--fast_viz</code>；<code>--fast_viz</code> 不支援 <code>--viz_extension pdf</code>。</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── matching.py ── -->
+<div class="section" id="matching">
+  <div class="section-title">五、models/matching.py — Pipeline 整合器</div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-purple">🔗</div>
+      <div>
+        <div class="card-title">Matching 類別</div>
+        <div class="card-subtitle">models/matching.py → class Matching(torch.nn.Module)</div>
+      </div>
+    </div>
+
+    <p style="font-size:.9rem; color:var(--gray-700); margin-bottom:1rem;">把 SuperPoint 和 SuperGlue 串在一起，對外只需要傳入影像，內部自動完成所有步驟。</p>
+
+    <div class="section-subtitle">初始化設定（config 字典）</div>
+    <div class="code-label">Python 使用範例</div>
+    <pre>
+<span class="hl-blue">from</span> models.matching <span class="hl-blue">import</span> Matching
+
+config = {
+    <span class="hl-green">'superpoint'</span>: {
+        <span class="hl-green">'nms_radius'</span>: <span class="hl-orange">4</span>,
+        <span class="hl-green">'keypoint_threshold'</span>: <span class="hl-orange">0.005</span>,
+        <span class="hl-green">'max_keypoints'</span>: <span class="hl-orange">1024</span>
+    },
+    <span class="hl-green">'superglue'</span>: {
+        <span class="hl-green">'weights'</span>: <span class="hl-green">'outdoor'</span>,       <span class="hl-gray"># 你的場景用 outdoor</span>
+        <span class="hl-green">'sinkhorn_iterations'</span>: <span class="hl-orange">20</span>,
+        <span class="hl-green">'match_threshold'</span>: <span class="hl-orange">0.2</span>
+    }
+}
+matching = Matching(config).eval().to(<span class="hl-green">'cuda'</span>)
+</pre>
+
+    <div class="section-subtitle">forward() 輸入輸出</div>
+    <div class="output-grid">
+      <div class="output-box">
+        <h4>輸入 data 字典</h4>
+        <div class="output-field"><span class="field-name">image0</span><span class="field-type">Tensor [1×1×H×W]</span></div>
+        <div class="output-field"><span class="field-name">image1</span><span class="field-type">Tensor [1×1×H×W]</span></div>
+        <div class="output-field" style="opacity:.5"><span class="field-name">keypoints0 <em>（可選）</em></span><span class="field-type">若提供則跳過 SuperPoint</span></div>
+      </div>
+      <div class="output-box">
+        <h4>輸出 pred 字典</h4>
+        <div class="output-field"><span class="field-name">keypoints0/1</span><span class="field-type">[N×2] 關鍵點座標</span></div>
+        <div class="output-field"><span class="field-name">scores0/1</span><span class="field-type">[N] 偵測信心分數</span></div>
+        <div class="output-field"><span class="field-name">descriptors0/1</span><span class="field-type">[256×N] 描述子</span></div>
+        <div class="output-field"><span class="field-name">matches0</span><span class="field-type">[N] 匹配索引（-1=無匹配）</span></div>
+        <div class="output-field"><span class="field-name">matching_scores0</span><span class="field-type">[N] 匹配信心分數 (0~1)</span></div>
+      </div>
+    </div>
+
+    <div class="callout callout-blue">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>可跳過 SuperPoint：</strong>如果你已有其他方法提取的關鍵點（如 SIFT、ORB），可以直接在 data 字典裡放入 <code>keypoints0/1</code>、<code>descriptors0/1</code>、<code>scores0/1</code>，Matching 會自動跳過 SuperPoint，直接跑 SuperGlue。這是後續客製化的入口之一。</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── superpoint.py ── -->
+<div class="section" id="superpoint">
+  <div class="section-title">六、models/superpoint.py — 關鍵點偵測器</div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-blue">🔍</div>
+      <div>
+        <div class="card-title">SuperPoint</div>
+        <div class="card-subtitle">models/superpoint.py → class SuperPoint(nn.Module)</div>
+      </div>
+    </div>
+
+    <div class="section-subtitle">網路架構</div>
+    <div class="pipeline" style="flex-direction:column; align-items:flex-start; gap:.6rem;">
+      <div style="display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;">
+        <div class="pipe-box pipe-blue">輸入<br><div class="pipe-label">1×1×H×W（灰階）</div></div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-box pipe-blue">CNN Encoder<br><div class="pipe-label">5層卷積 64→128→256</div></div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-box pipe-orange">特徵圖<br><div class="pipe-label">解析度降 8 倍</div></div>
+      </div>
+      <div style="display:flex; gap:2rem; padding-left:2rem; flex-wrap:wrap;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:.4rem;">
+          <div style="font-size:.75rem; color:var(--gray-600);">Interest Point Head</div>
+          <div class="pipe-arrow">↓</div>
+          <div class="pipe-box pipe-green">關鍵點座標<br><div class="pipe-label">keypoints [N×2]</div></div>
+          <div class="pipe-box pipe-green">分數<br><div class="pipe-label">scores [N]</div></div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:.4rem;">
+          <div style="font-size:.75rem; color:var(--gray-600);">Descriptor Head</div>
+          <div class="pipe-arrow">↓</div>
+          <div class="pipe-box pipe-purple">描述子<br><div class="pipe-label">descriptors [256×N]</div></div>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="section-subtitle">可調參數（影響關鍵點數量與品質）</div>
+    <table class="spec-table">
+      <tr><th>參數</th><th>預設值</th><th>效果</th><th>調整建議</th></tr>
+      <tr>
+        <td><span class="param-name">nms_radius</span></td>
+        <td><span class="default-val">4</span></td>
+        <td>關鍵點間最小距離（像素）</td>
+        <td>戶外場景改 3，讓點更密集</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">keypoint_threshold</span></td>
+        <td><span class="default-val">0.005</span></td>
+        <td>越低 = 偵測越多點</td>
+        <td>匹配少時試 0.001 或 0.003</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">max_keypoints</span></td>
+        <td><span class="default-val">-1（不限）</span></td>
+        <td>只保留前 k 個高分點</td>
+        <td>match_pairs.py 預設傳入 1024，可改 2048</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">remove_borders</span></td>
+        <td><span class="default-val">4</span></td>
+        <td>移除邊緣 4px 內的點</td>
+        <td>通常不需更動</td>
+      </tr>
+    </table>
+
+    <div class="callout callout-green">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body"><strong>權重檔路徑：</strong><code>models/weights/superpoint_v1.pth</code>，初始化時自動載入，不需手動指定。</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── superglue.py ── -->
+<div class="section" id="superglue">
+  <div class="section-title">七、models/superglue.py — GNN 匹配網路</div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-purple">🔗</div>
+      <div>
+        <div class="card-title">SuperGlue</div>
+        <div class="card-subtitle">models/superglue.py → class SuperGlue(nn.Module)</div>
+      </div>
+    </div>
+
+    <div class="section-subtitle">內部運作流程</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Keypoint Encoding</div>
+          <div class="step-desc">將關鍵點的座標（x,y）和偵測分數（score）透過 MLP 融合進 256 維描述子。讓描述子同時包含「視覺外觀」和「位置」資訊。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Attentional GNN（18 層）</div>
+          <div class="step-desc">交替執行 self-attention（同張圖內的點互相參考）和 cross-attention（跨兩張圖的點互相參考）。讓每個點的特徵能「看到」整張圖的上下文。共 9 次 self + 9 次 cross。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Optimal Transport（Sinkhorn 算法）</div>
+          <div class="step-desc">計算兩組特徵的 N×M 相似度矩陣，用 Sinkhorn 迭代找到一個「最優傳輸」分配，讓每個點最多對應到一個點（mutual exclusivity）。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">閾值過濾</div>
+          <div class="step-desc">信心分數 &gt; match_threshold 且互相最佳匹配才保留。最終輸出 matches0[i] = j 表示圖0的第 i 個點對應到圖1的第 j 個點（-1 = 無匹配）。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-subtitle">重要參數</div>
+    <table class="spec-table">
+      <tr><th>參數</th><th>預設值</th><th>說明</th></tr>
+      <tr>
+        <td><span class="param-name">weights</span></td>
+        <td><span class="default-val">'indoor'</span></td>
+        <td>選 <code>'indoor'</code>（ScanNet）或 <code>'outdoor'</code>（MegaDepth）。<strong>你的場景用 outdoor</strong></td>
+      </tr>
+      <tr>
+        <td><span class="param-name">match_threshold</span></td>
+        <td><span class="default-val">0.2</span></td>
+        <td>信心分數低於此值的匹配會被丟棄。降低 = 保留更多但品質可能較差的匹配</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">sinkhorn_iterations</span></td>
+        <td><span class="default-val">100（訓練）/ 20（推理）</span></td>
+        <td>迭代次數。20 對推理已足夠，不需更改</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">GNN_layers</span></td>
+        <td><span class="default-val">['self','cross'] × 9</span></td>
+        <td>18 層交替 attention。固定值，不可更改（由訓練決定）</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+<!-- ── utils.py ── -->
+<div class="section" id="utils">
+  <div class="section-title">八、models/utils.py — 工具函式庫</div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-gray">🛠️</div>
+      <div>
+        <div class="card-title">utils.py 重要函式</div>
+        <div class="card-subtitle">讀圖、視覺化、幾何計算</div>
+      </div>
+    </div>
+
+    <table class="spec-table">
+      <tr><th>函式名稱</th><th>功能</th><th>何時會用到</th></tr>
+      <tr>
+        <td><span class="param-name">read_image()</span></td>
+        <td>讀取影像、轉灰階、縮放、轉 tensor</td>
+        <td>match_pairs.py 自動呼叫，通常不需手動</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">make_matching_plot()</span></td>
+        <td>用 Matplotlib 繪製高品質匹配圖（慢）</td>
+        <td><code>--viz</code>（不加 --fast_viz）時使用</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">make_matching_plot_fast()</span></td>
+        <td>用 OpenCV 繪製匹配圖（快）</td>
+        <td><code>--viz --fast_viz</code> 時使用</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">scale_intrinsics()</span></td>
+        <td>依縮放比例調整相機內參 K</td>
+        <td>--eval 模式自動呼叫（你提供原始 K 即可）</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">compute_epipolar_error()</span></td>
+        <td>計算每個匹配的對極幾何誤差</td>
+        <td>--eval 模式用來評估匹配正確性</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">estimate_pose()</span></td>
+        <td>用 RANSAC + Essential Matrix 估計相對姿態</td>
+        <td>--eval 模式用來估計 R、t，再與 GT 比較</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">compute_pose_error()</span></td>
+        <td>計算估計姿態與 GT 的旋轉/平移誤差（度）</td>
+        <td>--eval 模式輸出 error_R, error_t</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">error_colormap()</span></td>
+        <td>誤差轉顏色：綠（小誤差）→ 紅（大誤差）</td>
+        <td>--eval --viz 的評估視覺化</td>
+      </tr>
+      <tr>
+        <td><span class="param-name">pose_auc()</span></td>
+        <td>計算 AUC@5, AUC@10, AUC@20</td>
+        <td>--eval 最終統計輸出</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     資料格式
+══════════════════════════════════════════════ -->
+
+<!-- ── pairs.txt ── -->
+<div class="section" id="pairs-format">
+  <div class="section-title">九、pairs.txt 格式說明</div>
+
+  <div class="card">
+    <div class="section-subtitle">模式一：純匹配（2 欄）— 你目前使用的</div>
+    <div class="code-label">格式</div>
+    <pre><span class="hl-green">name0</span> <span class="hl-blue">name1</span></pre>
+    <div class="code-label">你的 Bullpen_CalibrationBar/pairs.txt</div>
+    <pre><span class="hl-green">cf/1.jpg</span> <span class="hl-blue">cs/1.jpg</span>
+<span class="hl-green">cf/2.jpg</span> <span class="hl-blue">cs/2.jpg</span>
+<span class="hl-gray">...（共 21 行）</span></pre>
+
+    <div class="callout callout-blue">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">路徑相對於 <code>--input_dir</code>。你設 <code>--input_dir Bullpen_CalibrationBar</code>，所以寫 <code>cf/1.jpg</code> 就會讀到 <code>Bullpen_CalibrationBar/cf/1.jpg</code>。</div>
+    </div>
+
+    <hr>
+
+    <div class="section-subtitle">模式二：含 GT 評估（38 欄）— 未來需要</div>
+    <div class="code-label">格式（每行 38 個以空格分隔的值）</div>
+    <pre>
+<span class="hl-green">name0</span> <span class="hl-blue">name1</span> <span class="hl-orange">rot0</span> <span class="hl-orange">rot1</span>  <span class="hl-yellow">K0_11 K0_12 K0_13 K0_21 K0_22 K0_23 K0_31 K0_32 K0_33</span>  <span class="hl-yellow">K1_11 ... K1_33</span>  <span class="hl-red">T_11 T_12 T_13 T_14 T_21 ... T_44</span>
+</pre>
+    <table class="spec-table">
+      <tr><th>欄位</th><th>數量</th><th>說明</th></tr>
+      <tr><td><span class="param-name">name0, name1</span></td><td>2</td><td>影像相對路徑</td></tr>
+      <tr><td><span class="param-name">rot0, rot1</span></td><td>2</td><td>EXIF 旋轉（0/1/2/3）。無資料填 0</td></tr>
+      <tr><td><span class="param-name">K0</span></td><td>9</td><td>Camera 0 的 3×3 內參矩陣，逐行展平</td></tr>
+      <tr><td><span class="param-name">K1</span></td><td>9</td><td>Camera 1 的 3×3 內參矩陣，逐行展平</td></tr>
+      <tr><td><span class="param-name">T_0to1</span></td><td>16</td><td>4×4 相對姿態（cam1 相對 cam0），逐行展平</td></tr>
+    </table>
+
+    <div class="code-label">K 矩陣展平方式</div>
+    <pre>
+K = [[<span class="hl-yellow">fx</span>,  0, <span class="hl-blue">cx</span>],
+     [ 0, <span class="hl-yellow">fy</span>, <span class="hl-blue">cy</span>],
+     [ 0,  0,  1]]
+
+<span class="hl-gray"># 展平 → 9 個數值：</span>
+<span class="hl-green">fx 0 cx 0 fy cy 0 0 1</span>
+</pre>
+
+    <div class="code-label">T_0to1 展平方式</div>
+    <pre>
+T_0to1 = [[<span class="hl-yellow">R11 R12 R13 tx</span>],
+           [<span class="hl-yellow">R21 R22 R23 ty</span>],
+           [<span class="hl-yellow">R31 R32 R33 tz</span>],
+           [  0   0   0  1]]
+
+<span class="hl-gray"># 展平 → 16 個數值（逐行）：</span>
+<span class="hl-green">R11 R12 R13 tx R21 R22 R23 ty R31 R32 R33 tz 0 0 0 1</span>
+</pre>
+  </div>
+</div>
+
+
+<!-- ── .npz format ── -->
+<div class="section" id="npz-format">
+  <div class="section-title">十、.npz 輸出格式說明</div>
+
+  <div class="card">
+    <div class="section-subtitle">*_matches.npz（每次匹配都會產生）</div>
+    <div class="output-grid">
+      <div class="output-box">
+        <h4>keypoints0</h4>
+        <div class="output-field"><span class="field-name">形狀</span><span class="field-type">[N, 2]</span></div>
+        <div class="output-field"><span class="field-name">單位</span><span class="field-type">像素座標 (x, y)</span></div>
+        <div class="output-field"><span class="field-name">對應</span><span class="field-type">cf 影像的關鍵點</span></div>
+      </div>
+      <div class="output-box">
+        <h4>keypoints1</h4>
+        <div class="output-field"><span class="field-name">形狀</span><span class="field-type">[M, 2]</span></div>
+        <div class="output-field"><span class="field-name">單位</span><span class="field-type">像素座標 (x, y)</span></div>
+        <div class="output-field"><span class="field-name">對應</span><span class="field-type">cs 影像的關鍵點</span></div>
+      </div>
+      <div class="output-box">
+        <h4>matches</h4>
+        <div class="output-field"><span class="field-name">形狀</span><span class="field-type">[N]</span></div>
+        <div class="output-field"><span class="field-name">意義</span><span class="field-type">kp0[i] 對應到 kp1[matches[i]]</span></div>
+        <div class="output-field"><span class="field-name">-1</span><span class="field-type">表示此點無匹配</span></div>
+      </div>
+      <div class="output-box">
+        <h4>match_confidence</h4>
+        <div class="output-field"><span class="field-name">形狀</span><span class="field-type">[N]</span></div>
+        <div class="output-field"><span class="field-name">範圍</span><span class="field-type">0.0 ~ 1.0</span></div>
+        <div class="output-field"><span class="field-name">意義</span><span class="field-type">越高 = 匹配越確定</span></div>
+      </div>
+    </div>
+
+    <div class="code-label" style="margin-top:1rem;">Python 讀取範例</div>
+    <pre>
+<span class="hl-blue">import</span> numpy <span class="hl-blue">as</span> np
+
+npz = np.load(<span class="hl-green">'Bullpen_CalibrationBar/output/1_1_matches.npz'</span>)
+
+kpts0 = npz[<span class="hl-green">'keypoints0'</span>]       <span class="hl-gray"># [N, 2]  cf 影像的所有關鍵點 (x, y)</span>
+kpts1 = npz[<span class="hl-green">'keypoints1'</span>]       <span class="hl-gray"># [M, 2]  cs 影像的所有關鍵點 (x, y)</span>
+matches = npz[<span class="hl-green">'matches'</span>]         <span class="hl-gray"># [N]     matches[i] = j 或 -1</span>
+conf = npz[<span class="hl-green">'match_confidence'</span>]  <span class="hl-gray"># [N]     0~1 信心分數</span>
+
+<span class="hl-gray"># 篩選有效匹配</span>
+valid = matches > -<span class="hl-orange">1</span>
+matched_kpts0 = kpts0[valid]                  <span class="hl-gray"># cf 的匹配點</span>
+matched_kpts1 = kpts1[matches[valid]]         <span class="hl-gray"># cs 的對應點</span>
+matched_conf  = conf[valid]                   <span class="hl-gray"># 對應信心分數</span>
+
+print(<span class="hl-green">f'總關鍵點：{len(kpts0)} (cf), {len(kpts1)} (cs)'</span>)
+print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
+</pre>
+
+    <div class="section-subtitle" style="margin-top:1.5rem;">*_evaluation.npz（加 --eval 才會產生）</div>
+    <table class="spec-table">
+      <tr><th>欄位</th><th>型態</th><th>說明</th></tr>
+      <tr><td><span class="param-name">error_R</span></td><td>scalar（度）</td><td>旋轉誤差（與 GT 比較）</td></tr>
+      <tr><td><span class="param-name">error_t</span></td><td>scalar（度）</td><td>平移方向誤差（與 GT 比較）</td></tr>
+      <tr><td><span class="param-name">precision</span></td><td>0~1</td><td>對極誤差 &lt; 5×10⁻⁴ 的匹配比例</td></tr>
+      <tr><td><span class="param-name">matching_score</span></td><td>0~1</td><td>正確匹配數 / kp0 總數</td></tr>
+      <tr><td><span class="param-name">num_correct</span></td><td>int</td><td>對極誤差 &lt; 5×10⁻⁴ 的匹配數</td></tr>
+      <tr><td><span class="param-name">epipolar_errors</span></td><td>[M]</td><td>每個匹配的對極幾何誤差</td></tr>
+    </table>
+  </div>
+</div>
+
+
+<!-- ── 視覺化 ── -->
+<div class="section" id="viz-format">
+  <div class="section-title">十一、視覺化圖說明</div>
+
+  <div class="card">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+      <div>
+        <div class="section-subtitle">一般匹配模式（--viz）</div>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:1rem; font-size:.85rem;">
+          <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem;">
+            <div style="width:60px; height:12px; background:linear-gradient(to right, #0000ff, #00ffff, #00ff00, #ffff00, #ff0000); border-radius:3px;"></div>
+            <span>jet colormap</span>
+          </div>
+          <p>線條顏色 = <strong>匹配信心度</strong></p>
+          <br>
+          <div class="color-legend">
+            <div class="color-item"><div class="color-swatch" style="background:#0000ff;"></div>低信心</div>
+            <div class="color-item"><div class="color-swatch" style="background:#00ff00;"></div>中等</div>
+            <div class="color-item"><div class="color-swatch" style="background:#ff0000;"></div>高信心</div>
+          </div>
+          <br>
+          <p style="color:var(--gray-600);">左上角顯示：<br>關鍵點數量（cf:cs）<br>有效匹配數</p>
+        </div>
+      </div>
+      <div>
+        <div class="section-subtitle">評估模式（--eval --viz）</div>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:1rem; font-size:.85rem;">
+          <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem;">
+            <div style="width:60px; height:12px; background:linear-gradient(to right, #ff0000, #ffff00, #00ff00); border-radius:3px;"></div>
+            <span>error colormap</span>
+          </div>
+          <p>線條顏色 = <strong>對極幾何誤差</strong></p>
+          <br>
+          <div class="color-legend">
+            <div class="color-item"><div class="color-swatch" style="background:#00cc00;"></div>誤差小（inlier）</div>
+            <div class="color-item"><div class="color-swatch" style="background:#ff0000;"></div>誤差大（outlier）</div>
+          </div>
+          <br>
+          <p style="color:var(--gray-600);">左上角顯示：<br>ΔR（旋轉誤差）<br>Δt（平移誤差）<br>inliers 數量</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-blue" style="margin-top:1rem;">
+      <div class="callout-icon">📌</div>
+      <div class="callout-body">判定 inlier 的閾值：對極誤差 &lt; <strong>5×10⁻⁴</strong>（在 <code>match_pairs.py:316</code> 定義）。這是歸一化座標系下的值，不是像素。</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     你的場景
+══════════════════════════════════════════════ -->
+
+<!-- ── Bullpen ── -->
+<div class="section" id="bullpen">
+  <div class="section-title">十二、你的場景：Bullpen_CalibrationBar</div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-orange">⚾</div>
+      <div>
+        <div class="card-title">資料集現況</div>
+        <div class="card-subtitle">Bullpen_CalibrationBar/</div>
+      </div>
+    </div>
+
+    <table class="spec-table">
+      <tr><th>項目</th><th>內容</th></tr>
+      <tr><td>cf/ 資料夾</td><td>Camera Front 影像，21 張（1.jpg ~ 21.jpg）</td></tr>
+      <tr><td>cs/ 資料夾</td><td>Camera Side 影像，21 張（1.jpg ~ 21.jpg）</td></tr>
+      <tr><td>pairs.txt</td><td>已生成，21 行，格式：<code>cf/N.jpg cs/N.jpg</code></td></tr>
+      <tr><td>output/</td><td>匹配結果目錄（跑完後產生）</td></tr>
+      <tr><td>場景類型</td><td>戶外棒球場 → 使用 <code>--superglue outdoor</code></td></tr>
+      <tr><td>相機關係</td><td>兩個固定相機，不同視角拍同一個標定棒</td></tr>
+    </table>
+
+    <div class="callout callout-orange" style="margin-top:1rem;">
+      <div class="callout-icon">📋</div>
+      <div class="callout-body"><strong>目前的限制：</strong>pairs.txt 只有 2 欄（無 GT），只能做匹配視覺化。若要做定量評估（--eval），需要取得相機內參 K 和相對姿態 T_0to1，然後重新產生 38 欄版本的 pairs.txt。</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── Commands ── -->
+<div class="section" id="commands">
+  <div class="section-title">十三、常用指令速查</div>
+
+  <div class="card">
+    <div class="callout callout-blue" style="margin-bottom:1rem;">
+      <div class="callout-icon">📁</div>
+      <div class="callout-body">所有指令都在 <code>c:\Mo\program\SuperGlueGnn</code> 目錄下執行，使用 <code>.venv\Scripts\python.exe</code>。</div>
+    </div>
+
+    <div class="section-subtitle">① 快速測試（先跑 2 對確認正常）</div>
+    <div class="code-label">PowerShell</div>
+    <pre>
+.venv/Scripts/python.exe match_pairs.py <span class="hl-green">`
+  --input_pairs Bullpen_CalibrationBar/pairs.txt `
+  --input_dir Bullpen_CalibrationBar `
+  --output_dir Bullpen_CalibrationBar/output `
+  --superglue outdoor `
+  --viz --fast_viz `
+  --resize 640 480 `
+  --max_length 2</span>
+</pre>
+
+    <div class="section-subtitle">② 全部 21 對（正式跑）</div>
+    <div class="code-label">PowerShell</div>
+    <pre>
+.venv/Scripts/python.exe match_pairs.py <span class="hl-green">`
+  --input_pairs Bullpen_CalibrationBar/pairs.txt `
+  --input_dir Bullpen_CalibrationBar `
+  --output_dir Bullpen_CalibrationBar/output `
+  --superglue outdoor `
+  --viz --fast_viz `
+  --resize 640 480</span>
+</pre>
+
+    <div class="section-subtitle">③ 提高品質（更多關鍵點 + 更高解析度）</div>
+    <div class="code-label">PowerShell</div>
+    <pre>
+.venv/Scripts/python.exe match_pairs.py <span class="hl-green">`
+  --input_pairs Bullpen_CalibrationBar/pairs.txt `
+  --input_dir Bullpen_CalibrationBar `
+  --output_dir Bullpen_CalibrationBar/output_hires `
+  --superglue outdoor `
+  --max_keypoints 2048 --nms_radius 3 --resize_float `
+  --viz --fast_viz `
+  --resize 1280</span>
+</pre>
+
+    <div class="section-subtitle">④ 查看結果</div>
+    <div class="code-label">PowerShell</div>
+    <pre>
+<span class="hl-gray"># 開啟瀏覽 UI</span>
+.venv/Scripts/python.exe superglue_viewer.py
+
+<span class="hl-gray"># 或直接用檔案總管打開 output/ 裡的 PNG</span>
+</pre>
+
+    <div class="section-subtitle">⑤ 官方範例驗證環境（ScanNet 室內）</div>
+    <div class="code-label">PowerShell</div>
+    <pre>
+.venv/Scripts/python.exe match_pairs.py --viz --fast_viz
+<span class="hl-gray"># 結果在 dump_match_pairs/ 目錄</span>
+</pre>
+  </div>
+</div>
+
+
+<!-- ── Next Steps ── -->
+<div class="section" id="next-steps">
+  <div class="section-title">十四、後續步驟路線圖</div>
+
+  <div class="card">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">✅ 現在：跑匹配視覺化，觀察結果</div>
+          <div class="step-desc">執行指令③（或②），打開 output/ 裡的 PNG，確認匹配點數量和分布是否合理。如果點太少，嘗試調整 --max_keypoints 或 --match_threshold。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">🔧 下一步：取得相機內參 K</div>
+          <div class="step-desc">用棋盤格拍多角度照片（≥10 張），用 OpenCV calibrateCamera() 取得 K 和 dist。這是做 --eval 評估的前提。reprojection error &lt; 1px 才算可信。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">🔧 取得相對姿態 T_0to1</div>
+          <div class="step-desc">對每對影像，用已知 3D 座標的標記點 + solvePnP() 分別取得 cf 和 cs 相機的外參，再計算相對姿態 T_0to1 = T_cam1 @ inv(T_cam0)。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">🔧 生成 38 欄 pairs_with_gt.txt</div>
+          <div class="step-desc">將 K 和 T_0to1 寫入 pairs.txt，格式為 38 欄，就可以啟用 --eval 模式，取得 AUC、Precision、Matching Score 等定量指標。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-title">🚀 進階：讀取 .npz 做後處理</div>
+          <div class="step-desc">從 *_matches.npz 拿到匹配點對座標，可進一步做：homography 估計、3D 座標計算、相機標定驗證、自訂視覺化等。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div style="text-align:center; color:var(--gray-400); font-size:.8rem; padding-top:2rem; border-top:1px solid var(--gray-200);">
+  SuperGlue 專案規格書 · 更新於 2026-05-10 · 適用於 Bullpen_CalibrationBar 資料集
+</div>
+
+</main>
+
+<script>
+  // Active nav link on scroll
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+
+</body>
+</html>

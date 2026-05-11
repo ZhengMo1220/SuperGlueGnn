@@ -4,7 +4,10 @@
 
 # 產生的匹配輸出（生成檔，不需版控）
 dump_match_pairs/
+dump_match_pairs_outdoor/
 dump_bullpen_matches/
+Bullpen_CalibrationBar/output/
+Bullpen_CalibrationBar/output_hires/
 
 # 模型權重（大型 binary，已存在 upstream，不重複 commit）
 models/weights/
