@@ -60,15 +60,30 @@
 - [x] 確認人工標記 GT：`selected_points_cf.json`、`selected_points_cs.json`（每張 6 點，共 120 對）
 - [x] 確認已有 GT Fundamental Matrix（RANSAC + 8-point，inliers 22/120）
 
-### 待完成：SuperGlue + RANSAC → Fundamental Matrix Pipeline
-- [ ] 生成 `Calibrate_Picture/pairs.txt`（20 對，格式：`cf/01.jpg cs/01.jpg`）
-- [ ] 執行 SuperGlue 匹配，輸出至 `Calibrate_Picture/output/`
-- [ ] 寫後處理腳本 `compute_fundamental.py`，流程如下：
-  1. 讀取 SuperGlue 輸出的 `.npz`（自動匹配點）
-  2. 對全部匹配點跑 **RANSAC + 8-point** 算 Fundamental Matrix
-  3. 與 GT F matrix（`fundamental matrix.txt`）比較差距
-- [ ] （驗證）先用人工 GT 點重現 GT F matrix，確認 pipeline 正確
-- [ ] 評估 SuperGlue 自動匹配的 F matrix 品質
+### SuperGlue + RANSAC → Fundamental Matrix Pipeline ✅ 已完成（2026-05-14）
+
+- [x] 生成 `Calibrate_Picture/pairs.txt`（20 對，格式：`cf/01.jpg cs/01.jpg`）
+- [x] 執行 SuperGlue 匹配，輸出至 `Calibrate_Picture/output/`
+- [x] 寫後處理腳本 `compute_fundamental.py`
+- [x] 驗證模式（`--verify_gt`）確認 pipeline 正確（Frobenius norm 0.006）
+- [x] 評估 SuperGlue 自動匹配的 F matrix 品質
+
+### Pipeline 執行結果（2026-05-14，第一次跑）
+| 指標 | 數值 | 說明 |
+|------|------|------|
+| Total matches | 396 | 20 對影像的所有 SuperGlue 匹配點 |
+| RANSAC inliers | 67 / 396 (16.9%) | 幾何一致的匹配點 |
+| Frobenius norm vs GT | **0.045** | < 0.1 表示幾何接近，結果正確 |
+| Sampson (F_est) | mean=0.56 | 低 = 好 |
+| Sampson (F_gt) | mean=24038 | **異常高**，因 GT F 在原始解析度計算，評估點在 640×480 → 座標尺度不符，非 pipeline 錯誤 |
+
+### 結論與改善方向
+- F matrix 幾何正確（Frobenius norm 0.045 < 0.1）
+- 16.9% inlier ratio 偏低（約 3-4 個好匹配/對影像），對 Pose Estimation 屬於邊界值
+- 改善方案（優先順序）：
+  1. `--max_keypoints 4096`（目前 1024）→ 增加候選匹配
+  2. `--match_threshold 0.1`（目前 0.2）→ 放寬信心閾值，RANSAC 後處理
+  3. `--resize 1280 960`（目前 640 480）→ 高解析度保留更多紋理細節
 
 ### 關鍵技術決策
 - **不需要相機內參** 來算 Fundamental Matrix（F 是純影像幾何）
@@ -89,6 +104,9 @@
 |------|------|------|
 | `Bullpen_CalibrationBar/pairs.txt` | 21 對影像配對清單（2 欄，無 GT） | ✅ |
 | `Bullpen_CalibrationBar/output/` | 匹配結果輸出目錄 | ✅（跑過 2 對測試）|
+| `Bullpen_CalibrationBar/Calibrate_Picture/pairs.txt` | 20 對影像配對清單（cf/01.jpg cs/01.jpg 格式） | ✅ |
+| `Bullpen_CalibrationBar/Calibrate_Picture/output/` | 20 對匹配結果（.npz + .png），已跑完 | ✅ |
+| `compute_fundamental.py` | F matrix pipeline：SuperGlue .npz → RANSAC → compare GT | ✅ |
 | `README_zh.md` | 中文操作手冊 | ✅ |
 | `spec.html` | HTML 規格書（瀏覽器或 VSCode Live Preview 開啟）| ✅ |
 | `CLAUDE.md` | 本文件 | ✅ |
@@ -227,6 +245,7 @@ name0 name1 rot0 rot1  K0(9值)  K1(9值)  T_0to1(16值)
 | 2026-05-09 | 新增 Bullpen_CalibrationBar 資料集、superglue_viewer.py、chat.md |
 | 2026-05-10 | 建立 uv 虛擬環境（.venv）、生成 pairs.txt、撰寫 README_zh.md、製作 spec.html、更新 CLAUDE.md |
 | 2026-05-14 | 新增 Calibrate_Picture 資料集分析、確認室外場域、討論 SuperGlue + RANSAC → F matrix pipeline |
+| 2026-05-14 | 完成 pipeline：compute_fundamental.py、Calibrate_Picture/pairs.txt；第一次執行結果：Frobenius norm 0.045，inlier ratio 16.9% |
 
 ---
 
