@@ -52,6 +52,31 @@
 
 ---
 
+## 當前討論代辦事項（2026-05-14）
+
+### 新資料集：Calibrate_Picture
+- [x] 確認資料集結構（cf/ + cs/ 各 20 張，01.jpg ~ 20.jpg）
+- [x] 確認場域為**室外**（outdoor），使用 `--superglue outdoor`
+- [x] 確認人工標記 GT：`selected_points_cf.json`、`selected_points_cs.json`（每張 6 點，共 120 對）
+- [x] 確認已有 GT Fundamental Matrix（RANSAC + 8-point，inliers 22/120）
+
+### 待完成：SuperGlue + RANSAC → Fundamental Matrix Pipeline
+- [ ] 生成 `Calibrate_Picture/pairs.txt`（20 對，格式：`cf/01.jpg cs/01.jpg`）
+- [ ] 執行 SuperGlue 匹配，輸出至 `Calibrate_Picture/output/`
+- [ ] 寫後處理腳本 `compute_fundamental.py`，流程如下：
+  1. 讀取 SuperGlue 輸出的 `.npz`（自動匹配點）
+  2. 對全部匹配點跑 **RANSAC + 8-point** 算 Fundamental Matrix
+  3. 與 GT F matrix（`fundamental matrix.txt`）比較差距
+- [ ] （驗證）先用人工 GT 點重現 GT F matrix，確認 pipeline 正確
+- [ ] 評估 SuperGlue 自動匹配的 F matrix 品質
+
+### 關鍵技術決策
+- **不需要相機內參** 來算 Fundamental Matrix（F 是純影像幾何）
+- SuperGlue 輸出雖有 confidence 過濾，但幾何 outlier 仍需 RANSAC 剔除
+- 目標：SuperGlue 自動找 corresponding points → RANSAC → F matrix，取代人工標記
+
+---
+
 ## 當前專案狀態
 
 ### 環境
@@ -201,6 +226,7 @@ name0 name1 rot0 rot1  K0(9值)  K1(9值)  T_0to1(16值)
 |------|------|
 | 2026-05-09 | 新增 Bullpen_CalibrationBar 資料集、superglue_viewer.py、chat.md |
 | 2026-05-10 | 建立 uv 虛擬環境（.venv）、生成 pairs.txt、撰寫 README_zh.md、製作 spec.html、更新 CLAUDE.md |
+| 2026-05-14 | 新增 Calibrate_Picture 資料集分析、確認室外場域、討論 SuperGlue + RANSAC → F matrix pipeline |
 
 ---
 
