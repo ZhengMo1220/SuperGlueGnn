@@ -8,6 +8,7 @@ dump_match_pairs_outdoor/
 dump_bullpen_matches/
 Bullpen_CalibrationBar/output/
 Bullpen_CalibrationBar/output_hires/
+Bullpen_CalibrationBar/Calibrate_Picture/output/
 
 # 模型權重（大型 binary，已存在 upstream，不重複 commit）
 models/weights/
