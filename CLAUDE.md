@@ -230,6 +230,20 @@ name0 name1 rot0 rot1  K0(9值)  K1(9值)  T_0to1(16值)
 
 ---
 
+## Future Work（備選改進方案）
+
+當 SuperGlue pipeline 品質到頂後，依優先順序考慮以下替代方案。詳細比較見 `spec.html` 第十五節。
+
+| 優先順序 | 方案 | Paper | 關鍵優勢 |
+|---------|------|-------|---------|
+| 1 | **LightGlue** | ICCV 2023（arxiv 2306.13643）| SuperGlue 原作者新作，更快更準，訓練程式碼完整開源 |
+| 2 | **LoFTR** | CVPR 2021（arxiv 2104.00680）| 無偵測器 dense matching，低紋理（保麗龍球）表現更好 |
+| 3 | **DKM** | CVPR 2023（arxiv 2202.00667）| 幾何估計精度最高，計算量最大，最後手段 |
+
+**觸發條件**：SuperGlue 的 F matrix 品質、匹配數量或 Pose Estimation 精度已無法透過調整超參數繼續提升。
+
+---
+
 ## 相關文件
 - `README_zh.md`：中文操作手冊（給人看）
 - `spec.html`：HTML 規格書，含所有檔案規格與參數說明（VSCode Live Preview 或瀏覽器開啟）

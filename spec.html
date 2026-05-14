@@ -271,6 +271,9 @@
   <a href="#bullpen" class="nav-link">Bullpen 資料集</a>
   <a href="#commands" class="nav-link">常用指令</a>
   <a href="#next-steps" class="nav-link">後續步驟</a>
+
+  <div class="nav-section">研究方向</div>
+  <a href="#future-work" class="nav-link">Future Work</a>
 </nav>
 
 <!-- ═══════════════════ MAIN ═══════════════════ -->
@@ -1205,8 +1208,204 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
 </div>
 
 
+<!-- ══════════════════════════════════════════════
+     Future Work
+══════════════════════════════════════════════ -->
+<div class="section" id="future-work">
+  <div class="section-title">十五、Future Work — 備選改進方案</div>
+
+  <div class="card">
+    <p style="font-size:.9rem; color:var(--gray-700); margin-bottom:1.2rem;">
+      當前方案（SuperGlue + 人工標記球心）在品質上已達到瓶頸時，以下是按優先順序排列的改進路線。
+      每個方案都附有 Paper 出處，待討論後擇一或兩篇實作。
+    </p>
+
+    <div class="callout callout-blue">
+      <div class="callout-icon">📌</div>
+      <div class="callout-body"><strong>使用時機：</strong>等當前 SuperGlue pipeline 的 F matrix 品質、匹配數量或 Pose Estimation 精度已無法透過調整超參數繼續提升，再回來此處挑選下一步。</div>
+    </div>
+  </div>
+
+  <!-- ── 方向一：LightGlue ── -->
+  <div class="card" style="border-left: 4px solid #7c3aed;">
+    <div class="card-header">
+      <div class="card-icon icon-purple" style="font-size:1.4rem;">⚡</div>
+      <div>
+        <div class="card-title">方向一：LightGlue（最優先嘗試）</div>
+        <div class="card-subtitle">SuperGlue 原作者的新作，更快、更準、完整開源含訓練</div>
+      </div>
+      <div style="margin-left:auto;">
+        <span class="tag" style="background:#ede9fe; color:#6d28d9; font-size:.8rem;">ICCV 2023</span>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+      <div style="background:#f5f3ff; border-radius:8px; padding:.9rem;">
+        <div style="font-weight:700; color:#6d28d9; margin-bottom:.5rem; font-size:.85rem;">📄 Paper</div>
+        <div style="font-size:.85rem; line-height:1.6;">
+          <strong>LightGlue: Local Feature Matching at Light Speed</strong><br>
+          Lindenberger, Sarlin, Pollefeys<br>
+          ICCV 2023 · ETH Zürich<br>
+          <a href="https://arxiv.org/abs/2306.13643" style="color:#7c3aed; font-size:.8rem;">arxiv.org/abs/2306.13643</a>
+        </div>
+      </div>
+      <div style="background:#f5f3ff; border-radius:8px; padding:.9rem;">
+        <div style="font-weight:700; color:#6d28d9; margin-bottom:.5rem; font-size:.85rem;">🔗 程式碼</div>
+        <div style="font-size:.85rem; line-height:1.6;">
+          完整開源，含訓練程式碼<br>
+          <a href="https://github.com/cvg/LightGlue" style="color:#7c3aed; font-size:.8rem;">github.com/cvg/LightGlue</a><br><br>
+          支援多種前端：SuperPoint、DISK、SIFT、ALIKED
+        </div>
+      </div>
+    </div>
+
+    <table class="spec-table">
+      <tr><th>比較項目</th><th>SuperGlue（現在）</th><th>LightGlue（改進）</th></tr>
+      <tr><td>推理速度</td><td>較慢（固定 18 層）</td><td><strong>2~10x 更快</strong>（自適應深度，簡單對早退）</td></tr>
+      <tr><td>匹配品質</td><td>優秀</td><td><strong>更優秀</strong>（在多個 benchmark 超越 SuperGlue）</td></tr>
+      <tr><td>訓練程式碼</td><td>❌ 不開放</td><td><strong>✅ 完整開源</strong></td></tr>
+      <tr><td>可微調（fine-tune）</td><td>❌</td><td><strong>✅ 可在自己資料上訓練</strong></td></tr>
+      <tr><td>安裝複雜度</td><td>低</td><td>低（pip install lightglue）</td></tr>
+    </table>
+
+    <div class="callout callout-green" style="margin-top:1rem;">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>為什麼優先：</strong>同一個作者團隊，架構相似易遷移；速度更快代表可以跑更多對影像做驗證；訓練程式碼開放代表如果需要 fine-tune 在牛棚場景上是可行的。</div>
+    </div>
+  </div>
+
+  <!-- ── 方向二：LoFTR ── -->
+  <div class="card" style="border-left: 4px solid #0891b2;">
+    <div class="card-header">
+      <div class="card-icon icon-blue" style="font-size:1.4rem;">🌊</div>
+      <div>
+        <div class="card-title">方向二：LoFTR（無偵測器，適合低紋理）</div>
+        <div class="card-subtitle">不依賴 SuperPoint，直接做 dense matching，對保麗龍球這類低紋理物體更友善</div>
+      </div>
+      <div style="margin-left:auto;">
+        <span class="tag" style="background:#cffafe; color:#0e7490; font-size:.8rem;">CVPR 2021</span>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+      <div style="background:#ecfeff; border-radius:8px; padding:.9rem;">
+        <div style="font-weight:700; color:#0e7490; margin-bottom:.5rem; font-size:.85rem;">📄 Paper</div>
+        <div style="font-size:.85rem; line-height:1.6;">
+          <strong>LoFTR: Detector-Free Local Feature Matching with Transformers</strong><br>
+          Sun, Shen, Chen, Bao, Zhou, Zhang, Fang<br>
+          CVPR 2021 · ZJU + ETH Zürich<br>
+          <a href="https://arxiv.org/abs/2104.00680" style="color:#0e7490; font-size:.8rem;">arxiv.org/abs/2104.00680</a>
+        </div>
+      </div>
+      <div style="background:#ecfeff; border-radius:8px; padding:.9rem;">
+        <div style="font-weight:700; color:#0e7490; margin-bottom:.5rem; font-size:.85rem;">🔗 程式碼</div>
+        <div style="font-size:.85rem; line-height:1.6;">
+          完整開源，含訓練<br>
+          <a href="https://github.com/zju3dv/LoFTR" style="color:#0e7490; font-size:.8rem;">github.com/zju3dv/LoFTR</a><br><br>
+          室內（ScanNet）/ 戶外（MegaDepth）預訓練均有
+        </div>
+      </div>
+    </div>
+
+    <table class="spec-table">
+      <tr><th>比較項目</th><th>SuperGlue（現在）</th><th>LoFTR（改進）</th></tr>
+      <tr><td>是否需要 SuperPoint</td><td>✅ 需要</td><td><strong>❌ 不需要，直接處理影像</strong></td></tr>
+      <tr><td>低紋理區域</td><td>較差（SuperPoint 找不到點）</td><td><strong>更好</strong>（dense matching 覆蓋全圖）</td></tr>
+      <tr><td>匹配密度</td><td>稀疏（keypoint-based）</td><td><strong>密集</strong>（semi-dense）</td></tr>
+      <tr><td>計算量</td><td>中</td><td>較高（但有加速版 QuadTree-LoFTR）</td></tr>
+    </table>
+
+    <div class="callout callout-orange" style="margin-top:1rem;">
+      <div class="callout-icon">⚾</div>
+      <div class="callout-body"><strong>與你場景的關聯：</strong>保麗龍球表面幾乎沒有紋理，SuperPoint 只能偵測到球的邊緣。LoFTR 跳過偵測器、直接做全圖 dense matching，對這類低紋理物體理論上效果更好。<strong>如果 SuperGlue 對球本身的匹配不夠精確，這是最值得嘗試的替代方案。</strong></div>
+    </div>
+  </div>
+
+  <!-- ── 方向三：DKM ── -->
+  <div class="card" style="border-left: 4px solid #16a34a;">
+    <div class="card-header">
+      <div class="card-icon icon-green" style="font-size:1.4rem;">🌿</div>
+      <div>
+        <div class="card-title">方向三：DKM（最高精度 dense matching）</div>
+        <div class="card-subtitle">Dense Kernelized Feature Matching，在幾何估計上精度最高的開源方案之一</div>
+      </div>
+      <div style="margin-left:auto;">
+        <span class="tag" style="background:#dcfce7; color:#15803d; font-size:.8rem;">CVPR 2023</span>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+      <div style="background:#f0fdf4; border-radius:8px; padding:.9rem;">
+        <div style="font-weight:700; color:#15803d; margin-bottom:.5rem; font-size:.85rem;">📄 Paper</div>
+        <div style="font-size:.85rem; line-height:1.6;">
+          <strong>DKM: Dense Kernelized Feature Matching for Geometry Estimation</strong><br>
+          Edstedt, Athanasiadis, Hammarstrand, Wadenback<br>
+          CVPR 2023 · Linköping University<br>
+          <a href="https://arxiv.org/abs/2202.00667" style="color:#15803d; font-size:.8rem;">arxiv.org/abs/2202.00667</a>
+        </div>
+      </div>
+      <div style="background:#f0fdf4; border-radius:8px; padding:.9rem;">
+        <div style="font-weight:700; color:#15803d; margin-bottom:.5rem; font-size:.85rem;">🔗 程式碼</div>
+        <div style="font-size:.85rem; line-height:1.6;">
+          完整開源，含訓練<br>
+          <a href="https://github.com/Parskatt/DKM" style="color:#15803d; font-size:.8rem;">github.com/Parskatt/DKM</a><br><br>
+          後繼作品：RoMa（更新更強）也可考慮
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-blue" style="margin-top:.5rem;">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>適合時機：</strong>如果 LightGlue 和 LoFTR 的精度仍不夠，DKM 在幾何估計 benchmark 上精度最高，但計算量也最大，作為最後手段考慮。</div>
+    </div>
+  </div>
+
+  <!-- ── 比較總覽 ── -->
+  <div class="card">
+    <div class="section-subtitle">方案比較總覽</div>
+    <table class="spec-table">
+      <tr>
+        <th>方案</th><th>Paper</th><th>訓練程式碼</th><th>低紋理表現</th><th>速度</th><th>建議時機</th>
+      </tr>
+      <tr>
+        <td><strong>SuperGlue</strong><br><span style="font-size:.75rem;color:var(--gray-600)">目前使用</span></td>
+        <td>CVPR 2020</td>
+        <td>❌</td>
+        <td>普通</td>
+        <td>中</td>
+        <td>現在</td>
+      </tr>
+      <tr style="background:#f5f3ff;">
+        <td><strong>LightGlue</strong><br><span style="font-size:.75rem;color:#6d28d9">優先嘗試</span></td>
+        <td>ICCV 2023</td>
+        <td>✅</td>
+        <td>普通～好</td>
+        <td>快</td>
+        <td>SuperGlue 品質到頂時</td>
+      </tr>
+      <tr style="background:#ecfeff;">
+        <td><strong>LoFTR</strong><br><span style="font-size:.75rem;color:#0e7490">球面特化</span></td>
+        <td>CVPR 2021</td>
+        <td>✅</td>
+        <td><strong>最好</strong></td>
+        <td>慢</td>
+        <td>球心匹配精度不足時</td>
+      </tr>
+      <tr style="background:#f0fdf4;">
+        <td><strong>DKM</strong><br><span style="font-size:.75rem;color:#15803d">最後手段</span></td>
+        <td>CVPR 2023</td>
+        <td>✅</td>
+        <td>好</td>
+        <td>最慢</td>
+        <td>精度要求極高時</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
 <div style="text-align:center; color:var(--gray-400); font-size:.8rem; padding-top:2rem; border-top:1px solid var(--gray-200);">
-  SuperGlue 專案規格書 · 更新於 2026-05-10 · 適用於 Bullpen_CalibrationBar 資料集
+  SuperGlue 專案規格書 · 更新於 2026-05-14 · 適用於 Bullpen_CalibrationBar 資料集
 </div>
 
 </main>
