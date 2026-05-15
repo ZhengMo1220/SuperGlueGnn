@@ -158,23 +158,29 @@ def run_verify_gt():
         print('\n[WARNING] Too few inliers. Check GT point format.')
 
 
-def run_superglue_eval(ransac_thresh, min_matches):
-    """Main eval: load SuperGlue matches, compute F, compare to GT."""
-    print('\n=== SuperGlue matching evaluation ===')
+def save_F_txt(F, n_inliers, n_total, path):
+    """輸出 F matrix 成與 GT 相同格式的 txt。"""
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(f'總共匹配點對數： {n_total}\n')
+        f.write('估計出的基本矩陣 F：\n')
+        rows = []
+        for row in F:
+            rows.append(f' [{row[0]:.8e}  {row[1]:.8e}  {row[2]:.8e}]')
+        f.write('\n'.join(rows) + '\n')
+        f.write(f'內點數量： {n_inliers} / {n_total}\n')
+    print(f'F matrix saved to: {path}')
 
-    F_gt = load_gt_F()
-    print('GT F matrix loaded.')
 
+def collect_superglue_points():
+    """讀取所有 .npz，回傳堆疊後的匹配點對。"""
     all_mkpts0, all_mkpts1 = [], []
     per_image_stats = []
-
     for name in IMAGE_NAMES:
         stem = Path(name).stem
         npz_path = OUTPUT_DIR / f'{stem}_{stem}_matches.npz'
         if not npz_path.exists():
             print(f'  [SKIP] {npz_path.name} not found')
             continue
-
         mkpts0, mkpts1, mconf = load_superglue_matches(npz_path)
         all_mkpts0.append(mkpts0)
         all_mkpts1.append(mkpts1)
@@ -183,8 +189,23 @@ def run_superglue_eval(ransac_thresh, min_matches):
             'n_matches': len(mkpts0),
             'mean_conf': mconf.mean() if len(mconf) > 0 else 0
         })
+    return (np.vstack(all_mkpts0) if all_mkpts0 else np.empty((0, 2))),\
+           (np.vstack(all_mkpts1) if all_mkpts1 else np.empty((0, 2))),\
+           per_image_stats
 
-    if not all_mkpts0:
+
+def run_superglue_eval(ransac_thresh, min_matches, save_F=False, use_gt_points=False):
+    """Main eval: load SuperGlue matches, optionally merge GT points, compute F, compare to GT."""
+
+    mode = 'SuperGlue + GT manual points (merged)' if use_gt_points else 'SuperGlue only'
+    print(f'\n=== SuperGlue matching evaluation  [{mode}] ===')
+
+    F_gt = load_gt_F()
+    print('GT F matrix loaded.')
+
+    sg_pts0, sg_pts1, per_image_stats = collect_superglue_points()
+
+    if len(sg_pts0) == 0:
         print('[FAIL] No .npz files found. Run match_pairs.py first.')
         return
 
@@ -193,30 +214,68 @@ def run_superglue_eval(ransac_thresh, min_matches):
     for s in per_image_stats:
         print(f'{s["name"]:<12} {s["n_matches"]:>8} {s["mean_conf"]:>10.4f}')
 
-    all_mkpts0 = np.vstack(all_mkpts0)
-    all_mkpts1 = np.vstack(all_mkpts1)
-    total = len(all_mkpts0)
-    print(f'\nTotal matched points: {total}')
+    if use_gt_points:
+        gt_pts0, gt_pts1 = load_gt_points()
+        all_mkpts0 = np.vstack([sg_pts0, gt_pts0])
+        all_mkpts1 = np.vstack([sg_pts1, gt_pts1])
+        print(f'\nSuperGlue points : {len(sg_pts0)}')
+        print(f'GT manual points : {len(gt_pts0)}  (appended)')
+        print(f'Total combined   : {len(all_mkpts0)}')
+    else:
+        all_mkpts0 = sg_pts0
+        all_mkpts1 = sg_pts1
+        print(f'\nTotal matched points: {len(all_mkpts0)}')
 
+    total = len(all_mkpts0)
     if total < min_matches:
-        print(f'[FAIL] Too few matches ({total} < {min_matches}). Adjust --max_keypoints or --match_threshold.')
+        print(f'[FAIL] Too few matches ({total} < {min_matches}).')
         return
 
-    F_sg, mask = compute_F_from_points(all_mkpts0, all_mkpts1, ransac_thresh)
-    n_inliers = mask.sum()
-    print(f'RANSAC inliers: {n_inliers} / {total}  ({100*n_inliers/total:.1f}%)')
-    print(f'\nSuperGlue F:\n{F_sg}')
-    print(f'\nGT F:\n{F_gt}')
+    # ── SuperGlue-only F (always computed for comparison baseline) ──
+    F_sg_only, mask_sg = compute_F_from_points(sg_pts0, sg_pts1, ransac_thresh)
+    n_in_sg = mask_sg.sum()
 
-    compare_F(F_sg, F_gt, all_mkpts0[mask], all_mkpts1[mask], label='SuperGlue')
+    # ── Main F (either merged or SG-only) ──
+    if use_gt_points:
+        F_main, mask_main = compute_F_from_points(all_mkpts0, all_mkpts1, ransac_thresh)
+        n_inliers = mask_main.sum()
+
+        print(f'\n[SuperGlue only]   RANSAC inliers: {n_in_sg} / {len(sg_pts0)}  ({100*n_in_sg/len(sg_pts0):.1f}%)')
+        print(f'[SG + GT merged]   RANSAC inliers: {n_inliers} / {total}  ({100*n_inliers/total:.1f}%)')
+
+        print(f'\n--- F matrix comparison ---')
+        print(f'SuperGlue-only F:\n{F_sg_only}')
+        print(f'\nSG + GT merged F:\n{F_main}')
+        print(f'\nGT F:\n{F_gt}')
+
+        compare_F(F_sg_only, F_gt, sg_pts0[mask_sg], sg_pts1[mask_sg],   label='SG-only   ')
+        compare_F(F_main,    F_gt, all_mkpts0[mask_main], all_mkpts1[mask_main], label='SG+GT-merged')
+
+        # how different are the two estimated F matrices from each other
+        def norm(M): return M / np.linalg.norm(M)
+        diff_between = np.linalg.norm(norm(F_sg_only) - norm(F_main))
+        print(f'\nDifference between SG-only F and merged F (Frobenius): {diff_between:.6f}')
+        print('(close to 0 = GT points did not change the geometry much)')
+    else:
+        F_main, mask_main = F_sg_only, mask_sg
+        n_inliers = n_in_sg
+        print(f'RANSAC inliers: {n_inliers} / {total}  ({100*n_inliers/total:.1f}%)')
+        print(f'\nSuperGlue F:\n{F_main}')
+        print(f'\nGT F:\n{F_gt}')
+        compare_F(F_main, F_gt, all_mkpts0[mask_main], all_mkpts1[mask_main], label='SuperGlue')
+
+    if save_F:
+        tag      = 'merged' if use_gt_points else 'superglue'
+        out_path = DATASET_DIR / f'{tag}_fundamental_matrix.txt'
+        save_F_txt(F_main, n_inliers, total, out_path)
 
     print('\n--- Conclusion ---')
     if n_inliers >= 30:
         print('[OK] Enough inliers. F matrix estimate is reliable.')
     elif n_inliers >= 15:
-        print('[WARNING] Moderate inliers. Result is indicative but try to get more matches.')
+        print('[WARNING] Moderate inliers. Result is indicative.')
     else:
-        print('[FAIL] Too few inliers. Improve SuperGlue matching quality first.')
+        print('[FAIL] Too few inliers.')
 
 
 # ── Entry point ───────────────────────────────────────
@@ -229,9 +288,14 @@ if __name__ == '__main__':
                         help='RANSAC 重投影誤差閾值（像素，預設 3.0）')
     parser.add_argument('--min_matches', type=int, default=20,
                         help='最少需要幾個匹配點才進行 F matrix 估計（預設 20）')
+    parser.add_argument('--save_F', action='store_true',
+                        help='將估計的 F matrix 輸出成 txt（與 GT 格式相同）')
+    parser.add_argument('--use_gt_points', action='store_true',
+                        help='將人工標記的 120 個對應點與 SuperGlue 點合併後一起算 F matrix')
     opt = parser.parse_args()
 
     if opt.verify_gt:
         run_verify_gt()
     else:
-        run_superglue_eval(opt.ransac_thresh, opt.min_matches)
+        run_superglue_eval(opt.ransac_thresh, opt.min_matches,
+                           save_F=opt.save_F, use_gt_points=opt.use_gt_points)
