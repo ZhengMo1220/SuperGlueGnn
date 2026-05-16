@@ -8,16 +8,14 @@ Pipeline:
   4. [verify_gt mode] Reproduce GT F matrix from manual GT points first
 
 Usage:
-  # Step 1: run SuperGlue matching
-  .venv/Scripts/python.exe match_pairs.py ^
-      --input_pairs Bullpen_CalibrationBar/Calibrate_Picture/pairs.txt ^
-      --input_dir Bullpen_CalibrationBar/Calibrate_Picture ^
-      --output_dir Bullpen_CalibrationBar/Calibrate_Picture/output ^
-      --superglue outdoor --viz --fast_viz --resize 640 480
+  # Default dataset (TSG_Bullpen, output/)
+  .venv/Scripts/python.exe compute_fundamental.py
+  .venv/Scripts/python.exe compute_fundamental.py --verify_gt
 
-  # Step 2: run this script
-  .venv/Scripts/python.exe compute_fundamental.py               # main eval
-  .venv/Scripts/python.exe compute_fundamental.py --verify_gt   # sanity check first
+  # Custom dataset / output directory
+  .venv/Scripts/python.exe compute_fundamental.py \
+      --dataset_dir Bullpen_Calibration/TSG_Bullpen \
+      --output_dir  Bullpen_Calibration/TSG_Bullpen/output_1920
 """
 
 import argparse
@@ -27,13 +25,14 @@ import cv2
 from pathlib import Path
 
 
-# ── 路徑設定 ──────────────────────────────────────────
-DATASET_DIR = Path('Bullpen_CalibrationBar/Calibrate_Picture')
+IMAGE_NAMES = [f'{i:02d}.jpg' for i in range(1, 21)]
+
+# 預設值；在 __main__ 區塊會依 CLI 參數覆蓋
+DATASET_DIR = Path('Bullpen_Calibration/TSG_Bullpen')
 OUTPUT_DIR  = DATASET_DIR / 'output'
 GT_F_FILE   = DATASET_DIR / 'fundamental matrix.txt'
 GT_CF_JSON  = DATASET_DIR / 'selected_points_cf.json'
 GT_CS_JSON  = DATASET_DIR / 'selected_points_cs.json'
-IMAGE_NAMES = [f'{i:02d}.jpg' for i in range(1, 21)]
 
 
 # ── 工具函式 ──────────────────────────────────────────
@@ -266,7 +265,8 @@ def run_superglue_eval(ransac_thresh, min_matches, save_F=False, use_gt_points=F
 
     if save_F:
         tag      = 'merged' if use_gt_points else 'superglue'
-        out_path = DATASET_DIR / f'{tag}_fundamental_matrix.txt'
+        res_tag  = OUTPUT_DIR.name  # e.g. 'output_1920', 'output'
+        out_path = DATASET_DIR / f'{tag}_F_{res_tag}.txt'
         save_F_txt(F_main, n_inliers, total, out_path)
 
     print('\n--- Conclusion ---')
@@ -282,6 +282,10 @@ def run_superglue_eval(ransac_thresh, min_matches, save_F=False, use_gt_points=F
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='計算並比較 Fundamental Matrix')
+    parser.add_argument('--dataset_dir', type=str, default='Bullpen_Calibration/TSG_Bullpen',
+                        help='資料集根目錄（預設：Bullpen_Calibration/TSG_Bullpen）')
+    parser.add_argument('--output_dir', type=str, default=None,
+                        help='SuperGlue .npz 所在目錄（預設：<dataset_dir>/output）')
     parser.add_argument('--verify_gt', action='store_true',
                         help='驗證模式：用人工 GT 點重現 F matrix，確認 pipeline 正確')
     parser.add_argument('--ransac_thresh', type=float, default=3.0,
@@ -293,6 +297,13 @@ if __name__ == '__main__':
     parser.add_argument('--use_gt_points', action='store_true',
                         help='將人工標記的 120 個對應點與 SuperGlue 點合併後一起算 F matrix')
     opt = parser.parse_args()
+
+    # 依 CLI 參數覆蓋全域路徑
+    DATASET_DIR = Path(opt.dataset_dir)
+    OUTPUT_DIR  = Path(opt.output_dir) if opt.output_dir else DATASET_DIR / 'output'
+    GT_F_FILE   = DATASET_DIR / 'fundamental matrix.txt'
+    GT_CF_JSON  = DATASET_DIR / 'selected_points_cf.json'
+    GT_CS_JSON  = DATASET_DIR / 'selected_points_cs.json'
 
     if opt.verify_gt:
         run_verify_gt()

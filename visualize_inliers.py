@@ -22,8 +22,8 @@ matplotlib.use('Agg')
 import matplotlib.cm as cm
 
 
-DATASET_DIR   = Path('Bullpen_CalibrationBar/Calibrate_Picture')
-OUTPUT_DIR    = DATASET_DIR / 'output'
+DATASET_DIR   = Path('Bullpen_Calibration/TSG_Bullpen')
+OUTPUT_DIR    = DATASET_DIR / 'output_1920'
 VIZ_DIR       = DATASET_DIR / 'inlier_viz'
 IMAGE_NAMES   = [f'{i:02d}.jpg' for i in range(1, 21)]
 RANSAC_THRESH = 3.0
