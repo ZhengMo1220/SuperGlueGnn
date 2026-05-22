@@ -1,6 +1,9 @@
-總共匹配點對數： 1358
-估計出的基本矩陣 F：
+Convention: p_cf^T F p_cs = 0 (cf first)
+Group A: viz_A_sg_all
+Total points used: 1358
+RANSAC inliers (SG): 278 / 1358
+
+Fundamental Matrix F:
  [-1.09528407e-06  5.03097781e-06  -7.00587349e-04]
  [9.14864860e-06  9.25719668e-06  -1.66500325e-02]
  [-3.26388951e-03  7.95542724e-03  1.00000000e+00]
-內點數量： 290 / 1358

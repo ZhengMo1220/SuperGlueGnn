@@ -1,0 +1,29 @@
+=== Pose Estimation Result ===
+Dataset   : Bullpen_Calibration\TSG_Bullpen
+Output dir: Bullpen_Calibration\TSG_Bullpen\output_1920
+
+RANSAC inliers (F): 290 / 1358
+recoverPose inliers: 290
+
+Rotation matrix R (cf -> cs):
+  [-0.65442661 -0.51196212 -0.55643562]
+  [-0.59142173  0.80509604 -0.04517425]
+  [ 0.47111162  0.29952489 -0.82966179]
+
+Euler angles (ZYX, degrees):
+  Roll  (X): 160.149380
+  Pitch (Y): -28.106478
+  Yaw   (Z): -137.895088
+
+Translation direction t (unit vector):
+  [ 0.27983495 -0.09299061  0.95553396]
+
+Fundamental Matrix F:
+  [-1.09528407e-06  9.14864860e-06 -3.26388951e-03]
+  [5.03097781e-06 9.25719668e-06 7.95542724e-03]
+  [-7.00587349e-04 -1.66500325e-02  1.00000000e+00]
+
+Essential Matrix E:
+  [-12.2072788  103.40135072   3.29134559]
+  [ 56.10307674 104.68656242  26.67993652]
+  [  9.03482559 -20.09394202   1.63254283]

@@ -38,14 +38,15 @@
 - [x] 評估 SuperGlue F matrix 品質（Frobenius norm 0.021 vs GT，非常好）
 - [x] 視覺化腳本 `visualize_inliers.py`（inlier 連線圖 + epipolar line 驗證圖）
 
-### 階段三：Essential Matrix → Pose Estimation（進行中）
-- [ ] 用 F matrix + 內參 K 換算 Essential Matrix（E = K2^T F K1）
-- [ ] 從 E 分解 R, t（cv2.recoverPose）
-- [ ] 評估姿態估計精度
+### 階段三：Essential Matrix → Pose Estimation ❌ 失敗（2026-05-22 確認瓶頸）
+- [x] 用 F matrix + 內參 K 換算 Essential Matrix（E = K_cs^T F K_cf）
+- [x] 從 E 分解 R, t（cv2.recoverPose）→ R ≈ 160°，應為 ~90°，失敗
+- [x] 四組 F matrix 實驗（A/B/C/D）→ 全部 3D 骨架重建失敗（躺平或壓成線）
+- [x] 根本原因確認：K_cf 條件數 8165，F→E 轉換數值病態，非特徵匹配問題
 
-### 階段四：優化與整合
-- [ ] 決定是否需要先做 undistort 再送入匹配
-- [ ] 評估是否需要 LightGlue / LoFTR 替換 SuperGlue
+### 階段四：下一步方向（待決定）
+- [ ] 方案 1：ChArUco board 直接標定（cv2.solvePnP，繞過 F/E 矩陣）
+- [ ] 方案 2：評估換新 matching 論文（LoFTR 等）是否有助於改善
 
 ---
 
@@ -95,10 +96,16 @@
 | `Bullpen_Calibration/TSG_Bullpen/inlier_viz/` | inlier 連線圖 + epipolar 驗證圖 | ✅ |
 | `Bullpen_Calibration/Intrinsic/Cf_Intrinsic.txt` | cf 相機內參 K | ✅ |
 | `Bullpen_Calibration/Intrinsic/Cs_Intrinsic.txt` | cs 相機內參 K | ✅ |
-| `compute_fundamental.py` | F matrix pipeline（支援 --dataset_dir / --output_dir） | ✅ |
+| `compute_fundamental.py` | F matrix pipeline（支援 --dataset_dir / --output_dir，輸出 cf-first convention） | ✅ |
+| `compute_pose.py` | E matrix → recoverPose → R,t（已確認失敗，K_cf 條件數問題） | ✅ |
 | `visualize_inliers.py` | inlier 連線 + epipolar 視覺化 | ✅ |
+| `visualize_four_groups.py` | 四組 F matrix 視覺化（A/B/C/D，各自獨立資料夾） | ✅ |
+| `Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/` | 組 A 視覺化 + F_matrix.txt（SG 全20對） | ✅ |
+| `Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/` | 組 B 視覺化 + F_matrix.txt（SG+人工全20對） | ✅ |
+| `Bullpen_Calibration/TSG_Bullpen/viz_C_sg_best/` | 組 C 視覺化 + F_matrix.txt（SG pair08） | ✅ |
+| `Bullpen_Calibration/TSG_Bullpen/viz_D_sg_manual_best/` | 組 D 視覺化 + F_matrix.txt（SG+人工 pair08） | ✅ |
 | `README_zh.md` | 中文操作手冊 | ✅ |
-| `spec.html` | HTML 規格書 | ✅ |
+| `spec.html` | HTML 規格書（含 Q1~Q15 QA） | ✅ |
 
 ### 資料集結構
 ```
@@ -225,6 +232,7 @@ cd "c:\Mo\program\SuperGlueGnn"
 | 2026-05-14 | 建立 F matrix pipeline（compute_fundamental.py）；Frobenius norm 0.045（640×480） |
 | 2026-05-15 | 視覺化腳本（visualize_inliers.py）；1920×1084 結果 Frobenius norm 0.021 |
 | 2026-05-16 | 更新 CLAUDE.md 反映新資料夾結構（Bullpen_Calibration/TSG_Bullpen）；新增內參資訊 |
+| 2026-05-22 | 四組 F matrix 實驗（A/B/C/D）3D 骨架重建全部失敗；確認根本原因為 K_cf 條件數 8165 導致 F→E 數值病態；修正 F matrix 輸出為 cf-first convention（.T）；新增 visualize_four_groups.py；更新 spec.html QA Q13/Q14 |
 
 ---
 
@@ -232,13 +240,17 @@ cd "c:\Mo\program\SuperGlueGnn"
 
 當 SuperGlue pipeline 品質到頂後，依優先順序考慮以下替代方案。詳細比較見 `spec.html` 第十五節。
 
-| 優先順序 | 方案 | Paper | 關鍵優勢 |
-|---------|------|-------|---------|
-| 1 | **LightGlue** | ICCV 2023（arxiv 2306.13643）| SuperGlue 原作者新作，更快更準，訓練程式碼完整開源 |
-| 2 | **LoFTR** | CVPR 2021（arxiv 2104.00680）| 無偵測器 dense matching，低紋理（保麗龍球）表現更好 |
-| 3 | **DKM** | CVPR 2023（arxiv 2202.00667）| 幾何估計精度最高，計算量最大，最後手段 |
+**2026-05-22 更新：問題不在特徵匹配演算法，換論文無法解決根本問題。**
 
-**觸發條件**：SuperGlue 的 F matrix 品質、匹配數量或 Pose Estimation 精度已無法透過調整超參數繼續提升。
+根本原因是 K_cf 條件數 8165（50mm 長焦），F→E 轉換數值病態。即使換 LoFTR 或 LightGlue 得到更好的 corresponding points，F→E→R,t 這條路仍然不穩定。
+
+**建議優先方向：**
+
+| 優先順序 | 方案 | 說明 |
+|---------|------|------|
+| 1 | **ChArUco board 直接標定** | 場景中放標定板，cv2.solvePnP 直接得 R,t，繞過 F/E，1~2 天可跑通 |
+| 2 | **LoFTR** | CVPR 2021，dense matching，學術價值高，但無法解決 K_cf 條件數問題 |
+| 3 | **LightGlue** | ICCV 2023，SuperGlue 原作者新作，同上，換匹配不換 pipeline |
 
 ---
 

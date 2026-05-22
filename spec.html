@@ -274,6 +274,7 @@
 
   <div class="nav-section">研究方向</div>
   <a href="#future-work" class="nav-link">Future Work</a>
+  <a href="#qa" class="nav-link">❓ 問題 Q&amp;A</a>
 </nav>
 
 <!-- ═══════════════════ MAIN ═══════════════════ -->
@@ -1404,8 +1405,374 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
 </div>
 
 
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="qa" style="margin-bottom:2rem;">
+  <h2 style="font-size:1.4rem;font-weight:700;color:var(--gray-900);margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:2px solid var(--primary);">
+    ❓ 問題 Q&amp;A（實驗過程遇到的問題整理）
+  </h2>
+  <p style="color:var(--gray-600);margin-bottom:1.5rem;font-size:.9rem;">更新於 2026-05-22 · 按時間順序整理，包含問題原因與解決狀態</p>
+
+  <!-- Q1 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--success);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已解決</span>
+      <strong style="color:var(--gray-900);">Q1｜Windows 終端機顯示亂碼 / UnicodeEncodeError</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>在 Windows cp950 環境下，Python print 含 emoji（✅⚠️❌）或中文時出現 <code>UnicodeEncodeError</code> 或亂碼。</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>Windows 預設終端機編碼為 cp950，不支援 Unicode emoji；中文字元也可能因編碼不匹配而亂碼。</p>
+    <p style="color:var(--gray-700);"><strong>解法：</strong>將所有 print 改為純 ASCII 標記（<code>[OK]</code>、<code>[WARNING]</code>、<code>[FAIL]</code>），並將所有 print 語句改為英文輸出。</p>
+  </div>
+
+  <!-- Q2 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--success);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已釐清</span>
+      <strong style="color:var(--gray-900);">Q2｜GT F matrix 的 Sampson distance 異常高（~24000）</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>用 GT F matrix 對 SuperGlue 的 inlier 點計算 Sampson distance，結果高達 24038，但估計的 F 只有 0.56，差距極大。</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>GT F 是在<strong>原圖解析度（1920×1084）</strong>下計算的，而第一次 SuperGlue 輸入是 resize 後的 640×480。兩組點的座標尺度不同，GT F 套用在小解析度的點上自然誤差極大。這不是 pipeline 錯誤。</p>
+    <p style="color:var(--gray-700);"><strong>解法：</strong>改用 1920×1084 原圖解析度跑 SuperGlue，座標系一致後 Frobenius norm 從 0.135 降到 <strong>0.021</strong>，GT Sampson 也降低。</p>
+  </div>
+
+  <!-- Q3 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--success);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已釐清</span>
+      <strong style="color:var(--gray-900);">Q3｜SuperGlue 偵測不到保麗龍球</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>場景中用來當標定點的白色保麗龍球，SuperGlue 幾乎完全無法匹配。</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>SuperPoint（SuperGlue 的前端）偵測角點與紋理邊緣。白色保麗龍球表面<strong>無紋理、無角點</strong>，SuperPoint 不會在球面放 keypoint。這是 SuperPoint 的設計限制，不是 bug。</p>
+    <p style="color:var(--gray-700);"><strong>影響：</strong>SuperGlue 的 inlier 全部來自背景紋理（草皮、圍網、棒子邊緣），這些點在幾何上可以建立正確的 F matrix，但無法提供精確的標定點座標。保麗龍球的用途應改為 PnP（已知 3D 座標），而非 SuperGlue 的 keypoint 來源。</p>
+  </div>
+
+  <!-- Q4 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--success);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已釐清</span>
+      <strong style="color:var(--gray-900);">Q4｜不同解析度算出的 F matrix 數值差很多，是錯的嗎？</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>640×480 和 1920×1084 跑出的 F matrix 數值完全不同，讓人擔心結果錯誤。</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>F matrix 的數值會隨座標尺度縮放，不同解析度的 F 直接比數字沒有意義。正確的比較方式是 <strong>Frobenius norm（normalize 後的矩陣差距）</strong>。</p>
+    <p style="color:var(--gray-700);"><strong>結論：</strong>1920×1084 的 F 與 GT F 的 Frobenius norm 為 <strong>0.021</strong>（極佳，&lt; 0.1 為接近）。幾何上正確，只是數值尺度不同。</p>
+  </div>
+
+  <!-- Q5 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--warning);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#fef3c7;color:#d97706;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">待確認</span>
+      <strong style="color:var(--gray-900);">Q5｜GT F matrix 只有 22/120 inliers，是否可靠？</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>人工標記的 120 個點，RANSAC 後只剩 22 個 inlier（18.3%），GT F 是否可信？</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>人工標記的 6 個點/張分布在保麗龍球位置，這些點的 epipolar 一致性本來就有限（標定點不是為 F matrix 設計的，分布也不夠分散）。22 個 inlier 算 F 勉強夠用但不穩定。</p>
+    <p style="color:var(--gray-700);"><strong>結論：</strong>SuperGlue 的 F（290 inliers）比 GT F（22 inliers）<strong>更可靠</strong>，inlier 數量多 13 倍。GT F 僅供對照參考。</p>
+  </div>
+
+  <!-- Q6 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">核心瓶頸</span>
+      <strong style="color:var(--gray-900);">Q6｜Pose Estimation 的 R 算出 160°，但實際只有 ~90°</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>從 F → E → recoverPose 得到的旋轉角度約 160°，但兩台相機實際夾角約 90°。</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因（兩個）：</strong></p>
+    <ol style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.5rem;">
+      <li style="margin-bottom:.3rem;"><strong>兩台相機 FoV 差距 5 倍</strong>：cf（50mm 長焦，FoV 13.8°）vs cs（8mm 廣角，FoV 68.7°）。SuperGlue 設計上假設兩張圖有大量視野重疊，FoV 差 5 倍時匹配前提失立，inlier 雖多但幾何約束不正確。</li>
+      <li><strong>cf 主點偏移</strong>：cx=869（影像中心應為 960），偏移 91px，代表標定時影像可能有裁切或感光器對齊問題，影響 E = K2ᵀFK1 的計算。</li>
+    </ol>
+    <p style="color:var(--gray-700);"><strong>驗證：</strong>cs 的 inlier 全部集中在影像左側 25%（X: 8~475px），對應 cf FoV 投影範圍，確認是 FoV 不匹配造成的系統性誤差。</p>
+  </div>
+
+  <!-- Q7 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">核心瓶頸</span>
+      <strong style="color:var(--gray-900);">Q7｜SuperGlue 在不同焦距相機間的根本限制</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>SuperGlue 能否正確處理焦距差距 5 倍的兩台相機？</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>分析：</strong>SuperGlue（SuperPoint + GNN matching）在設計上針對<strong>相近視野、相似解析度</strong>的影像對。當一台看到的場景是另一台的 5 倍大時：</p>
+    <ul style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.5rem;">
+      <li>同一個場景物件在兩張圖中的尺寸差 5 倍 → descriptor 不相似</li>
+      <li>cs 影像大部分區域在 cf 中根本看不到 → 大量誤匹配</li>
+      <li>F matrix 雖然數值上接近（Frobenius norm 0.021），但用來 recoverPose 仍然失敗</li>
+    </ul>
+    <p style="color:var(--gray-700);"><strong>結論：</strong>這是此相機配置下 SuperGlue 的根本限制，非參數調整可以解決。</p>
+  </div>
+
+  <!-- Q8 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--success);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已確認</span>
+      <strong style="color:var(--gray-900);">Q8｜最終目標：3D 骨架節點估計 → 投球動作分析</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>目標：</strong>透過雙相機（側面 cs + 正面 cf）的 2D 骨架點（ViT-Pose 輸出），經三角測量重建投手的 <strong>3D 骨架節點座標</strong>，進而計算物理特徵（腳踝距離、肩外旋角度、手腕速度等），切割投球動作 4 個階段。</p>
+
+    <div style="background:var(--gray-50);border-radius:8px;padding:1rem;margin-bottom:.8rem;">
+      <div style="font-weight:700;color:var(--gray-800);margin-bottom:.6rem;">完整 Pipeline</div>
+      <div style="font-family:monospace;font-size:.82rem;color:var(--gray-700);line-height:2;">
+        ViT-Pose → 側面 2D 骨架點 (cs) + 正面 2D 骨架點 (cf)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+        F matrix → E = K_cs<sup>T</sup> F K_cf → SVD → <strong>R, t</strong><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+        外參：cs = [I | 0]，cf = [R | t]<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+        undistort 2D 點 → <strong>cv2.triangulatePoints()</strong><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+        3D 骨架節點座標 P<sup>w</sup>（世界座標）<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+        物理特徵計算 → 投球動作 4 階段切割
+      </div>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
+        <thead>
+          <tr style="background:var(--gray-100);">
+            <th style="padding:.5rem .8rem;text-align:left;border-bottom:1px solid var(--gray-200);">步驟</th>
+            <th style="padding:.5rem .8rem;text-align:left;border-bottom:1px solid var(--gray-200);">工具</th>
+            <th style="padding:.5rem .8rem;text-align:left;border-bottom:1px solid var(--gray-200);">狀態</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">2D 骨架偵測</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">ViT-Pose（Vision Transformer）</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);color:var(--success);">✅ 已有</td>
+          </tr>
+          <tr style="background:var(--gray-50);">
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">相機內參 K</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">Bullpen_Calibration/Intrinsic/</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);color:var(--success);">✅ 已有</td>
+          </tr>
+          <tr>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">F matrix 估計</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">SuperGlue + RANSAC（Frobenius 0.021）</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);color:var(--success);">✅ 完成</td>
+          </tr>
+          <tr style="background:var(--gray-50);">
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">R, t 估計（Pose）</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">E matrix → recoverPose</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);color:var(--danger);font-weight:600;">❌ 失敗（FoV 不匹配，R 算出 160°）</td>
+          </tr>
+          <tr>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">三角測量</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">cv2.triangulatePoints()</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);color:var(--warning);">⏳ 待 R, t 正確後執行</td>
+          </tr>
+          <tr style="background:var(--gray-50);">
+            <td style="padding:.5rem .8rem;">物理特徵 + 動作切割</td>
+            <td style="padding:.5rem .8rem;">自訂演算法</td>
+            <td style="padding:.5rem .8rem;color:var(--warning);">⏳ 待上游完成</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="color:var(--danger);margin-top:.8rem;font-size:.85rem;font-weight:600;">→ 目前卡在 R, t 估計失敗（Q6），這是整個 pipeline 的關鍵瓶頸。</p>
+  </div>
+
+  <!-- Q9 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">核心瓶頸</span>
+      <strong style="color:var(--gray-900);">Q9｜為什麼 SuperGlue 的 inlier 比人工多，但 F matrix 差異更大？</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>問題：</strong>SuperGlue 找到 290 個 inlier（遠多於人工的 22 個），但算出的 Pose（R, t）卻是錯的，而人工標記的 F 雖然 inlier 少，幾何上卻更接近真實。這是為什麼？</p>
+
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>關鍵原因：inlier 多 ≠ 正確，要看點的「語義品質」和「分布」</strong></p>
+    <div style="overflow-x:auto;margin-bottom:.8rem;">
+      <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
+        <thead>
+          <tr style="background:var(--gray-100);">
+            <th style="padding:.5rem .8rem;text-align:left;border-bottom:1px solid var(--gray-200);"></th>
+            <th style="padding:.5rem .8rem;text-align:left;border-bottom:1px solid var(--gray-200);">SuperGlue（背景紋理）</th>
+            <th style="padding:.5rem .8rem;text-align:left;border-bottom:1px solid var(--gray-200);">人工標記（保麗龍球）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);font-weight:600;">inlier 數量</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">290（多）</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">22（少）</td>
+          </tr>
+          <tr style="background:var(--gray-50);">
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);font-weight:600;">點的來源</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">草皮、圍網、棒子邊緣（背景）</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">保麗龍球球心（語義明確）</td>
+          </tr>
+          <tr>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);font-weight:600;">FoV 問題</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);color:var(--danger);">cs 的 inlier 集中在左側 25%（FoV 不匹配造成系統性偏差）</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">點位已考慮兩台相機的共同可見區域</td>
+          </tr>
+          <tr style="background:var(--gray-50);">
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);font-weight:600;">F matrix 品質</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">Frobenius norm 0.021（幾何數值接近）</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">GT F（基準）</td>
+          </tr>
+          <tr>
+            <td style="padding:.5rem .8rem;font-weight:600;">Pose 結果</td>
+            <td style="padding:.5rem .8rem;color:var(--danger);">R ≈ 160°（錯誤，應為 ~90°）</td>
+            <td style="padding:.5rem .8rem;">未直接驗證，但作為 GT 參考</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>核心矛盾說明：</strong></p>
+    <ul style="color:var(--gray-700);margin-left:1.5rem;">
+      <li style="margin-bottom:.4rem;"><strong>F matrix 幾何上正確（0.021）但 Pose 錯誤</strong>——因為 F matrix 描述的是「兩張圖中點的對極幾何關係」，它可以在 FoV 嚴重不匹配的情況下數值上收斂，但這個 F 對應的幾何並非真實的相機位置關係。</li>
+      <li style="margin-bottom:.4rem;"><strong>inlier 多反而是壞事</strong>——290 個點都集中在 cs 影像的左側 25%，它們一致性很高（所以 RANSAC 選中了），但這個「一致性」是 FoV 不匹配造成的系統性偏差，不是真實的幾何約束。</li>
+      <li><strong>類比：</strong>好比你用一把歪掉的尺量了 290 次，每次結果都一致（inlier 多），但量出來的值就是錯的。人工標記雖然只有 22 次，但用的是正確的尺。</li>
+    </ul>
+  </div>
+
+  <!-- Q10 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">核心瓶頸</span>
+      <strong style="color:var(--gray-900);">Q10｜SuperGlue 在此場景的根本限制總結</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.8rem;">以下是 SuperGlue 在本專案中所有已確認的限制，確認這些限制真的無法克服後，才考慮換新方法：</p>
+    <div style="display:grid;gap:.6rem;">
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:.8rem;">
+        <strong style="color:var(--danger);">限制 1：SuperPoint 無法偵測保麗龍球</strong>
+        <p style="font-size:.85rem;color:var(--gray-700);margin-top:.3rem;">球面無紋理，SuperPoint 不產生 keypoint。<br>→ <strong>無法克服</strong>（SuperPoint 的設計限制，重新 train 才能改善，但成本高）</p>
+      </div>
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:.8rem;">
+        <strong style="color:var(--danger);">限制 2：兩台相機 FoV 差距 5 倍（50mm vs 8mm）</strong>
+        <p style="font-size:.85rem;color:var(--gray-700);margin-top:.3rem;">cf（13.8°）vs cs（68.7°），SuperGlue 假設視野大量重疊，此前提失立。<br>→ <strong>無法克服</strong>（場景物理限制，調整參數無效）</p>
+      </div>
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:.8rem;">
+        <strong style="color:var(--danger);">限制 3：背景紋理 inlier 無法支撐正確 Pose</strong>
+        <p style="font-size:.85rem;color:var(--gray-700);margin-top:.3rem;">290 個 inlier 幾何一致但物理上有系統性偏差，recoverPose 結果 R ≈ 160°（應為 90°）。<br>→ <strong>無法克服</strong>（根因是限制 2，F 數值接近但 Pose 錯誤）</p>
+      </div>
+      <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:6px;padding:.8rem;">
+        <strong style="color:var(--warning);">待測試：換新論文方法（LoFTR / DKM）能否改善？</strong>
+        <p style="font-size:.85rem;color:var(--gray-700);margin-top:.3rem;">Dense matching 方法對 FoV 差異容忍度較高，但 5 倍差距仍是挑戰。<br>→ <strong>待驗證</strong>（先做小規模測試再決定是否完整實作）</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q13 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">實驗結果</span>
+      <strong style="color:var(--gray-900);">Q13｜四組 F matrix 的 3D 骨架重建結果比較</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>實驗設定：</strong>針對四種不同的 F matrix 計算方式，各自輸出視覺化結果與 F_matrix.txt，並由開發人員載入系統驗證 3D 骨架重建效果。</p>
+
+    <div style="overflow-x:auto;margin-bottom:1rem;">
+      <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
+        <thead>
+          <tr style="background:var(--gray-100);">
+            <th style="padding:.5rem .8rem;text-align:left;border-bottom:1px solid var(--gray-200);">組別</th>
+            <th style="padding:.5rem .8rem;text-align:left;border-bottom:1px solid var(--gray-200);">F 計算方式</th>
+            <th style="padding:.5rem .8rem;text-align:left;border-bottom:1px solid var(--gray-200);">SG Inliers</th>
+            <th style="padding:.5rem .8rem;text-align:left;border-bottom:1px solid var(--gray-200);">3D 骨架結果</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);font-weight:600;">人工標記（基準）</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">20 張 × 6 個人工點 → RANSAC</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">22 / 120</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);color:#16a34a;font-weight:600;">✅ 站立，姿勢正常</td>
+          </tr>
+          <tr style="background:var(--gray-50);">
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);font-weight:600;">A｜SG 全 20 對</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">1920 解析度，全 20 對 SG 合併</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">278 / 1358 (20.5%)</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);color:var(--danger);font-weight:600;">❌ 骨架躺平（水平傾倒）</td>
+          </tr>
+          <tr>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);font-weight:600;">B｜SG + 人工全 20 對</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">SG 1358 點 + 人工 120 點合併</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">285 / 1358 (21.0%)</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);color:var(--danger);font-weight:600;">❌ 骨架躺平（類似 A）</td>
+          </tr>
+          <tr style="background:var(--gray-50);">
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);font-weight:600;">C｜SG pair 08 單對</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">最佳單對（pair 08，inlier 最多）</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">52 / 114 (45.6%)</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);color:var(--danger);font-weight:600;">❌ 骨架躺平，稍有軀幹輪廓</td>
+          </tr>
+          <tr>
+            <td style="padding:.5rem .8rem;font-weight:600;">D｜SG pair 08 + 人工</td>
+            <td style="padding:.5rem .8rem;">pair 08 SG + pair 08 的 6 個人工點</td>
+            <td style="padding:.5rem .8rem;">46 / 114 (40.4%)</td>
+            <td style="padding:.5rem .8rem;color:var(--danger);font-weight:600;">❌ 骨架直立但壓扁成一條線（深度消失）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>各組失敗原因：</strong></p>
+    <ul style="color:var(--gray-700);margin-left:1.5rem;">
+      <li style="margin-bottom:.4rem;"><strong>A、B、C 躺平：</strong>SuperGlue 的 F → E → recoverPose 算出 R ≈ 160°（應為 ~90°），triangulatePoints 使用錯誤的 [R|t]，Y 軸與 Z 軸方向對調，骨架倒地。</li>
+      <li><strong>D 變一條線：</strong>6 個人工點與 114 個 SG 點的幾何約束互相衝突，RANSAC 折衷後的 F 導致 t 方向幾乎垂直於相機連線，深度（Z 方向）資訊消失，所有 3D 點壓縮到同一平面。</li>
+    </ul>
+
+    <p style="color:var(--gray-700);margin-top:.8rem;"><strong>結論：</strong>四組 SuperGlue F matrix 均無法正確重建 3D 骨架，人工標記 F 是目前唯一可用的基準。問題根源見 Q14。</p>
+  </div>
+
+  <!-- Q14 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">根本診斷</span>
+      <strong style="color:var(--gray-900);">Q14｜問題出在哪個環節？特徵點、匹配、還是 F→E 轉換？</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>問題：</strong>3D 骨架重建失敗，問題是出在 SuperPoint 特徵點偵測、SuperGlue 匹配，還是後處理的 F→E→R,t 計算？</p>
+
+    <div style="background:var(--gray-50);border-radius:8px;padding:1rem;margin-bottom:.8rem;font-family:monospace;font-size:.82rem;line-height:1.9;">
+      SuperPoint 找特徵點 &nbsp;&nbsp;&nbsp;&nbsp;→ <span style="color:#16a34a;font-weight:600;">正常</span>（背景紋理角點正確偵測）<br>
+      SuperGlue 找 corresponding → <span style="color:#d97706;font-weight:600;">有偏差</span>（FoV 差 5 倍，descriptor 不一致，但 Frob 0.021 仍可接受）<br>
+      RANSAC 算 F &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <span style="color:#d97706;font-weight:600;">數值接近</span>（Frobenius norm 0.021 vs 人工 F）<br>
+      F → E = K_cs<sup>T</sup> F K_cf &nbsp;&nbsp;→ <span style="color:#dc2626;font-weight:600;">❌ 此步驟失敗</span>（K_cf 條件數 8165，放大誤差）<br>
+      E → recoverPose → R,t &nbsp;&nbsp;→ <span style="color:#dc2626;font-weight:600;">❌ R ≈ 160°（應為 ~90°）</span><br>
+      triangulatePoints &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <span style="color:#dc2626;font-weight:600;">❌ 3D 骨架躺平</span>
+    </div>
+
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>根本原因：</strong>兩台相機焦距差距過大（50mm vs 8mm，比例 5.6×）導致：</p>
+    <ul style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.8rem;">
+      <li style="margin-bottom:.3rem;">K_cf 的焦距 fx = 7928，條件數高達 8165（K_cs 只有 2303）</li>
+      <li style="margin-bottom:.3rem;">E = K_cs<sup>T</sup> F K_cf 的奇異值比例應為 1:1，實際是 3:1（SG）或 6:1（人工），嚴重偏離合法 E 矩陣條件</li>
+      <li>recoverPose 強制將奇異值矯正為 [1, 1, 0]，引入大量旋轉誤差</li>
+    </ul>
+
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>重要結論：這不是特徵匹配演算法的問題，換 LoFTR 或 LightGlue 無法解決此問題。</strong>即使用完美的 F matrix（人工標記），同樣的 K_cf 條件數問題依然存在，E → R,t 仍會不準確。</p>
+
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>建議方向：放棄 F→E→R,t 路線，改用直接標定：</strong></p>
+    <ul style="color:var(--gray-700);margin-left:1.5rem;">
+      <li style="margin-bottom:.3rem;"><strong>方案 1（最快）：ChArUco board 直接標定</strong> — 在場景中放標定板，用 cv2.solvePnP 直接從 2D→3D 對應求 R,t，完全繞過 F/E 矩陣，不受焦距差距影響。</li>
+      <li><strong>方案 2（長期）：重新評估相機配置</strong> — 若必須用此兩台相機，考慮用不同解析度或先做相機 undistortion，再評估 E 矩陣的數值穩定性。</li>
+    </ul>
+  </div>
+
+  <!-- Q11 (原 Q12) -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid #7c3aed;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#ede9fe;color:#7c3aed;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">討論中</span>
+      <strong style="color:var(--gray-900);">Q15｜如何繼續推進？下一步選擇</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.8rem;">在目前的相機配置（50mm vs 8mm，FoV 差 5 倍）下，SuperGlue 直接做 Pose Estimation 已達瓶頸。以下是三個可行方向：</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:1rem;">
+        <div style="font-weight:700;color:#16a34a;margin-bottom:.4rem;">方向 A｜換標定物</div>
+        <p style="font-size:.85rem;color:var(--gray-700);">用 ArUco marker 或 ChArUco 取代保麗龍球。OpenCV 內建偵測，不需要 SuperPoint，直接得到 2D-3D 對應點，一兩天可跑通。</p>
+      </div>
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:1rem;">
+        <div style="font-weight:700;color:#2563eb;margin-bottom:.4rem;">方向 B｜LoFTR 論文</div>
+        <p style="font-size:.85rem;color:var(--gray-700);">Dense matching，不需要 keypoint 偵測，對 FoV 差異更有容忍度。CVPR 2021，有開源實作，學術價值高。</p>
+      </div>
+      <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:8px;padding:1rem;">
+        <div style="font-weight:700;color:#7c3aed;margin-bottom:.4rem;">方向 C｜直接 PnP</div>
+        <p style="font-size:.85rem;color:var(--gray-700);">用已有的 selected_points（120 個 2D 對應點）+ 已知 3D 座標，直接 solvePnP，不需任何 matching，精度最高。</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 <div style="text-align:center; color:var(--gray-400); font-size:.8rem; padding-top:2rem; border-top:1px solid var(--gray-200);">
-  SuperGlue 專案規格書 · 更新於 2026-05-14 · 適用於 Bullpen_CalibrationBar 資料集
+  SuperGlue 專案規格書 · 更新於 2026-05-22 · 適用於 Bullpen_Calibration/TSG_Bullpen 資料集
 </div>
 
 </main>

@@ -267,7 +267,8 @@ def run_superglue_eval(ransac_thresh, min_matches, save_F=False, use_gt_points=F
         tag      = 'merged' if use_gt_points else 'superglue'
         res_tag  = OUTPUT_DIR.name  # e.g. 'output_1920', 'output'
         out_path = DATASET_DIR / f'{tag}_F_{res_tag}.txt'
-        save_F_txt(F_main, n_inliers, total, out_path)
+        # Transpose F so convention becomes p_cf^T F p_cs = 0 (cf first)
+        save_F_txt(F_main.T, n_inliers, total, out_path)
 
     print('\n--- Conclusion ---')
     if n_inliers >= 30:

@@ -1,0 +1,9 @@
+Convention: p_cf^T F p_cs = 0 (cf first)
+Group B: viz_B_sg_manual_all
+Total points used: 1478
+RANSAC inliers (SG): 285 / 1358
+
+Fundamental Matrix F:
+ [-1.57219545e-06  6.27310793e-06  -7.69727853e-04]
+ [1.19214668e-06  6.41133812e-06  -1.34274691e-02]
+ [-1.53581768e-03  4.73153485e-03  1.00000000e+00]
