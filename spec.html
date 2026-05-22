@@ -1711,6 +1711,104 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
     </ul>
 
     <p style="color:var(--gray-700);margin-top:.8rem;"><strong>結論：</strong>四組 SuperGlue F matrix 均無法正確重建 3D 骨架，人工標記 F 是目前唯一可用的基準。問題根源見 Q14。</p>
+
+    <!-- 圖片結果區塊 -->
+    <div style="margin-top:1.4rem;">
+      <h3 style="font-size:1rem;font-weight:700;color:var(--gray-800);margin-bottom:1rem;">對應點連線視覺化結果</h3>
+
+      <!-- Group A -->
+      <div style="margin-bottom:1rem;border:1px solid var(--gray-200);border-radius:8px;overflow:hidden;">
+        <button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.arrow').textContent=this.nextElementSibling.style.display==='block'?'▲':'▼';"
+          style="width:100%;text-align:left;padding:.8rem 1rem;background:var(--gray-50);border:none;cursor:pointer;font-size:.9rem;font-weight:700;color:var(--gray-800);display:flex;justify-content:space-between;align-items:center;">
+          <span>Group A｜SG 全 20 對（278 / 1358 inliers，20.5%）— 共 20 張</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div style="display:none;padding:1rem;background:#fff;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:.8rem;">
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 01</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/01.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 02</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/02.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 03</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/03.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 04</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/04.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 05</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/05.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 06</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/06.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 07</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/07.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 08（最佳對）</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/08.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 09</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/09.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 10</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/10.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 11</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/11.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 12</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/12.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 13</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/13.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 14</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/14.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 15</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/15.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 16</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/16.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 17</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/17.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 18</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/18.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 19</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/19.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 20</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/20.jpg" style="width:100%;border-radius:4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group B -->
+      <div style="margin-bottom:1rem;border:1px solid var(--gray-200);border-radius:8px;overflow:hidden;">
+        <button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.arrow').textContent=this.nextElementSibling.style.display==='block'?'▲':'▼';"
+          style="width:100%;text-align:left;padding:.8rem 1rem;background:var(--gray-50);border:none;cursor:pointer;font-size:.9rem;font-weight:700;color:var(--gray-800);display:flex;justify-content:space-between;align-items:center;">
+          <span>Group B｜SG + 人工標記 全 20 對（285 / 1358 inliers，21.0%）— 共 20 張</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div style="display:none;padding:1rem;background:#fff;">
+          <p style="font-size:.82rem;color:var(--gray-600);margin-bottom:.8rem;">白色圓點為人工標記對應點（每對 6 個），彩色為 SuperGlue inlier。</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:.8rem;">
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 01</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/01.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 02</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/02.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 03</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/03.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 04</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/04.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 05</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/05.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 06</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/06.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 07</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/07.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 08（最佳對）</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/08.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 09</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/09.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 10</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/10.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 11</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/11.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 12</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/12.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 13</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/13.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 14</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/14.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 15</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/15.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 16</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/16.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 17</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/17.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 18</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/18.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 19</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/19.jpg" style="width:100%;border-radius:4px;"></div>
+            <div><p style="font-size:.75rem;color:var(--gray-500);margin-bottom:.3rem;text-align:center;">Pair 20</p><img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/20.jpg" style="width:100%;border-radius:4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group C -->
+      <div style="margin-bottom:1rem;border:1px solid var(--gray-200);border-radius:8px;overflow:hidden;">
+        <button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.arrow').textContent=this.nextElementSibling.style.display==='block'?'▲':'▼';"
+          style="width:100%;text-align:left;padding:.8rem 1rem;background:var(--gray-50);border:none;cursor:pointer;font-size:.9rem;font-weight:700;color:var(--gray-800);display:flex;justify-content:space-between;align-items:center;">
+          <span>Group C｜SG 最佳單對（Pair 08，52 / 114 inliers，45.6%）</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div style="display:none;padding:1rem;background:#fff;">
+          <img src="Bullpen_Calibration/TSG_Bullpen/viz_C_sg_best/08.jpg" style="width:100%;border-radius:4px;">
+        </div>
+      </div>
+
+      <!-- Group D -->
+      <div style="margin-bottom:.5rem;border:1px solid var(--gray-200);border-radius:8px;overflow:hidden;">
+        <button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.arrow').textContent=this.nextElementSibling.style.display==='block'?'▲':'▼';"
+          style="width:100%;text-align:left;padding:.8rem 1rem;background:var(--gray-50);border:none;cursor:pointer;font-size:.9rem;font-weight:700;color:var(--gray-800);display:flex;justify-content:space-between;align-items:center;">
+          <span>Group D｜SG 最佳單對 + 人工標記（Pair 08，46 / 114 inliers，40.4%）</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div style="display:none;padding:1rem;background:#fff;">
+          <p style="font-size:.82rem;color:var(--gray-600);margin-bottom:.8rem;">白色圓點為人工標記對應點（6 個），彩色為 SuperGlue inlier。</p>
+          <img src="Bullpen_Calibration/TSG_Bullpen/viz_D_sg_manual_best/08.jpg" style="width:100%;border-radius:4px;">
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- Q14 -->
