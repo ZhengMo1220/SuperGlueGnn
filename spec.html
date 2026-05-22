@@ -1809,55 +1809,62 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
   <!-- Q14 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
-      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">根本診斷</span>
+      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">根本診斷（更新 2026-05-23）</span>
       <strong style="color:var(--gray-900);">Q14｜問題出在哪個環節？特徵點、匹配、還是 F→E 轉換？</strong>
     </div>
     <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>問題：</strong>3D 骨架重建失敗，問題是出在 SuperPoint 特徵點偵測、SuperGlue 匹配，還是後處理的 F→E→R,t 計算？</p>
 
     <div style="background:var(--gray-50);border-radius:8px;padding:1rem;margin-bottom:.8rem;font-family:monospace;font-size:.82rem;line-height:1.9;">
       SuperPoint 找特徵點 &nbsp;&nbsp;&nbsp;&nbsp;→ <span style="color:#16a34a;font-weight:600;">正常</span>（背景紋理角點正確偵測）<br>
-      SuperGlue 找 corresponding → <span style="color:#d97706;font-weight:600;">有偏差</span>（FoV 差 5 倍，descriptor 不一致，但 Frob 0.021 仍可接受）<br>
-      RANSAC 算 F &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <span style="color:#d97706;font-weight:600;">數值接近</span>（Frobenius norm 0.021 vs 人工 F）<br>
-      F → E = K_cs<sup>T</sup> F K_cf &nbsp;&nbsp;→ <span style="color:#dc2626;font-weight:600;">❌ 此步驟失敗</span>（K_cf 條件數 8165，放大誤差）<br>
-      E → recoverPose → R,t &nbsp;&nbsp;→ <span style="color:#dc2626;font-weight:600;">❌ R ≈ 160°（應為 ~90°）</span><br>
-      triangulatePoints &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <span style="color:#dc2626;font-weight:600;">❌ 3D 骨架躺平</span>
+      SuperGlue 找 corresponding → <span style="color:#dc2626;font-weight:600;">❌ 此步驟是根本問題</span>（F 品質不足，見下方分析）<br>
+      RANSAC 算 F &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <span style="color:#dc2626;font-weight:600;">❌ Frobenius 0.021 看似接近，但 E 奇異值比嚴重偏離 1:1</span><br>
+      F → E = K_cs<sup>T</sup> F K_cf &nbsp;&nbsp;→ <span style="color:#d97706;font-weight:600;">K 轉換本身沒有問題（見實驗驗證）</span><br>
+      E → recoverPose → R,t &nbsp;&nbsp;→ <span style="color:#dc2626;font-weight:600;">❌ SG：R ≈ 160°；人工點：R ≈ 84°（正確）</span><br>
+      triangulatePoints &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <span style="color:#dc2626;font-weight:600;">❌ 3D 骨架躺平（因 SG 的 R 錯誤）</span>
     </div>
 
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>根本原因：</strong>兩台相機焦距差距過大（50mm vs 8mm，比例 5.6×）導致：</p>
+    <p style="color:var(--gray-700);margin-bottom:.6rem;"><strong>🔬 實驗驗證（2026-05-23 新增）：</strong>對人工標記 120 個點做完整 F→E→R,t pipeline 驗證：</p>
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:1rem;margin-bottom:.8rem;font-family:monospace;font-size:.82rem;line-height:1.7;">
+      人工點 E 奇異值比：<strong style="color:#16a34a;">sv[0]/sv[1] = 1.047（幾乎理想的 1:1）</strong><br>
+      人工點 Pose：Roll=65.8°, <strong>Pitch=-84.0°（正確！cs 在 cf 右側 ~90°）</strong>, Yaw=-66.0°<br>
+      SG 點 Pose：Roll=160°, Pitch=-28°（錯誤，偏差 >60°）
+    </div>
+
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>修正後的根本原因：K_cf 條件數不是問題，問題是 SuperGlue 的 F matrix 品質不夠好。</strong></p>
     <ul style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.8rem;">
-      <li style="margin-bottom:.3rem;">K_cf 的焦距 fx = 7928，條件數高達 8165（K_cs 只有 2303）</li>
-      <li style="margin-bottom:.3rem;">E = K_cs<sup>T</sup> F K_cf 的奇異值比例應為 1:1，實際是 3:1（SG）或 6:1（人工），嚴重偏離合法 E 矩陣條件</li>
-      <li>recoverPose 強制將奇異值矯正為 [1, 1, 0]，引入大量旋轉誤差</li>
+      <li style="margin-bottom:.3rem;"><strong>對應點是對的</strong>：視覺化可見連線多在圍網同一位置，SuperGlue 確實找到了正確的幾何對應</li>
+      <li style="margin-bottom:.3rem;"><strong>但 F matrix 退化</strong>：大量特徵點集中在圍網（近似平面），平面退化（planar degeneracy）讓 RANSAC 算出的 F 幾何上不精確</li>
+      <li style="margin-bottom:.3rem;"><strong>E 奇異值比嚴重偏離</strong>：SG 的 F 算出的 E 奇異值比例遠大於 1.0，recoverPose 強制矯正引入大角度誤差</li>
+      <li>人工點因為分布在場景多個位置（棒子、投手板、牆面），不落在單一平面，F 品質更好</li>
     </ul>
 
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>重要結論：這不是特徵匹配演算法的問題，換 LoFTR 或 LightGlue 無法解決此問題。</strong>即使用完美的 F matrix（人工標記），同樣的 K_cf 條件數問題依然存在，E → R,t 仍會不準確。</p>
-
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>建議方向：放棄 F→E→R,t 路線，改用直接標定：</strong></p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>結論：這是 SuperGlue matching 的問題，換用對平面退化更穩健的匹配方式有機會改善。</strong></p>
     <ul style="color:var(--gray-700);margin-left:1.5rem;">
-      <li style="margin-bottom:.3rem;"><strong>方案 1（最快）：ChArUco board 直接標定</strong> — 在場景中放標定板，用 cv2.solvePnP 直接從 2D→3D 對應求 R,t，完全繞過 F/E 矩陣，不受焦距差距影響。</li>
-      <li><strong>方案 2（長期）：重新評估相機配置</strong> — 若必須用此兩台相機，考慮用不同解析度或先做相機 undistortion，再評估 E 矩陣的數值穩定性。</li>
+      <li style="margin-bottom:.3rem;"><strong>方案 1（最直接）：增加人工標記點</strong> — 從 6 點/對增加到 15-20 點，確保分布在不同景深，直接算出好的 F</li>
+      <li style="margin-bottom:.3rem;"><strong>方案 2：LoFTR / LightGlue</strong> — Dense matching 對低紋理區域及 FoV 差異更穩健，有機會產生更好分布的 corresponding points</li>
+      <li><strong>方案 3（不可行）：ChArUco board</strong> — 兩機夾角 ~90°，無法同時拍到同一塊板子，已排除</li>
     </ul>
   </div>
 
-  <!-- Q11 (原 Q12) -->
+  <!-- Q15 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid #7c3aed;box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
       <span style="background:#ede9fe;color:#7c3aed;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">討論中</span>
       <strong style="color:var(--gray-900);">Q15｜如何繼續推進？下一步選擇</strong>
     </div>
-    <p style="color:var(--gray-700);margin-bottom:.8rem;">在目前的相機配置（50mm vs 8mm，FoV 差 5 倍）下，SuperGlue 直接做 Pose Estimation 已達瓶頸。以下是三個可行方向：</p>
+    <p style="color:var(--gray-700);margin-bottom:.8rem;">根本問題已確認（見 Q14）：SuperGlue 的 F matrix 因特徵點集中在平面（圍網）而退化。以下是三個可行方向（ChArUco 已確認不可行，因兩機夾角 ~90°）：</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
       <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:1rem;">
-        <div style="font-weight:700;color:#16a34a;margin-bottom:.4rem;">方向 A｜換標定物</div>
-        <p style="font-size:.85rem;color:var(--gray-700);">用 ArUco marker 或 ChArUco 取代保麗龍球。OpenCV 內建偵測，不需要 SuperPoint，直接得到 2D-3D 對應點，一兩天可跑通。</p>
+        <div style="font-weight:700;color:#16a34a;margin-bottom:.4rem;">方向 A｜增加人工標記點</div>
+        <p style="font-size:.85rem;color:var(--gray-700);">目前每對只有 6 個點，增加到 15–20 點，確保分布在不同景深（棒子、投手板、地面、牆面），可直接改善 F matrix 品質，成本最低。</p>
       </div>
       <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:1rem;">
         <div style="font-weight:700;color:#2563eb;margin-bottom:.4rem;">方向 B｜LoFTR 論文</div>
-        <p style="font-size:.85rem;color:var(--gray-700);">Dense matching，不需要 keypoint 偵測，對 FoV 差異更有容忍度。CVPR 2021，有開源實作，學術價值高。</p>
+        <p style="font-size:.85rem;color:var(--gray-700);">Dense matching（CVPR 2021），不需要 keypoint，對 FoV 差異（5×）更有容忍度，有機會找到分布在不同深度的 corresponding points，有開源實作。</p>
       </div>
       <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:8px;padding:1rem;">
-        <div style="font-weight:700;color:#7c3aed;margin-bottom:.4rem;">方向 C｜直接 PnP</div>
-        <p style="font-size:.85rem;color:var(--gray-700);">用已有的 selected_points（120 個 2D 對應點）+ 已知 3D 座標，直接 solvePnP，不需任何 matching，精度最高。</p>
+        <div style="font-weight:700;color:#7c3aed;margin-bottom:.4rem;">方向 C｜LightGlue 論文</div>
+        <p style="font-size:.85rem;color:var(--gray-700);">SuperGlue 原作者的改進版（ICCV 2023），matching 更快更準，配合 DISK / ALIKED 特徵點偵測器，對低紋理區域有改善。</p>
       </div>
     </div>
   </div>
