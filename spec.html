@@ -1217,75 +1217,127 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
   <div class="section-title">十五、Future Work — 備選改進方案</div>
 
   <div class="card">
-    <p style="font-size:.9rem; color:var(--gray-700); margin-bottom:1.2rem;">
-      當前方案（SuperGlue + 人工標記球心）在品質上已達到瓶頸時，以下是按優先順序排列的改進路線。
-      每個方案都附有 Paper 出處，待討論後擇一或兩篇實作。
+    <p style="font-size:.9rem; color:var(--gray-700); margin-bottom:1rem;">
+      根本問題確認：SuperGlue 和 LightGlue（keypoint-based）在 FoV 差距 5× 下失效，原因是 descriptor 在不同尺度下不匹配。
+      LoFTR 驗證成功（Pitch≈−82°），但 2021 年發表偏舊。以下列出近三年（2023–2024）的替代方案，按優先順序排列。
     </p>
-
-    <div class="callout callout-blue">
-      <div class="callout-icon">📌</div>
-      <div class="callout-body"><strong>使用時機：</strong>等當前 SuperGlue pipeline 的 F matrix 品質、匹配數量或 Pose Estimation 精度已無法透過調整超參數繼續提升，再回來此處挑選下一步。</div>
+    <div class="callout callout-orange">
+      <div class="callout-icon">🎯</div>
+      <div class="callout-body"><strong>選方案的核心標準：</strong>必須是 detector-free 或 scale-invariant，才能克服 cf（50mm）與 cs（8mm）之間 5× 的視野差距。keypoint-based 方法（SuperGlue、LightGlue）已驗證在此場景失效。</div>
     </div>
   </div>
 
-  <!-- ── 方向一：LightGlue ── -->
-  <div class="card" style="border-left: 4px solid #7c3aed;">
+  <!-- ── 優先順序標題 ── -->
+  <div style="display:flex;gap:.6rem;margin-bottom:1.2rem;flex-wrap:wrap;">
+    <span style="background:#dc2626;color:#fff;padding:.3rem .9rem;border-radius:999px;font-weight:700;font-size:.85rem;">① 最優先</span>
+    <span style="background:#ea580c;color:#fff;padding:.3rem .9rem;border-radius:999px;font-weight:700;font-size:.85rem;">② 次優先</span>
+    <span style="background:#0891b2;color:#fff;padding:.3rem .9rem;border-radius:999px;font-weight:700;font-size:.85rem;">③ 參考</span>
+    <span style="background:#6b7280;color:#fff;padding:.3rem .9rem;border-radius:999px;font-weight:700;font-size:.85rem;">❌ 已測試失效</span>
+  </div>
+
+  <!-- ── 方向一：RoMa ── -->
+  <div class="card" style="border-left: 4px solid #dc2626;">
     <div class="card-header">
-      <div class="card-icon icon-purple" style="font-size:1.4rem;">⚡</div>
+      <div style="background:#dc2626;color:#fff;font-weight:700;padding:.25rem .7rem;border-radius:999px;font-size:.85rem;flex-shrink:0;">① 最優先</div>
       <div>
-        <div class="card-title">方向一：LightGlue（最優先嘗試）</div>
-        <div class="card-subtitle">SuperGlue 原作者的新作，更快、更準、完整開源含訓練</div>
+        <div class="card-title">RoMa：Robust Dense Feature Matching</div>
+        <div class="card-subtitle">DINOv2 backbone + dense warp，天生 scale-invariant，在 worst-case benchmark 超越所有前人方法</div>
       </div>
       <div style="margin-left:auto;">
-        <span class="tag" style="background:#ede9fe; color:#6d28d9; font-size:.8rem;">ICCV 2023</span>
+        <span class="tag" style="background:#fee2e2; color:#b91c1c; font-size:.8rem;">CVPR 2024</span>
       </div>
     </div>
 
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
-      <div style="background:#f5f3ff; border-radius:8px; padding:.9rem;">
-        <div style="font-weight:700; color:#6d28d9; margin-bottom:.5rem; font-size:.85rem;">📄 Paper</div>
+      <div style="background:#fef2f2; border-radius:8px; padding:.9rem;">
+        <div style="font-weight:700; color:#b91c1c; margin-bottom:.5rem; font-size:.85rem;">📄 Paper</div>
         <div style="font-size:.85rem; line-height:1.6;">
-          <strong>LightGlue: Local Feature Matching at Light Speed</strong><br>
-          Lindenberger, Sarlin, Pollefeys<br>
-          ICCV 2023 · ETH Zürich<br>
-          <a href="https://arxiv.org/abs/2306.13643" style="color:#7c3aed; font-size:.8rem;">arxiv.org/abs/2306.13643</a>
+          <strong>RoMa: Robust Dense Feature Matching</strong><br>
+          Edstedt, Sun, Bökman, Wadenbäck, Felsberg<br>
+          CVPR 2024 · Linköping University<br>
+          <a href="https://arxiv.org/abs/2305.15404" style="color:#b91c1c; font-size:.8rem;">arxiv.org/abs/2305.15404</a>
         </div>
       </div>
-      <div style="background:#f5f3ff; border-radius:8px; padding:.9rem;">
-        <div style="font-weight:700; color:#6d28d9; margin-bottom:.5rem; font-size:.85rem;">🔗 程式碼</div>
+      <div style="background:#fef2f2; border-radius:8px; padding:.9rem;">
+        <div style="font-weight:700; color:#b91c1c; margin-bottom:.5rem; font-size:.85rem;">🔗 程式碼</div>
         <div style="font-size:.85rem; line-height:1.6;">
-          完整開源，含訓練程式碼<br>
-          <a href="https://github.com/cvg/LightGlue" style="color:#7c3aed; font-size:.8rem;">github.com/cvg/LightGlue</a><br><br>
-          支援多種前端：SuperPoint、DISK、SIFT、ALIKED
+          完整開源，pip install 即可<br>
+          <a href="https://github.com/Parskatt/RoMa" style="color:#b91c1c; font-size:.8rem;">github.com/Parskatt/RoMa</a><br><br>
+          提供 outdoor / indoor 預訓練權重，支援 PyTorch 2.x
         </div>
       </div>
     </div>
 
     <table class="spec-table">
-      <tr><th>比較項目</th><th>SuperGlue（現在）</th><th>LightGlue（改進）</th></tr>
-      <tr><td>推理速度</td><td>較慢（固定 18 層）</td><td><strong>2~10x 更快</strong>（自適應深度，簡單對早退）</td></tr>
-      <tr><td>匹配品質</td><td>優秀</td><td><strong>更優秀</strong>（在多個 benchmark 超越 SuperGlue）</td></tr>
-      <tr><td>訓練程式碼</td><td>❌ 不開放</td><td><strong>✅ 完整開源</strong></td></tr>
-      <tr><td>可微調（fine-tune）</td><td>❌</td><td><strong>✅ 可在自己資料上訓練</strong></td></tr>
-      <tr><td>安裝複雜度</td><td>低</td><td>低（pip install lightglue）</td></tr>
+      <tr><th>比較項目</th><th>LoFTR（已測試有效）</th><th>RoMa（改進）</th></tr>
+      <tr><td>發表年份</td><td>CVPR 2021</td><td><strong>CVPR 2024（更新）</strong></td></tr>
+      <tr><td>Backbone</td><td>ResNet + Transformer</td><td><strong>DINOv2（大型 self-supervised，更強 scale-invariance）</strong></td></tr>
+      <tr><td>匹配方式</td><td>Semi-dense coarse-to-fine</td><td><strong>Pixel-level dense warp（更精確）</strong></td></tr>
+      <tr><td>WxBS benchmark</td><td>—</td><td><strong>+36% 超越前人（worst-case 場景）</strong></td></tr>
+      <tr><td>安裝</td><td>pip install kornia</td><td>pip install romatch（已安裝）</td></tr>
     </table>
 
     <div class="callout callout-green" style="margin-top:1rem;">
       <div class="callout-icon">💡</div>
-      <div class="callout-body"><strong>為什麼優先：</strong>同一個作者團隊，架構相似易遷移；速度更快代表可以跑更多對影像做驗證；訓練程式碼開放代表如果需要 fine-tune 在牛棚場景上是可行的。</div>
+      <div class="callout-body"><strong>為何列第一：</strong>WxBS（Wider Baseline Stereo）benchmark 專門測大尺度、大視角差距的場景——和你的 50mm vs 8mm 問題高度吻合。DINOv2 backbone 在不同解析度/尺度下語意特徵一致，可克服 FoV 差距造成的 descriptor mismatch。</div>
     </div>
   </div>
 
-  <!-- ── 方向二：LoFTR ── -->
-  <div class="card" style="border-left: 4px solid #0891b2;">
+  <!-- ── 方向二：PRISM ── -->
+  <div class="card" style="border-left: 4px solid #ea580c;">
     <div class="card-header">
-      <div class="card-icon icon-blue" style="font-size:1.4rem;">🌊</div>
+      <div style="background:#ea580c;color:#fff;font-weight:700;padding:.25rem .7rem;border-radius:999px;font-size:.85rem;flex-shrink:0;">② 次優先</div>
       <div>
-        <div class="card-title">方向二：LoFTR（無偵測器，適合低紋理）</div>
-        <div class="card-subtitle">不依賴 SuperPoint，直接做 dense matching，對保麗龍球這類低紋理物體更友善</div>
+        <div class="card-title">PRISM：Progressive Dependency Maximization for Scale-Invariant Matching</div>
+        <div class="card-subtitle">專為解決 scale discrepancy 設計，Multi-scale Pruning 明確處理焦距差異</div>
       </div>
       <div style="margin-left:auto;">
-        <span class="tag" style="background:#cffafe; color:#0e7490; font-size:.8rem;">CVPR 2021</span>
+        <span class="tag" style="background:#ffedd5; color:#c2410c; font-size:.8rem;">ACM MM 2024</span>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+      <div style="background:#fff7ed; border-radius:8px; padding:.9rem;">
+        <div style="font-weight:700; color:#c2410c; margin-bottom:.5rem; font-size:.85rem;">📄 Paper</div>
+        <div style="font-size:.85rem; line-height:1.6;">
+          <strong>PRISM: PRogressive dependency maximization for Scale-Invariant image Matching</strong><br>
+          Cai et al.<br>
+          ACM MM 2024 · October 2024<br>
+          <a href="https://dl.acm.org/doi/10.1145/3664647.3681209" style="color:#c2410c; font-size:.8rem;">doi.org/10.1145/3664647.3681209</a>
+        </div>
+      </div>
+      <div style="background:#fff7ed; border-radius:8px; padding:.9rem;">
+        <div style="font-weight:700; color:#c2410c; margin-bottom:.5rem; font-size:.85rem;">🔗 程式碼</div>
+        <div style="font-size:.85rem; line-height:1.6;">
+          開源<br>
+          <a href="https://github.com/Master-cai/PRISM" style="color:#c2410c; font-size:.8rem;">github.com/Master-cai/PRISM</a><br><br>
+          Detector-free，提供 outdoor 預訓練
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fff7ed;border-radius:8px;padding:.9rem;margin-bottom:.8rem;font-size:.85rem;line-height:1.7;">
+      <strong>核心模組：</strong><br>
+      • <strong>MPM（Multi-scale Pruning Module）</strong>：自適應過濾在不同尺度下無法匹配的特徵<br>
+      • <strong>SADPA（Scale-Aware Dynamic Pruning Attention）</strong>：在不同解析度層次做階層式聚合，明確建模尺度差異
+    </div>
+
+    <div class="callout callout-orange" style="margin-top:.5rem;">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>為何列第二：</strong>PRISM 的設計動機就是「兩張圖尺度不一樣怎麼辦」——和你的問題一模一樣。ACM MM 是 top-tier 多媒體會議，2024 年發表學術分量夠。若 RoMa 效果不夠好，PRISM 是最針對性的替代選項。</div>
+    </div>
+  </div>
+
+  <!-- ── 方向三：RCM ── -->
+  <div class="card" style="border-left: 4px solid #0891b2;">
+    <div class="card-header">
+      <div style="background:#0891b2;color:#fff;font-weight:700;padding:.25rem .7rem;border-radius:999px;font-size:.85rem;flex-shrink:0;">③ 參考</div>
+      <div>
+        <div class="card-title">RCM：Raising the Ceiling — Conflict-Free Local Feature Matching</div>
+        <div class="card-subtitle">Dynamic View Switching 解決「小 FoV 圖可匹配點稀少」問題，宣稱 +260% ground-truth matches</div>
+      </div>
+      <div style="margin-left:auto;">
+        <span class="tag" style="background:#cffafe; color:#0e7490; font-size:.8rem;">ECCV 2024</span>
       </div>
     </div>
 
@@ -1293,113 +1345,83 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
       <div style="background:#ecfeff; border-radius:8px; padding:.9rem;">
         <div style="font-weight:700; color:#0e7490; margin-bottom:.5rem; font-size:.85rem;">📄 Paper</div>
         <div style="font-size:.85rem; line-height:1.6;">
-          <strong>LoFTR: Detector-Free Local Feature Matching with Transformers</strong><br>
-          Sun, Shen, Chen, Bao, Zhou, Zhang, Fang<br>
-          CVPR 2021 · ZJU + ETH Zürich<br>
-          <a href="https://arxiv.org/abs/2104.00680" style="color:#0e7490; font-size:.8rem;">arxiv.org/abs/2104.00680</a>
+          <strong>Raising the Ceiling: Conflict-Free Local Feature Matching with Dynamic View Switching</strong><br>
+          ECCV 2024<br>
+          <a href="https://arxiv.org/abs/2407.07789" style="color:#0e7490; font-size:.8rem;">arxiv.org/abs/2407.07789</a>
         </div>
       </div>
       <div style="background:#ecfeff; border-radius:8px; padding:.9rem;">
-        <div style="font-weight:700; color:#0e7490; margin-bottom:.5rem; font-size:.85rem;">🔗 程式碼</div>
+        <div style="font-weight:700; color:#0e7490; margin-bottom:.5rem; font-size:.85rem;">核心概念</div>
         <div style="font-size:.85rem; line-height:1.6;">
-          完整開源，含訓練<br>
-          <a href="https://github.com/zju3dv/LoFTR" style="color:#0e7490; font-size:.8rem;">github.com/zju3dv/LoFTR</a><br><br>
-          室內（ScanNet）/ 戶外（MegaDepth）預訓練均有
-        </div>
-      </div>
-    </div>
-
-    <table class="spec-table">
-      <tr><th>比較項目</th><th>SuperGlue（現在）</th><th>LoFTR（改進）</th></tr>
-      <tr><td>是否需要 SuperPoint</td><td>✅ 需要</td><td><strong>❌ 不需要，直接處理影像</strong></td></tr>
-      <tr><td>低紋理區域</td><td>較差（SuperPoint 找不到點）</td><td><strong>更好</strong>（dense matching 覆蓋全圖）</td></tr>
-      <tr><td>匹配密度</td><td>稀疏（keypoint-based）</td><td><strong>密集</strong>（semi-dense）</td></tr>
-      <tr><td>計算量</td><td>中</td><td>較高（但有加速版 QuadTree-LoFTR）</td></tr>
-    </table>
-
-    <div class="callout callout-orange" style="margin-top:1rem;">
-      <div class="callout-icon">⚾</div>
-      <div class="callout-body"><strong>與你場景的關聯：</strong>保麗龍球表面幾乎沒有紋理，SuperPoint 只能偵測到球的邊緣。LoFTR 跳過偵測器、直接做全圖 dense matching，對這類低紋理物體理論上效果更好。<strong>如果 SuperGlue 對球本身的匹配不夠精確，這是最值得嘗試的替代方案。</strong></div>
-    </div>
-  </div>
-
-  <!-- ── 方向三：DKM ── -->
-  <div class="card" style="border-left: 4px solid #16a34a;">
-    <div class="card-header">
-      <div class="card-icon icon-green" style="font-size:1.4rem;">🌿</div>
-      <div>
-        <div class="card-title">方向三：DKM（最高精度 dense matching）</div>
-        <div class="card-subtitle">Dense Kernelized Feature Matching，在幾何估計上精度最高的開源方案之一</div>
-      </div>
-      <div style="margin-left:auto;">
-        <span class="tag" style="background:#dcfce7; color:#15803d; font-size:.8rem;">CVPR 2023</span>
-      </div>
-    </div>
-
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
-      <div style="background:#f0fdf4; border-radius:8px; padding:.9rem;">
-        <div style="font-weight:700; color:#15803d; margin-bottom:.5rem; font-size:.85rem;">📄 Paper</div>
-        <div style="font-size:.85rem; line-height:1.6;">
-          <strong>DKM: Dense Kernelized Feature Matching for Geometry Estimation</strong><br>
-          Edstedt, Athanasiadis, Hammarstrand, Wadenback<br>
-          CVPR 2023 · Linköping University<br>
-          <a href="https://arxiv.org/abs/2202.00667" style="color:#15803d; font-size:.8rem;">arxiv.org/abs/2202.00667</a>
-        </div>
-      </div>
-      <div style="background:#f0fdf4; border-radius:8px; padding:.9rem;">
-        <div style="font-weight:700; color:#15803d; margin-bottom:.5rem; font-size:.85rem;">🔗 程式碼</div>
-        <div style="font-size:.85rem; line-height:1.6;">
-          完整開源，含訓練<br>
-          <a href="https://github.com/Parskatt/DKM" style="color:#15803d; font-size:.8rem;">github.com/Parskatt/DKM</a><br><br>
-          後繼作品：RoMa（更新更強）也可考慮
+          當某一方視野小（cf 的 50mm），可匹配點天然稀少。<br>
+          RCM 透過 <strong>動態切換「從哪個視角出發做匹配」</strong>，搭配 conflict-free coarse matching，大幅增加匹配覆蓋率。
         </div>
       </div>
     </div>
 
     <div class="callout callout-blue" style="margin-top:.5rem;">
       <div class="callout-icon">💡</div>
-      <div class="callout-body"><strong>適合時機：</strong>如果 LightGlue 和 LoFTR 的精度仍不夠，DKM 在幾何估計 benchmark 上精度最高，但計算量也最大，作為最後手段考慮。</div>
+      <div class="callout-body"><strong>列第三的原因：</strong>理念對，但 dynamic view switching 是在 keypoint-based 架構上的改進，仍可能受 descriptor scale mismatch 影響。列為參考方案，若前兩者都不夠時再嘗試。</div>
+    </div>
+  </div>
+
+  <!-- ── 已測試失效 ── -->
+  <div class="card" style="border-left: 4px solid #9ca3af; opacity:.85;">
+    <div class="card-header">
+      <div style="background:#6b7280;color:#fff;font-weight:700;padding:.25rem .7rem;border-radius:999px;font-size:.85rem;flex-shrink:0;">❌ 已測試失效</div>
+      <div>
+        <div class="card-title" style="color:var(--gray-600);">LightGlue（ICCV 2023）/ SuperGlue（CVPR 2020）</div>
+        <div class="card-subtitle">Keypoint-based 方法在 FoV 差距 5× 下全部失敗</div>
+      </div>
+    </div>
+    <div style="font-size:.85rem;color:var(--gray-600);line-height:1.7;">
+      測試結果：SuperPoint / DISK / ALIKED 三種前端搭配 LightGlue，matches 數量均 &lt;40，信心分數 &lt;0.5，Pitch 角度全部錯誤。
+      根本原因：同一個 3D 點在 cf（50mm）和 cs（8mm）的影像中，外觀尺度差 5×，local descriptor（128~256 維向量）無法跨尺度匹配。
+      換 keypoint 方法無法解決此根本問題，不再測試同類型方案。
     </div>
   </div>
 
   <!-- ── 比較總覽 ── -->
   <div class="card">
-    <div class="section-subtitle">方案比較總覽</div>
+    <div class="section-subtitle">方案比較總覽（依優先順序）</div>
     <table class="spec-table">
       <tr>
-        <th>方案</th><th>Paper</th><th>訓練程式碼</th><th>低紋理表現</th><th>速度</th><th>建議時機</th>
+        <th>優先</th><th>方案</th><th>Paper</th><th>核心優勢</th><th>是否已測試</th>
       </tr>
-      <tr>
-        <td><strong>SuperGlue</strong><br><span style="font-size:.75rem;color:var(--gray-600)">目前使用</span></td>
-        <td>CVPR 2020</td>
-        <td>❌</td>
-        <td>普通</td>
-        <td>中</td>
-        <td>現在</td>
+      <tr style="background:#fef2f2;">
+        <td><strong style="color:#dc2626;">①</strong></td>
+        <td><strong>RoMa</strong></td>
+        <td>CVPR 2024</td>
+        <td>DINOv2 scale-invariant dense warp，WxBS +36%</td>
+        <td>✅ 已測試（見 Q18）</td>
       </tr>
-      <tr style="background:#f5f3ff;">
-        <td><strong>LightGlue</strong><br><span style="font-size:.75rem;color:#6d28d9">優先嘗試</span></td>
-        <td>ICCV 2023</td>
-        <td>✅</td>
-        <td>普通～好</td>
-        <td>快</td>
-        <td>SuperGlue 品質到頂時</td>
+      <tr style="background:#fff7ed;">
+        <td><strong style="color:#ea580c;">②</strong></td>
+        <td><strong>PRISM</strong></td>
+        <td>ACM MM 2024</td>
+        <td>明確針對 scale discrepancy 設計，MPM + SADPA</td>
+        <td>待測試</td>
       </tr>
       <tr style="background:#ecfeff;">
-        <td><strong>LoFTR</strong><br><span style="font-size:.75rem;color:#0e7490">球面特化</span></td>
-        <td>CVPR 2021</td>
-        <td>✅</td>
-        <td><strong>最好</strong></td>
-        <td>慢</td>
-        <td>球心匹配精度不足時</td>
+        <td><strong style="color:#0891b2;">③</strong></td>
+        <td><strong>RCM</strong></td>
+        <td>ECCV 2024</td>
+        <td>Dynamic view switching，+260% GT matches</td>
+        <td>待測試</td>
       </tr>
-      <tr style="background:#f0fdf4;">
-        <td><strong>DKM</strong><br><span style="font-size:.75rem;color:#15803d">最後手段</span></td>
-        <td>CVPR 2023</td>
-        <td>✅</td>
-        <td>好</td>
-        <td>最慢</td>
-        <td>精度要求極高時</td>
+      <tr style="background:#f3f4f6;">
+        <td><strong style="color:#6b7280;">—</strong></td>
+        <td><strong>LoFTR</strong></td>
+        <td>CVPR 2021</td>
+        <td>Detector-free，已驗證 Pitch≈−82°（但 2021 偏舊）</td>
+        <td>✅ 已測試（見 Q16）</td>
+      </tr>
+      <tr style="background:#f3f4f6;opacity:.7;">
+        <td><strong style="color:#9ca3af;">❌</strong></td>
+        <td>LightGlue / SuperGlue</td>
+        <td>ICCV 2023 / CVPR 2020</td>
+        <td>Keypoint-based，FoV 差距 5× 下失效</td>
+        <td>❌ 已測試失效</td>
       </tr>
     </table>
   </div>
@@ -1994,6 +2016,21 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
 
     <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>根本原因：</strong>LightGlue 和 SuperGlue 都是 <strong>keypoint-based</strong>，先偵測角點再配對。當 FoV 差距 5× 時，同一個場景點在兩張圖中的大小差 5 倍，descriptor 完全不相似，高信心的 match 幾乎找不到，換再好的 matching 網路也無法解決。</p>
     <p style="color:var(--gray-700);"><strong>結論：此場景下 detector-based 方法（SuperGlue / LightGlue）均無效，必須使用 detector-free 方法（LoFTR）才能在 FoV 差距大時找到有意義的 corresponding points。</strong></p>
+  </div>
+
+  <!-- Q18 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid #dc2626;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">進行中</span>
+      <strong style="color:var(--gray-900);">Q18｜RoMa 測試結果：CVPR 2024 DINOv2-based dense matching 能否超越 LoFTR？</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.8rem;">
+      <strong>背景：</strong>RoMa（CVPR 2024）是 LoFTR 的後繼改進方案，使用 DINOv2 作為 backbone，在 WxBS（Wider Baseline Stereo）benchmark 上超越所有前人方法。DINOv2 是 Meta 的大型 self-supervised vision foundation model，特徵具有天然 scale-invariance，適合應對 FoV 差距 5× 的場景。
+    </p>
+    <p style="color:var(--gray-700);margin-bottom:.8rem;">
+      <strong>測試方法：</strong>使用 <code>romatch</code> 套件（pip install romatch），載入 outdoor 預訓練權重，對 pair 08 做 dense matching，從 5000 個 sampled 點中以 confidence threshold 過濾後計算 E matrix → recoverPose。
+    </p>
+    <p style="color:var(--gray-700);"><strong>結果：</strong>（測試進行中，結果待補）</p>
   </div>
 
 </div>
