@@ -1503,7 +1503,7 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
   <h2 style="font-size:1.4rem;font-weight:700;color:var(--gray-900);margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:2px solid var(--primary);">
     ❓ 問題 Q&amp;A（實驗過程遇到的問題整理）
   </h2>
-  <p style="color:var(--gray-600);margin-bottom:1.5rem;font-size:.9rem;">更新於 2026-05-22 · 按時間順序整理，包含問題原因與解決狀態</p>
+  <p style="color:var(--gray-600);margin-bottom:1.5rem;font-size:.9rem;">更新於 2026-05-23 · 按時間順序整理，包含問題原因與解決狀態</p>
 
   <!-- Q1 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--success);box-shadow:0 1px 4px rgba(0,0,0,.06);">
@@ -1547,48 +1547,6 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
     <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>640×480 和 1920×1084 跑出的 F matrix 數值完全不同，讓人擔心結果錯誤。</p>
     <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>F matrix 的數值會隨座標尺度縮放，不同解析度的 F 直接比數字沒有意義。正確的比較方式是 <strong>Frobenius norm（normalize 後的矩陣差距）</strong>。</p>
     <p style="color:var(--gray-700);"><strong>結論：</strong>1920×1084 的 F 與 GT F 的 Frobenius norm 為 <strong>0.021</strong>（極佳，&lt; 0.1 為接近）。幾何上正確，只是數值尺度不同。</p>
-  </div>
-
-  <!-- Q5 -->
-  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--warning);box-shadow:0 1px 4px rgba(0,0,0,.06);">
-    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
-      <span style="background:#fef3c7;color:#d97706;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">待確認</span>
-      <strong style="color:var(--gray-900);">Q5｜GT F matrix 只有 22/120 inliers，是否可靠？</strong>
-    </div>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>人工標記的 120 個點，RANSAC 後只剩 22 個 inlier（18.3%），GT F 是否可信？</p>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>人工標記的 6 個點/張分布在保麗龍球位置，這些點的 epipolar 一致性本來就有限（標定點不是為 F matrix 設計的，分布也不夠分散）。22 個 inlier 算 F 勉強夠用但不穩定。</p>
-    <p style="color:var(--gray-700);"><strong>結論：</strong>SuperGlue 的 F（290 inliers）比 GT F（22 inliers）<strong>更可靠</strong>，inlier 數量多 13 倍。GT F 僅供對照參考。</p>
-  </div>
-
-  <!-- Q6 -->
-  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
-    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
-      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">核心瓶頸</span>
-      <strong style="color:var(--gray-900);">Q6｜Pose Estimation 的 R 算出 160°，但實際只有 ~90°</strong>
-    </div>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>從 F → E → recoverPose 得到的旋轉角度約 160°，但兩台相機實際夾角約 90°。</p>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因（兩個）：</strong></p>
-    <ol style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.5rem;">
-      <li style="margin-bottom:.3rem;"><strong>兩台相機 FoV 差距 5 倍</strong>：cf（50mm 長焦，FoV 13.8°）vs cs（8mm 廣角，FoV 68.7°）。SuperGlue 設計上假設兩張圖有大量視野重疊，FoV 差 5 倍時匹配前提失立，inlier 雖多但幾何約束不正確。</li>
-      <li><strong>cf 主點偏移</strong>：cx=869（影像中心應為 960），偏移 91px，代表標定時影像可能有裁切或感光器對齊問題，影響 E = K2ᵀFK1 的計算。</li>
-    </ol>
-    <p style="color:var(--gray-700);"><strong>驗證：</strong>cs 的 inlier 全部集中在影像左側 25%（X: 8~475px），對應 cf FoV 投影範圍，確認是 FoV 不匹配造成的系統性誤差。</p>
-  </div>
-
-  <!-- Q7 -->
-  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
-    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
-      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">核心瓶頸</span>
-      <strong style="color:var(--gray-900);">Q7｜SuperGlue 在不同焦距相機間的根本限制</strong>
-    </div>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>SuperGlue 能否正確處理焦距差距 5 倍的兩台相機？</p>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>分析：</strong>SuperGlue（SuperPoint + GNN matching）在設計上針對<strong>相近視野、相似解析度</strong>的影像對。當一台看到的場景是另一台的 5 倍大時：</p>
-    <ul style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.5rem;">
-      <li>同一個場景物件在兩張圖中的尺寸差 5 倍 → descriptor 不相似</li>
-      <li>cs 影像大部分區域在 cf 中根本看不到 → 大量誤匹配</li>
-      <li>F matrix 雖然數值上接近（Frobenius norm 0.021），但用來 recoverPose 仍然失敗</li>
-    </ul>
-    <p style="color:var(--gray-700);"><strong>結論：</strong>這是此相機配置下 SuperGlue 的根本限制，非參數調整可以解決。</p>
   </div>
 
   <!-- Q8 -->
@@ -1660,6 +1618,48 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
       </table>
     </div>
     <p style="color:var(--danger);margin-top:.8rem;font-size:.85rem;font-weight:600;">→ 目前卡在 R, t 估計失敗（Q6），這是整個 pipeline 的關鍵瓶頸。</p>
+  </div>
+
+  <!-- Q5 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--warning);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#fef3c7;color:#d97706;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">待確認</span>
+      <strong style="color:var(--gray-900);">Q5｜GT F matrix 只有 22/120 inliers，是否可靠？</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>人工標記的 120 個點，RANSAC 後只剩 22 個 inlier（18.3%），GT F 是否可信？</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>人工標記的 6 個點/張分布在保麗龍球位置，這些點的 epipolar 一致性本來就有限（標定點不是為 F matrix 設計的，分布也不夠分散）。22 個 inlier 算 F 勉強夠用但不穩定。</p>
+    <p style="color:var(--gray-700);"><strong>結論：</strong>SuperGlue 的 F（290 inliers）比 GT F（22 inliers）<strong>更可靠</strong>，inlier 數量多 13 倍。GT F 僅供對照參考。</p>
+  </div>
+
+  <!-- Q6 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">核心瓶頸</span>
+      <strong style="color:var(--gray-900);">Q6｜Pose Estimation 的 R 算出 160°，但實際只有 ~90°</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>從 F → E → recoverPose 得到的旋轉角度約 160°，但兩台相機實際夾角約 90°。</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因（兩個）：</strong></p>
+    <ol style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.5rem;">
+      <li style="margin-bottom:.3rem;"><strong>兩台相機 FoV 差距 5 倍</strong>：cf（50mm 長焦，FoV 13.8°）vs cs（8mm 廣角，FoV 68.7°）。SuperGlue 設計上假設兩張圖有大量視野重疊，FoV 差 5 倍時匹配前提失立，inlier 雖多但幾何約束不正確。</li>
+      <li><strong>cf 主點偏移</strong>：cx=869（影像中心應為 960），偏移 91px，代表標定時影像可能有裁切或感光器對齊問題，影響 E = K2ᵀFK1 的計算。</li>
+    </ol>
+    <p style="color:var(--gray-700);"><strong>驗證：</strong>cs 的 inlier 全部集中在影像左側 25%（X: 8~475px），對應 cf FoV 投影範圍，確認是 FoV 不匹配造成的系統性誤差。</p>
+  </div>
+
+  <!-- Q7 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">核心瓶頸</span>
+      <strong style="color:var(--gray-900);">Q7｜SuperGlue 在不同焦距相機間的根本限制</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>SuperGlue 能否正確處理焦距差距 5 倍的兩台相機？</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>分析：</strong>SuperGlue（SuperPoint + GNN matching）在設計上針對<strong>相近視野、相似解析度</strong>的影像對。當一台看到的場景是另一台的 5 倍大時：</p>
+    <ul style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.5rem;">
+      <li>同一個場景物件在兩張圖中的尺寸差 5 倍 → descriptor 不相似</li>
+      <li>cs 影像大部分區域在 cf 中根本看不到 → 大量誤匹配</li>
+      <li>F matrix 雖然數值上接近（Frobenius norm 0.021），但用來 recoverPose 仍然失敗</li>
+    </ul>
+    <p style="color:var(--gray-700);"><strong>結論：</strong>這是此相機配置下 SuperGlue 的根本限制，非參數調整可以解決。</p>
   </div>
 
   <!-- Q9 -->
@@ -1869,10 +1869,38 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
     </div>
   </div>
 
+  <!-- Q16 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid #7c3aed;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#ede9fe;color:#7c3aed;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">進行中</span>
+      <strong style="color:var(--gray-900);">Q16｜LoFTR 測試結果：能否解決 SuperGlue 的 matching 問題？</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>測試方法：</strong>用 kornia 的 LoFTR（outdoor 權重）對 pair 08 做 dense matching，和 SuperGlue 做 Pose 比較。LoFTR 不需要 SuperPoint，直接在整張圖做 attention 輸出 corresponding points。</p>
+
+    <div style="background:var(--gray-50);border-radius:8px;padding:1rem;margin-bottom:.8rem;font-family:monospace;font-size:.82rem;line-height:1.9;">
+      LoFTR indoor 權重 (pair 08) &nbsp;→ 只找到 8 個點，完全失效（此場景非室內）<br>
+      LoFTR outdoor 640px conf≥0.0 → 73 個點，E-inliers=23，Pitch=-52.9°（仍有偏差）<br>
+      LoFTR outdoor 640px conf≥0.3 → 37 個點，E-inliers=19，Pitch=<strong style="color:#d97706;">-79.4°</strong>（接近正確）<br>
+      LoFTR outdoor 640px conf≥0.5 → 15 個點，E-inliers=9，&nbsp;Pitch=<strong style="color:#16a34a;">-82.0°</strong>（正確！）<br>
+      SuperGlue pair 08（對照）&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ 114 個點，E-inliers=58，Pitch=-41.3°（❌ 嚴重偏差）<br>
+      人工標記 120 點（基準）&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ 60 inliers，Pitch=<strong style="color:#16a34a;">-82.0°</strong>（正確）
+    </div>
+
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>關鍵發現：</strong></p>
+    <ul style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.8rem;">
+      <li style="margin-bottom:.3rem;"><strong>LoFTR conf≥0.5 的 15 個高信心點，Pose 結果與人工標記完全吻合（Pitch=-82°）</strong>，確認問題在 SuperGlue matching 品質，而非 K 矩陣或焦距轉換</li>
+      <li style="margin-bottom:.3rem;">LoFTR 找到的點分布在人物身上、地板、不同景深位置，不像 SuperGlue 集中在圍網平面 → 避免了平面退化問題</li>
+      <li style="margin-bottom:.3rem;">然而 LoFTR 在此 FoV 差距 5× 的場景下，高信心點只有 15 個，點數太少且不穩定（解析度從 640→960 後 conf≥0.5 只剩 10 個，Pose 反而變差）</li>
+      <li>Indoor 權重在此戶外牛棚場景完全無效，確認必須用 outdoor 權重</li>
+    </ul>
+
+    <p style="color:var(--gray-700);"><strong>待確認：</strong>LoFTR 的點數穩定性不足（單對只有 15 個高信心點），是否能透過對多對影像合併或調整預處理來增加可用點數，仍在評估中。</p>
+  </div>
+
 </div>
 
 <div style="text-align:center; color:var(--gray-400); font-size:.8rem; padding-top:2rem; border-top:1px solid var(--gray-200);">
-  SuperGlue 專案規格書 · 更新於 2026-05-22 · 適用於 Bullpen_Calibration/TSG_Bullpen 資料集
+  SuperGlue 專案規格書 · 更新於 2026-05-23 · 適用於 Bullpen_Calibration/TSG_Bullpen 資料集
 </div>
 
 </main>
