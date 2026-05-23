@@ -1,9 +1,9 @@
-Convention: p_cf^T F p_cs = 0 (cf first)
+Convention: p_cs^T F p_cf = 0 (OpenCV, 1280x960 coords)
 Group B: viz_B_sg_manual_all
-Total points used: 1478
-RANSAC inliers (SG): 285 / 1358
+Total points: 1821
+RANSAC inliers: 326 / 1821
 
 Fundamental Matrix F:
- [-1.57219545e-06  6.27310793e-06  -7.69727853e-04]
- [1.19214668e-06  6.41133812e-06  -1.34274691e-02]
- [-1.53581768e-03  4.73153485e-03  1.00000000e+00]
+ [np.float64(-5.156874219763983e-06), np.float64(-1.9645485969382702e-05), np.float64(0.0023350420183696026)]
+ [np.float64(1.884190826556232e-05), np.float64(-6.231635690560352e-06), np.float64(-0.00024393324264584702)]
+ [np.float64(-0.0020857084492263067), np.float64(-0.008468894962067748), np.float64(1.0)]
