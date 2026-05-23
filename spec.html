@@ -1914,24 +1914,22 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
   </div>
 
   <!-- Q17 -->
-  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid #7c3aed;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
-      <span style="background:#ede9fe;color:#7c3aed;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">待測試</span>
-      <strong style="color:var(--gray-900);">Q17｜LightGlue：SuperGlue 原作者改進版，是否能改善 matching 穩定性？</strong>
+      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已測試・失敗</span>
+      <strong style="color:var(--gray-900);">Q17｜LightGlue 測試結果：keypoint-based 在 FoV 差距 5× 下完全失效</strong>
     </div>
-    <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>背景：</strong>LightGlue（ICCV 2023）是 SuperGlue 原作者（ETH Zurich）的新一代 keypoint matching 論文。與 SuperGlue 的差異：</p>
-    <ul style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.8rem;">
-      <li style="margin-bottom:.3rem;"><strong>更快更準</strong>：自適應深度的 Transformer（非固定 18 層），簡單配對早退，計算量約 SuperGlue 的 1/3</li>
-      <li style="margin-bottom:.3rem;"><strong>搭配新特徵點偵測器</strong>：DISK 或 ALIKED，比 SuperPoint 對尺度變化更穩健，可能在 FoV 差距大時找到更好的 descriptor</li>
-      <li style="margin-bottom:.3rem;"><strong>同為 keypoint-based</strong>：仍需先偵測特徵點，根本上和 SuperGlue 類似，FoV 差距 5× 的問題無法完全解決</li>
-      <li>開源代碼：<code>kornia.feature.LightGlueMatcher</code> 或官方 repo lightglue</li>
-    </ul>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>與 LoFTR 的核心差異：</strong></p>
-    <div style="background:var(--gray-50);border-radius:8px;padding:.8rem 1rem;font-size:.85rem;color:var(--gray-700);">
-      LoFTR：detector-free，整圖 dense attention，不依賴角點偵測，對 FoV 差異較有容忍度，但點數少<br>
-      LightGlue：detector-based（DISK/ALIKED），仍需偵測 keypoint，配 matching 更精確，速度更快
+    <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>背景：</strong>LightGlue（ICCV 2023）是 SuperGlue 原作者（ETH Zurich）的新一代 keypoint matching 論文，搭配 SuperPoint / DISK / ALIKED 特徵點偵測器，速度和精度均優於 SuperGlue。</p>
+
+    <div style="background:var(--gray-50);border-radius:8px;padding:1rem;margin-bottom:.8rem;font-family:monospace;font-size:.82rem;line-height:1.9;">
+      SuperPoint + LightGlue &nbsp;→ matches=7，&nbsp;sc>0.5=0，Pitch=<strong style="color:#dc2626;">11.2° ❌</strong><br>
+      DISK + LightGlue &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ matches=20，sc>0.5=0，Pitch=<strong style="color:#dc2626;">-28.6° ❌</strong><br>
+      ALIKED + LightGlue &nbsp;&nbsp;&nbsp;&nbsp;→ matches=38，sc>0.5=2，Pitch=<strong style="color:#dc2626;">3.6° ❌</strong><br>
+      LoFTR outdoor（對照）&nbsp;&nbsp;→ matches=73，sc>0.5=15，Pitch=<strong style="color:#16a34a;">-82.0° ✅</strong>
     </div>
-    <p style="color:var(--gray-700);margin-top:.8rem;"><strong>預期：</strong>LightGlue 在 matching 精度上優於 SuperGlue，但因為仍是 keypoint-based，FoV 差距造成的 descriptor 不一致問題依然存在，改善幅度可能不如 LoFTR。值得測試作為對照。</p>
+
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>根本原因：</strong>LightGlue 和 SuperGlue 都是 <strong>keypoint-based</strong>，先偵測角點再配對。當 FoV 差距 5× 時，同一個場景點在兩張圖中的大小差 5 倍，descriptor 完全不相似，高信心的 match 幾乎找不到，換再好的 matching 網路也無法解決。</p>
+    <p style="color:var(--gray-700);"><strong>結論：此場景下 detector-based 方法（SuperGlue / LightGlue）均無效，必須使用 detector-free 方法（LoFTR）才能在 FoV 差距大時找到有意義的 corresponding points。</strong></p>
   </div>
 
 </div>
