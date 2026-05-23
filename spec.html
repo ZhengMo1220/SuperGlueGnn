@@ -1503,7 +1503,7 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
   <h2 style="font-size:1.4rem;font-weight:700;color:var(--gray-900);margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:2px solid var(--primary);">
     ❓ 問題 Q&amp;A（實驗過程遇到的問題整理）
   </h2>
-  <p style="color:var(--gray-600);margin-bottom:1.5rem;font-size:.9rem;">更新於 2026-05-23 · 按時間順序整理，包含問題原因與解決狀態</p>
+  <p style="color:var(--gray-600);margin-bottom:1.5rem;font-size:.9rem;">更新於 2026-05-24 · 按時間順序整理，包含問題原因與解決狀態</p>
 
   <!-- Q1 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--success);box-shadow:0 1px 4px rgba(0,0,0,.06);">
@@ -1877,30 +1877,67 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
     </div>
     <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>測試方法：</strong>用 kornia 的 LoFTR（outdoor 權重）對 pair 08 做 dense matching，和 SuperGlue 做 Pose 比較。LoFTR 不需要 SuperPoint，直接在整張圖做 attention 輸出 corresponding points。</p>
 
-    <div style="background:var(--gray-50);border-radius:8px;padding:1rem;margin-bottom:.8rem;font-family:monospace;font-size:.82rem;line-height:1.9;">
-      LoFTR indoor 權重 (pair 08) &nbsp;→ 只找到 8 個點，完全失效（此場景非室內）<br>
-      LoFTR outdoor 640px conf≥0.0 → 73 個點，E-inliers=23，Pitch=-52.9°（仍有偏差）<br>
-      LoFTR outdoor 640px conf≥0.3 → 37 個點，E-inliers=19，Pitch=<strong style="color:#d97706;">-79.4°</strong>（接近正確）<br>
-      LoFTR outdoor 640px conf≥0.5 → 15 個點，E-inliers=9，&nbsp;Pitch=<strong style="color:#16a34a;">-82.0°</strong>（正確！）<br>
-      SuperGlue pair 08（對照）&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ 114 個點，E-inliers=58，Pitch=-41.3°（❌ 嚴重偏差）<br>
-      人工標記 120 點（基準）&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ 60 inliers，Pitch=<strong style="color:#16a34a;">-82.0°</strong>（正確）
-    </div>
+    <p style="color:var(--gray-700);margin-bottom:.6rem;"><strong>完整測試結果（2026-05-24 更新）：</strong></p>
+
+    <table style="width:100%;border-collapse:collapse;font-size:.84rem;margin-bottom:1rem;">
+      <thead><tr style="background:#f1f5f9;">
+        <th style="padding:.4rem .7rem;text-align:left;border:1px solid #e2e8f0;">方法</th>
+        <th style="padding:.4rem .7rem;text-align:center;border:1px solid #e2e8f0;">解析度</th>
+        <th style="padding:.4rem .7rem;text-align:center;border:1px solid #e2e8f0;">conf 門檻</th>
+        <th style="padding:.4rem .7rem;text-align:center;border:1px solid #e2e8f0;">原始點數</th>
+        <th style="padding:.4rem .7rem;text-align:center;border:1px solid #e2e8f0;">E-inliers</th>
+        <th style="padding:.4rem .7rem;text-align:center;border:1px solid #e2e8f0;">Pitch</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:.35rem .7rem;border:1px solid #e2e8f0;">人工標記（Direct E）</td><td style="text-align:center;border:1px solid #e2e8f0;">1920</td><td style="text-align:center;border:1px solid #e2e8f0;">—</td><td style="text-align:center;border:1px solid #e2e8f0;">120</td><td style="text-align:center;border:1px solid #e2e8f0;">60</td><td style="text-align:center;border:1px solid #e2e8f0;color:#16a34a;font-weight:700;">-82.0° ✅</td></tr>
+        <tr><td style="padding:.35rem .7rem;border:1px solid #e2e8f0;">人工標記（F→E）</td><td style="text-align:center;border:1px solid #e2e8f0;">1920</td><td style="text-align:center;border:1px solid #e2e8f0;">—</td><td style="text-align:center;border:1px solid #e2e8f0;">120</td><td style="text-align:center;border:1px solid #e2e8f0;">43</td><td style="text-align:center;border:1px solid #e2e8f0;color:#16a34a;font-weight:700;">-84.0° ✅</td></tr>
+        <tr style="background:#fefce8;"><td style="padding:.35rem .7rem;border:1px solid #e2e8f0;">LoFTR outdoor</td><td style="text-align:center;border:1px solid #e2e8f0;">640</td><td style="text-align:center;border:1px solid #e2e8f0;">≥0.3</td><td style="text-align:center;border:1px solid #e2e8f0;">37</td><td style="text-align:center;border:1px solid #e2e8f0;">19</td><td style="text-align:center;border:1px solid #e2e8f0;color:#d97706;font-weight:700;">-79.4°</td></tr>
+        <tr style="background:#f0fdf4;"><td style="padding:.35rem .7rem;border:1px solid #e2e8f0;"><strong>LoFTR outdoor</strong></td><td style="text-align:center;border:1px solid #e2e8f0;"><strong>640</strong></td><td style="text-align:center;border:1px solid #e2e8f0;"><strong>≥0.5</strong></td><td style="text-align:center;border:1px solid #e2e8f0;"><strong>15</strong></td><td style="text-align:center;border:1px solid #e2e8f0;"><strong>9</strong></td><td style="text-align:center;border:1px solid #e2e8f0;color:#16a34a;font-weight:700;">-82.0° ✅</td></tr>
+        <tr><td style="padding:.35rem .7rem;border:1px solid #e2e8f0;">LoFTR outdoor</td><td style="text-align:center;border:1px solid #e2e8f0;">1280</td><td style="text-align:center;border:1px solid #e2e8f0;">≥0.3</td><td style="text-align:center;border:1px solid #e2e8f0;">77</td><td style="text-align:center;border:1px solid #e2e8f0;">28</td><td style="text-align:center;border:1px solid #e2e8f0;color:#d97706;">-79.9°</td></tr>
+        <tr><td style="padding:.35rem .7rem;border:1px solid #e2e8f0;">LoFTR outdoor（20 對合併）</td><td style="text-align:center;border:1px solid #e2e8f0;">640</td><td style="text-align:center;border:1px solid #e2e8f0;">≥0.3</td><td style="text-align:center;border:1px solid #e2e8f0;">720</td><td style="text-align:center;border:1px solid #e2e8f0;">100</td><td style="text-align:center;border:1px solid #e2e8f0;color:#dc2626;">-61.8° ❌</td></tr>
+        <tr><td style="padding:.35rem .7rem;border:1px solid #e2e8f0;">SuperGlue pair 08（對照）</td><td style="text-align:center;border:1px solid #e2e8f0;">1920</td><td style="text-align:center;border:1px solid #e2e8f0;">0.1</td><td style="text-align:center;border:1px solid #e2e8f0;">114</td><td style="text-align:center;border:1px solid #e2e8f0;">58</td><td style="text-align:center;border:1px solid #e2e8f0;color:#dc2626;">-41.3° ❌</td></tr>
+        <tr><td style="padding:.35rem .7rem;border:1px solid #e2e8f0;">LoFTR indoor 權重</td><td style="text-align:center;border:1px solid #e2e8f0;">640</td><td style="text-align:center;border:1px solid #e2e8f0;">≥0.3</td><td style="text-align:center;border:1px solid #e2e8f0;">8</td><td style="text-align:center;border:1px solid #e2e8f0;">—</td><td style="text-align:center;border:1px solid #e2e8f0;color:#dc2626;">完全失效 ❌</td></tr>
+      </tbody>
+    </table>
 
     <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>關鍵發現：</strong></p>
     <ul style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.8rem;">
-      <li style="margin-bottom:.3rem;"><strong>LoFTR conf≥0.5 的 15 個高信心點，Pose 結果與人工標記完全吻合（Pitch=-82°）</strong>，確認問題在 SuperGlue matching 品質，而非 K 矩陣或焦距轉換</li>
-      <li style="margin-bottom:.3rem;">LoFTR 找到的點分布在人物身上、地板、不同景深位置，不像 SuperGlue 集中在圍網平面 → 避免了平面退化問題</li>
-      <li style="margin-bottom:.3rem;">然而 LoFTR 在此 FoV 差距 5× 的場景下，高信心點只有 15 個，點數太少且不穩定（解析度從 640→960 後 conf≥0.5 只剩 10 個，Pose 反而變差）</li>
-      <li>Indoor 權重在此戶外牛棚場景完全無效，確認必須用 outdoor 權重</li>
+      <li style="margin-bottom:.3rem;"><strong>人工標記不論 Direct E 或 F→E，Pitch 都正確（-82° / -84°）</strong>，確認 K 矩陣轉換本身沒問題，問題在 matching 品質</li>
+      <li style="margin-bottom:.3rem;"><strong>LoFTR 640px conf≥0.5 的 15 個點，Pitch=-82°，與人工標記完全吻合</strong>，確認 LoFTR 的高信心點品質足夠</li>
+      <li style="margin-bottom:.3rem;">點數少（9 個 E-inlier）不等於結果差，<strong>品質比數量重要</strong>；20 對合併 100 個 E-inlier 反而只有 -61.8°（壞的對把整體拉偏）</li>
+      <li style="margin-bottom:.3rem;">解析度越高點數越多，但高信心點反而更少且不穩定；<strong>640px 是目前最佳輸入解析度</strong></li>
+      <li style="margin-bottom:.3rem;">拿掉人物只用背景（下 55% 區域）：Pitch=-57.9°，比全圖更差；<strong>人身上的點才是好的 corresponding points</strong>，圍網背景才是雜訊來源</li>
+      <li>Indoor 權重在此戶外牛棚場景完全失效，<strong>必須用 outdoor 權重</strong></li>
     </ul>
 
-    <p style="color:var(--gray-700);"><strong>待確認：</strong>LoFTR 的點數穩定性不足（單對只有 15 個高信心點），是否能透過對多對影像合併或調整預處理來增加可用點數，仍在評估中。</p>
+    <p style="color:var(--gray-700);"><strong>現況與限制：</strong>LoFTR 高信心點在單對影像可達正確 Pose，但跨對不穩定（20 對中只有 3-4 對可達 -80° 附近）。根本原因是 FoV 差距 5× 導致高信心點數量不足，穩定性仍需改善。</p>
+  </div>
+
+  <!-- Q17 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid #7c3aed;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#ede9fe;color:#7c3aed;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">待測試</span>
+      <strong style="color:var(--gray-900);">Q17｜LightGlue：SuperGlue 原作者改進版，是否能改善 matching 穩定性？</strong>
+    </div>
+    <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>背景：</strong>LightGlue（ICCV 2023）是 SuperGlue 原作者（ETH Zurich）的新一代 keypoint matching 論文。與 SuperGlue 的差異：</p>
+    <ul style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.8rem;">
+      <li style="margin-bottom:.3rem;"><strong>更快更準</strong>：自適應深度的 Transformer（非固定 18 層），簡單配對早退，計算量約 SuperGlue 的 1/3</li>
+      <li style="margin-bottom:.3rem;"><strong>搭配新特徵點偵測器</strong>：DISK 或 ALIKED，比 SuperPoint 對尺度變化更穩健，可能在 FoV 差距大時找到更好的 descriptor</li>
+      <li style="margin-bottom:.3rem;"><strong>同為 keypoint-based</strong>：仍需先偵測特徵點，根本上和 SuperGlue 類似，FoV 差距 5× 的問題無法完全解決</li>
+      <li>開源代碼：<code>kornia.feature.LightGlueMatcher</code> 或官方 repo lightglue</li>
+    </ul>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>與 LoFTR 的核心差異：</strong></p>
+    <div style="background:var(--gray-50);border-radius:8px;padding:.8rem 1rem;font-size:.85rem;color:var(--gray-700);">
+      LoFTR：detector-free，整圖 dense attention，不依賴角點偵測，對 FoV 差異較有容忍度，但點數少<br>
+      LightGlue：detector-based（DISK/ALIKED），仍需偵測 keypoint，配 matching 更精確，速度更快
+    </div>
+    <p style="color:var(--gray-700);margin-top:.8rem;"><strong>預期：</strong>LightGlue 在 matching 精度上優於 SuperGlue，但因為仍是 keypoint-based，FoV 差距造成的 descriptor 不一致問題依然存在，改善幅度可能不如 LoFTR。值得測試作為對照。</p>
   </div>
 
 </div>
 
 <div style="text-align:center; color:var(--gray-400); font-size:.8rem; padding-top:2rem; border-top:1px solid var(--gray-200);">
-  SuperGlue 專案規格書 · 更新於 2026-05-23 · 適用於 Bullpen_Calibration/TSG_Bullpen 資料集
+  SuperGlue 專案規格書 · 更新於 2026-05-24 · 適用於 Bullpen_Calibration/TSG_Bullpen 資料集
 </div>
 
 </main>
