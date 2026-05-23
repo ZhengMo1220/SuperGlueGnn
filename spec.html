@@ -1410,7 +1410,15 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
 <!-- ── 實驗結果 ── -->
 <div class="section" id="results">
   <h2 class="section-title">📊 實驗結果</h2>
-  <p style="color:var(--gray-600);margin-bottom:1.5rem;font-size:.9rem;">四組 F matrix 對應的 SuperGlue 連線圖（SG inlier 以 plasma 彩色顯示；人工標記點以白色顯示）</p>
+
+  <!-- 分類一標題 -->
+  <div style="background:#1e40af;color:#fff;border-radius:8px;padding:.7rem 1.2rem;margin-bottom:1rem;font-weight:700;font-size:1rem;">
+    📌 Part 1｜SuperGlue 四組 F matrix 實驗（A/B/C/D）
+  </div>
+  <p style="color:var(--gray-600);margin-bottom:1.2rem;font-size:.85rem;">
+    彩色圓點＋連線 = SuperGlue inlier（plasma colormap）；白色圓點＋連線 = 人工標記點（僅 B、D 組顯示）<br>
+    判斷方式：用各組的全局 F matrix 計算 Sampson distance，距離 &lt; 3px 為 inlier
+  </p>
 
   <!-- Group A -->
   <details open style="margin-bottom:1.5rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
@@ -1496,23 +1504,43 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
     </div>
   </details>
 
-  <!-- LoFTR vs SuperGlue epipolar comparison -->
-  <details style="margin-bottom:1.5rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
-    <summary style="cursor:pointer;background:#f8fafc;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
-      <span style="background:#16a34a;color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">LoFTR</span>
-      Pair 08 比較：SuperGlue vs LoFTR（matching 連線圖 + epipolar line 驗證圖）
+  <!-- 分類二標題 -->
+  <div style="background:#15803d;color:#fff;border-radius:8px;padding:.7rem 1.2rem;margin-bottom:1rem;font-weight:700;font-size:1rem;">
+    🔬 Part 2｜SuperGlue vs LoFTR 對比（Pair 08，含 Epipolar Line 驗證）
+  </div>
+  <p style="color:var(--gray-600);margin-bottom:1.2rem;font-size:.85rem;">
+    Epipolar line 驗證圖說明：左圖每個彩色點，在右圖應有一條同色直線通過對應點。線不過點 = F matrix 幾何不準確。
+  </p>
+
+  <details open style="margin-bottom:1rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+    <summary style="cursor:pointer;background:#fef2f2;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
+      <span style="background:#dc2626;color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">SuperGlue</span>
+      SuperGlue pair 08（31 inliers，Pitch = -41.3° ❌）
     </summary>
-    <div style="padding:1.2rem 1.4rem;display:grid;grid-template-columns:1fr;gap:1rem;">
+    <div style="padding:1.2rem 1.4rem;display:grid;grid-template-columns:1fr;gap:.8rem;">
       <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>SuperGlue pair 08 epipolar 驗證</strong>（31 inliers，Pitch=-41.3°，線未必過點）</p>
-        <img src="Bullpen_Calibration/TSG_Bullpen/inlier_viz/epipolar_08.jpg" style="width:100%;border-radius:6px;">
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>Matching 連線圖</strong>（Group C，SG only pair08）</p>
+        <img src="Bullpen_Calibration/TSG_Bullpen/viz_C_sg_best/08.jpg" style="width:100%;border-radius:6px;">
       </div>
       <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>LoFTR pair 08 matching 連線</strong>（conf≥0.5：15 pts，E-inliers=9，Pitch=-82.0°）</p>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>Epipolar line 驗證圖</strong>（31 inliers — 觀察：多數線未通過對應點）</p>
+        <img src="Bullpen_Calibration/TSG_Bullpen/inlier_viz/epipolar_08.jpg" style="width:100%;border-radius:6px;">
+      </div>
+    </div>
+  </details>
+
+  <details open style="margin-bottom:1.5rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+    <summary style="cursor:pointer;background:#f0fdf4;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
+      <span style="background:#16a34a;color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">LoFTR</span>
+      LoFTR pair 08（conf≥0.5，15 pts，E-inliers = 9，Pitch = -82.0° ✅）
+    </summary>
+    <div style="padding:1.2rem 1.4rem;display:grid;grid-template-columns:1fr;gap:.8rem;">
+      <div>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>Matching 連線圖</strong>（點分布在人身上，非圍網平面）</p>
         <img src="Bullpen_Calibration/TSG_Bullpen/inlier_viz/matching_loftr_08.jpg" style="width:100%;border-radius:6px;">
       </div>
       <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>LoFTR pair 08 epipolar 驗證</strong>（9 inliers，彩色點應落在同色 epipolar line 上）</p>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>Epipolar line 驗證圖</strong>（9 inliers — 觀察：每個彩色點落在同色線上，幾何正確）</p>
         <img src="Bullpen_Calibration/TSG_Bullpen/inlier_viz/epipolar_loftr_08.jpg" style="width:100%;border-radius:6px;">
       </div>
     </div>
