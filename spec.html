@@ -1210,6 +1210,161 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
 </div>
 
 
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- ── 實驗結果 ── -->
+<div class="section" id="results">
+  <h2 class="section-title">📊 實驗結果</h2>
+
+  <!-- 分類一標題 -->
+  <div style="background:#1e40af;color:#fff;border-radius:8px;padding:.7rem 1.2rem;margin-bottom:1rem;font-weight:700;font-size:1rem;">
+    📌 Part 1｜SuperGlue 四組 F matrix 實驗（A/B/C/D）
+  </div>
+  <p style="color:var(--gray-600);margin-bottom:1.2rem;font-size:.85rem;">
+    彩色圓點＋連線 = SuperGlue inlier（plasma colormap）；白色圓點＋連線 = 人工標記點（僅 B、D 組顯示）<br>
+    判斷方式：用各組的全局 F matrix 計算 Sampson distance，距離 &lt; 3px 為 inlier
+  </p>
+
+  <!-- Group A -->
+  <details open style="margin-bottom:1.5rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+    <summary style="cursor:pointer;background:#f8fafc;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
+      <span style="background:var(--primary);color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">A</span>
+      Group A｜全部 20 對 SG only（278 / 1358 inliers，20.5%）
+    </summary>
+    <div style="padding:1.2rem 1.4rem;display:grid;grid-template-columns:1fr;gap:.8rem;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/01.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/02.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/03.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/04.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/05.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/06.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/07.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/08.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/09.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/10.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/11.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/12.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/13.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/14.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/15.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/16.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/17.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/18.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/19.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/20.jpg" style="width:100%;border-radius:6px;">
+    </div>
+  </details>
+
+  <!-- Group B -->
+  <details style="margin-bottom:1.5rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+    <summary style="cursor:pointer;background:#f8fafc;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
+      <span style="background:#7c3aed;color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">B</span>
+      Group B｜全部 20 對 SG + 人工標記（285 / 1358 inliers，21.0%）
+      <span style="margin-left:auto;font-size:.8rem;color:var(--gray-500);font-weight:400;">白色圓點 = 人工標記點</span>
+    </summary>
+    <div style="padding:1.2rem 1.4rem;display:grid;grid-template-columns:1fr;gap:.8rem;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/01.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/02.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/03.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/04.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/05.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/06.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/07.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/08.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/09.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/10.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/11.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/12.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/13.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/14.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/15.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/16.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/17.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/18.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/19.jpg" style="width:100%;border-radius:6px;">
+      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/20.jpg" style="width:100%;border-radius:6px;">
+    </div>
+  </details>
+
+  <!-- Group C -->
+  <details style="margin-bottom:1.5rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+    <summary style="cursor:pointer;background:#f8fafc;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
+      <span style="background:#0891b2;color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">C</span>
+      Group C｜Pair 08（最佳單對）SG only（52 / 114 inliers，45.6%）
+    </summary>
+    <div style="padding:1.2rem 1.4rem;display:flex;flex-direction:column;gap:1rem;">
+      <div>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;font-weight:600;">Matching 連線圖</p>
+        <img src="Bullpen_Calibration/TSG_Bullpen/viz_C_sg_best/08.jpg" style="width:100%;border-radius:6px;">
+      </div>
+      <div>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;font-weight:600;">Epipolar line 評估圖（Sampson&lt;3px: 31/63，Sampson&lt;10px: 36/63）</p>
+        <img src="Bullpen_Calibration/TSG_Bullpen/viz_C_sg_best/epipolar_C_08.jpg" style="width:100%;border-radius:6px;">
+      </div>
+    </div>
+  </details>
+
+  <!-- Group D -->
+  <details style="margin-bottom:1.5rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+    <summary style="cursor:pointer;background:#f8fafc;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
+      <span style="background:#dc2626;color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">D</span>
+      Group D｜Pair 08 SG + 人工標記（46 / 114 inliers，40.4%）
+      <span style="margin-left:auto;font-size:.8rem;color:var(--gray-500);font-weight:400;">白色圓點 = 人工標記點</span>
+    </summary>
+    <div style="padding:1.2rem 1.4rem;display:flex;flex-direction:column;gap:1rem;">
+      <div>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;font-weight:600;">Matching 連線圖</p>
+        <img src="Bullpen_Calibration/TSG_Bullpen/viz_D_sg_manual_best/08.jpg" style="width:100%;border-radius:6px;">
+      </div>
+      <div>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;font-weight:600;">Epipolar line 評估圖（Sampson&lt;3px: 28/63，Sampson&lt;10px: 31/63）</p>
+        <img src="Bullpen_Calibration/TSG_Bullpen/viz_D_sg_manual_best/epipolar_D_08.jpg" style="width:100%;border-radius:6px;">
+      </div>
+    </div>
+  </details>
+
+  <!-- 分類二標題 -->
+  <div style="background:#15803d;color:#fff;border-radius:8px;padding:.7rem 1.2rem;margin-bottom:1rem;font-weight:700;font-size:1rem;">
+    🔬 Part 2｜SuperGlue vs LoFTR 對比（Pair 08，含 Epipolar Line 驗證）
+  </div>
+  <p style="color:var(--gray-600);margin-bottom:1.2rem;font-size:.85rem;">
+    Epipolar line 驗證圖說明：左圖每個彩色點，在右圖應有一條同色直線通過對應點。線不過點 = F matrix 幾何不準確。
+  </p>
+
+  <details open style="margin-bottom:1rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+    <summary style="cursor:pointer;background:#fef2f2;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
+      <span style="background:#dc2626;color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">SuperGlue</span>
+      SuperGlue pair 08（31 inliers，Pitch = -41.3° ❌）
+    </summary>
+    <div style="padding:1.2rem 1.4rem;display:grid;grid-template-columns:1fr;gap:.8rem;">
+      <div>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>Matching 連線圖</strong>（Group C，SG only pair08）</p>
+        <img src="Bullpen_Calibration/TSG_Bullpen/viz_C_sg_best/08.jpg" style="width:100%;border-radius:6px;">
+      </div>
+      <div>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>Epipolar line 驗證圖</strong>（31 inliers — 觀察：多數線未通過對應點）</p>
+        <img src="Bullpen_Calibration/TSG_Bullpen/inlier_viz/epipolar_08.jpg" style="width:100%;border-radius:6px;">
+      </div>
+    </div>
+  </details>
+
+  <details open style="margin-bottom:1.5rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+    <summary style="cursor:pointer;background:#f0fdf4;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
+      <span style="background:#16a34a;color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">LoFTR</span>
+      LoFTR pair 08（conf≥0.5，15 pts，E-inliers = 9，Pitch = -82.0° ✅）
+    </summary>
+    <div style="padding:1.2rem 1.4rem;display:grid;grid-template-columns:1fr;gap:.8rem;">
+      <div>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>Matching 連線圖</strong>（點分布在人身上，非圍網平面）</p>
+        <img src="Bullpen_Calibration/TSG_Bullpen/inlier_viz/matching_loftr_08.jpg" style="width:100%;border-radius:6px;">
+      </div>
+      <div>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>Epipolar line 驗證圖</strong>（9 inliers — 觀察：每個彩色點落在同色線上，幾何正確）</p>
+        <img src="Bullpen_Calibration/TSG_Bullpen/inlier_viz/epipolar_loftr_08.jpg" style="width:100%;border-radius:6px;">
+      </div>
+    </div>
+  </details>
+</div>
+
 <!-- ══════════════════════════════════════════════
      Future Work
 ══════════════════════════════════════════════ -->
@@ -1365,19 +1520,79 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
     </div>
   </div>
 
-  <!-- ── 已測試失效 ── -->
-  <div class="card" style="border-left: 4px solid #9ca3af; opacity:.85;">
+  <!-- ── 方向四：LoFTR ── -->
+  <div class="card" style="border-left: 4px solid #6d28d9;">
     <div class="card-header">
-      <div style="background:#6b7280;color:#fff;font-weight:700;padding:.25rem .7rem;border-radius:999px;font-size:.85rem;flex-shrink:0;">❌ 已測試失效</div>
+      <div style="background:#6d28d9;color:#fff;font-weight:700;padding:.25rem .7rem;border-radius:999px;font-size:.85rem;flex-shrink:0;">④ 參考（已測試有效）</div>
       <div>
-        <div class="card-title" style="color:var(--gray-600);">LightGlue（ICCV 2023）/ SuperGlue（CVPR 2020）</div>
-        <div class="card-subtitle">Keypoint-based 方法在 FoV 差距 5× 下全部失敗</div>
+        <div class="card-title">LoFTR：Detector-Free Local Feature Matching with Transformers</div>
+        <div class="card-subtitle">Detector-free，已驗證 Pitch≈−82°，但 2021 年發表偏舊，點數少</div>
+      </div>
+      <div style="margin-left:auto;">
+        <span class="tag" style="background:#ede9fe; color:#6d28d9; font-size:.8rem;">CVPR 2021</span>
       </div>
     </div>
-    <div style="font-size:.85rem;color:var(--gray-600);line-height:1.7;">
-      測試結果：SuperPoint / DISK / ALIKED 三種前端搭配 LightGlue，matches 數量均 &lt;40，信心分數 &lt;0.5，Pitch 角度全部錯誤。
-      根本原因：同一個 3D 點在 cf（50mm）和 cs（8mm）的影像中，外觀尺度差 5×，local descriptor（128~256 維向量）無法跨尺度匹配。
-      換 keypoint 方法無法解決此根本問題，不再測試同類型方案。
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:.8rem;">
+      <div style="background:#f5f3ff; border-radius:8px; padding:.9rem;">
+        <div style="font-weight:700; color:#6d28d9; margin-bottom:.5rem; font-size:.85rem;">📄 Paper</div>
+        <div style="font-size:.85rem; line-height:1.6;">
+          <strong>LoFTR: Detector-Free Local Feature Matching with Transformers</strong><br>
+          Sun, Shen, Chen, Bao, Zhou, Zhang, Fang<br>
+          CVPR 2021 · ZJU + ETH Zürich<br>
+          <a href="https://arxiv.org/abs/2104.00680" style="color:#6d28d9; font-size:.8rem;">arxiv.org/abs/2104.00680</a>
+          &nbsp;|&nbsp;<a href="https://github.com/zju3dv/LoFTR" style="color:#6d28d9; font-size:.8rem;">GitHub</a>
+        </div>
+      </div>
+      <div style="background:#f5f3ff; border-radius:8px; padding:.9rem;">
+        <div style="font-weight:700; color:#6d28d9; margin-bottom:.5rem; font-size:.85rem;">測試結果（詳見 Q16）</div>
+        <div style="font-size:.85rem; line-height:1.6;">
+          conf≥0.5 → 15 pts，E-inliers=9<br>
+          Pitch=<strong style="color:#16a34a;">−82.0° ✅</strong>，sv_ratio=1.047<br>
+          跨影像對穩定性不足（20 對中只有 3-4 對正確）
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-blue">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">Pitch 方向正確，是首個驗證成功的 detector-free 方案。但高信心點數量太少（15 個），跨對穩定性差。RoMa（CVPR 2024）是其升級版，E-inliers 多 200 倍，建議優先使用。</div>
+    </div>
+  </div>
+
+  <!-- ── 方向五：LightGlue ── -->
+  <div class="card" style="border-left: 4px solid #0891b2;">
+    <div class="card-header">
+      <div style="background:#0891b2;color:#fff;font-weight:700;padding:.25rem .7rem;border-radius:999px;font-size:.85rem;flex-shrink:0;">⑤ 參考（已測試失效）</div>
+      <div>
+        <div class="card-title">LightGlue：Local Feature Matching at Light Speed</div>
+        <div class="card-subtitle">SuperGlue 原作者新作，速度精度均優，但仍是 keypoint-based，FoV 差距 5× 下失效</div>
+      </div>
+      <div style="margin-left:auto;">
+        <span class="tag" style="background:#cffafe; color:#0e7490; font-size:.8rem;">ICCV 2023</span>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:.8rem;">
+      <div style="background:#ecfeff; border-radius:8px; padding:.9rem;">
+        <div style="font-weight:700; color:#0e7490; margin-bottom:.5rem; font-size:.85rem;">📄 Paper</div>
+        <div style="font-size:.85rem; line-height:1.6;">
+          <strong>LightGlue: Local Feature Matching at Light Speed</strong><br>
+          Lindenberger, Sarlin, Pollefeys<br>
+          ICCV 2023 · ETH Zürich<br>
+          <a href="https://arxiv.org/abs/2306.13643" style="color:#0e7490; font-size:.8rem;">arxiv.org/abs/2306.13643</a>
+          &nbsp;|&nbsp;<a href="https://github.com/cvg/LightGlue" style="color:#0e7490; font-size:.8rem;">GitHub</a>
+        </div>
+      </div>
+      <div style="background:#ecfeff; border-radius:8px; padding:.9rem;">
+        <div style="font-weight:700; color:#0e7490; margin-bottom:.5rem; font-size:.85rem;">測試結果（詳見 Q17）</div>
+        <div style="font-size:.85rem; line-height:1.6;">
+          SuperPoint → matches=7，Pitch=<strong style="color:#dc2626;">11.2° ❌</strong><br>
+          DISK → matches=20，Pitch=<strong style="color:#dc2626;">−28.6° ❌</strong><br>
+          ALIKED → matches=38，Pitch=<strong style="color:#dc2626;">3.6° ❌</strong>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-orange">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">Keypoint-based 架構在 FoV 差距 5× 下根本失效——同一場景點在兩圖中外觀尺度差 5 倍，local descriptor 無法跨尺度匹配。保留此條目供教授參考，不建議在此場景繼續嘗試同類方案。</div>
     </div>
   </div>
 
@@ -1409,179 +1624,31 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
         <td>Dynamic view switching，+260% GT matches</td>
         <td>待測試</td>
       </tr>
-      <tr style="background:#f3f4f6;">
-        <td><strong style="color:#6b7280;">—</strong></td>
+      <tr style="background:#f5f3ff;">
+        <td><strong style="color:#6d28d9;">④</strong></td>
         <td><strong>LoFTR</strong></td>
         <td>CVPR 2021</td>
-        <td>Detector-free，已驗證 Pitch≈−82°（但 2021 偏舊）</td>
-        <td>✅ 已測試（見 Q16）</td>
+        <td>Detector-free，Pitch≈−82° 正確，但點數少（15 pts）</td>
+        <td>✅ 已測試有效（見 Q16）</td>
+      </tr>
+      <tr style="background:#ecfeff;">
+        <td><strong style="color:#0891b2;">⑤</strong></td>
+        <td><strong>LightGlue</strong></td>
+        <td>ICCV 2023</td>
+        <td>SuperGlue 升級版，速度快，但 keypoint-based 仍失效</td>
+        <td>❌ 已測試失效（見 Q17）</td>
       </tr>
       <tr style="background:#f3f4f6;opacity:.7;">
-        <td><strong style="color:#9ca3af;">❌</strong></td>
-        <td>LightGlue / SuperGlue</td>
-        <td>ICCV 2023 / CVPR 2020</td>
-        <td>Keypoint-based，FoV 差距 5× 下失效</td>
-        <td>❌ 已測試失效</td>
+        <td><strong style="color:#9ca3af;">—</strong></td>
+        <td>SuperGlue</td>
+        <td>CVPR 2020</td>
+        <td>目前 baseline，FoV 差距 5× 下 Pose 失敗</td>
+        <td>❌ Pose 失敗</td>
       </tr>
     </table>
   </div>
 </div>
 
-
-<!-- ══════════════════════════════════════════════════════════ -->
-<!-- ── 實驗結果 ── -->
-<div class="section" id="results">
-  <h2 class="section-title">📊 實驗結果</h2>
-
-  <!-- 分類一標題 -->
-  <div style="background:#1e40af;color:#fff;border-radius:8px;padding:.7rem 1.2rem;margin-bottom:1rem;font-weight:700;font-size:1rem;">
-    📌 Part 1｜SuperGlue 四組 F matrix 實驗（A/B/C/D）
-  </div>
-  <p style="color:var(--gray-600);margin-bottom:1.2rem;font-size:.85rem;">
-    彩色圓點＋連線 = SuperGlue inlier（plasma colormap）；白色圓點＋連線 = 人工標記點（僅 B、D 組顯示）<br>
-    判斷方式：用各組的全局 F matrix 計算 Sampson distance，距離 &lt; 3px 為 inlier
-  </p>
-
-  <!-- Group A -->
-  <details open style="margin-bottom:1.5rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
-    <summary style="cursor:pointer;background:#f8fafc;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
-      <span style="background:var(--primary);color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">A</span>
-      Group A｜全部 20 對 SG only（278 / 1358 inliers，20.5%）
-    </summary>
-    <div style="padding:1.2rem 1.4rem;display:grid;grid-template-columns:1fr;gap:.8rem;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/01.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/02.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/03.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/04.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/05.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/06.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/07.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/08.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/09.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/10.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/11.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/12.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/13.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/14.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/15.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/16.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/17.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/18.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/19.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_A_sg_all/20.jpg" style="width:100%;border-radius:6px;">
-    </div>
-  </details>
-
-  <!-- Group B -->
-  <details style="margin-bottom:1.5rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
-    <summary style="cursor:pointer;background:#f8fafc;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
-      <span style="background:#7c3aed;color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">B</span>
-      Group B｜全部 20 對 SG + 人工標記（285 / 1358 inliers，21.0%）
-      <span style="margin-left:auto;font-size:.8rem;color:var(--gray-500);font-weight:400;">白色圓點 = 人工標記點</span>
-    </summary>
-    <div style="padding:1.2rem 1.4rem;display:grid;grid-template-columns:1fr;gap:.8rem;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/01.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/02.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/03.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/04.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/05.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/06.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/07.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/08.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/09.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/10.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/11.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/12.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/13.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/14.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/15.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/16.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/17.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/18.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/19.jpg" style="width:100%;border-radius:6px;">
-      <img src="Bullpen_Calibration/TSG_Bullpen/viz_B_sg_manual_all/20.jpg" style="width:100%;border-radius:6px;">
-    </div>
-  </details>
-
-  <!-- Group C -->
-  <details style="margin-bottom:1.5rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
-    <summary style="cursor:pointer;background:#f8fafc;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
-      <span style="background:#0891b2;color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">C</span>
-      Group C｜Pair 08（最佳單對）SG only（52 / 114 inliers，45.6%）
-    </summary>
-    <div style="padding:1.2rem 1.4rem;display:flex;flex-direction:column;gap:1rem;">
-      <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;font-weight:600;">Matching 連線圖</p>
-        <img src="Bullpen_Calibration/TSG_Bullpen/viz_C_sg_best/08.jpg" style="width:100%;border-radius:6px;">
-      </div>
-      <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;font-weight:600;">Epipolar line 評估圖（Sampson&lt;3px: 31/63，Sampson&lt;10px: 36/63）</p>
-        <img src="Bullpen_Calibration/TSG_Bullpen/viz_C_sg_best/epipolar_C_08.jpg" style="width:100%;border-radius:6px;">
-      </div>
-    </div>
-  </details>
-
-  <!-- Group D -->
-  <details style="margin-bottom:1.5rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
-    <summary style="cursor:pointer;background:#f8fafc;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
-      <span style="background:#dc2626;color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">D</span>
-      Group D｜Pair 08 SG + 人工標記（46 / 114 inliers，40.4%）
-      <span style="margin-left:auto;font-size:.8rem;color:var(--gray-500);font-weight:400;">白色圓點 = 人工標記點</span>
-    </summary>
-    <div style="padding:1.2rem 1.4rem;display:flex;flex-direction:column;gap:1rem;">
-      <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;font-weight:600;">Matching 連線圖</p>
-        <img src="Bullpen_Calibration/TSG_Bullpen/viz_D_sg_manual_best/08.jpg" style="width:100%;border-radius:6px;">
-      </div>
-      <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;font-weight:600;">Epipolar line 評估圖（Sampson&lt;3px: 28/63，Sampson&lt;10px: 31/63）</p>
-        <img src="Bullpen_Calibration/TSG_Bullpen/viz_D_sg_manual_best/epipolar_D_08.jpg" style="width:100%;border-radius:6px;">
-      </div>
-    </div>
-  </details>
-
-  <!-- 分類二標題 -->
-  <div style="background:#15803d;color:#fff;border-radius:8px;padding:.7rem 1.2rem;margin-bottom:1rem;font-weight:700;font-size:1rem;">
-    🔬 Part 2｜SuperGlue vs LoFTR 對比（Pair 08，含 Epipolar Line 驗證）
-  </div>
-  <p style="color:var(--gray-600);margin-bottom:1.2rem;font-size:.85rem;">
-    Epipolar line 驗證圖說明：左圖每個彩色點，在右圖應有一條同色直線通過對應點。線不過點 = F matrix 幾何不準確。
-  </p>
-
-  <details open style="margin-bottom:1rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
-    <summary style="cursor:pointer;background:#fef2f2;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
-      <span style="background:#dc2626;color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">SuperGlue</span>
-      SuperGlue pair 08（31 inliers，Pitch = -41.3° ❌）
-    </summary>
-    <div style="padding:1.2rem 1.4rem;display:grid;grid-template-columns:1fr;gap:.8rem;">
-      <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>Matching 連線圖</strong>（Group C，SG only pair08）</p>
-        <img src="Bullpen_Calibration/TSG_Bullpen/viz_C_sg_best/08.jpg" style="width:100%;border-radius:6px;">
-      </div>
-      <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>Epipolar line 驗證圖</strong>（31 inliers — 觀察：多數線未通過對應點）</p>
-        <img src="Bullpen_Calibration/TSG_Bullpen/inlier_viz/epipolar_08.jpg" style="width:100%;border-radius:6px;">
-      </div>
-    </div>
-  </details>
-
-  <details open style="margin-bottom:1.5rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
-    <summary style="cursor:pointer;background:#f0fdf4;padding:1rem 1.4rem;font-weight:700;font-size:1rem;color:var(--gray-900);list-style:none;display:flex;align-items:center;gap:.6rem;">
-      <span style="background:#16a34a;color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">LoFTR</span>
-      LoFTR pair 08（conf≥0.5，15 pts，E-inliers = 9，Pitch = -82.0° ✅）
-    </summary>
-    <div style="padding:1.2rem 1.4rem;display:grid;grid-template-columns:1fr;gap:.8rem;">
-      <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>Matching 連線圖</strong>（點分布在人身上，非圍網平面）</p>
-        <img src="Bullpen_Calibration/TSG_Bullpen/inlier_viz/matching_loftr_08.jpg" style="width:100%;border-radius:6px;">
-      </div>
-      <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;"><strong>Epipolar line 驗證圖</strong>（9 inliers — 觀察：每個彩色點落在同色線上，幾何正確）</p>
-        <img src="Bullpen_Calibration/TSG_Bullpen/inlier_viz/epipolar_loftr_08.jpg" style="width:100%;border-radius:6px;">
-      </div>
-    </div>
-  </details>
-</div>
 
 
 <!-- ══════════════════════════════════════════════════════════ -->
@@ -2056,6 +2123,31 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
         <strong>結論：RoMa 是目前最佳選擇。</strong>
         Pitch≈−75.8°（方向正確），sv_ratio=1.0000（E matrix 幾何上完美），E-inliers 高達 1985 個，遠超 LoFTR 的 9 個。
         且 RoMa 為 CVPR 2024，學術分量比 LoFTR（CVPR 2021）更新三年，更適合向教授報告。
+      </div>
+    </div>
+
+    <div style="margin-top:1.4rem;">
+      <div style="font-weight:700;color:var(--gray-800);margin-bottom:.6rem;">補充驗證：Direct E vs F→E 的差異（RoMa 與人工標記點）</div>
+      <p style="color:var(--gray-700);font-size:.88rem;margin-bottom:.8rem;">
+        針對「先算 F 再轉 E」是否比「直接算 E」更好的問題，用 RoMa matches（pair08）和人工標記點（全20對）各自驗證：
+      </p>
+      <div style="background:var(--gray-50);border-radius:8px;padding:1rem;font-family:monospace;font-size:.82rem;line-height:2;margin-bottom:.8rem;">
+        <strong>RoMa pair08（4699 pts，1920×1084）：</strong><br>
+        Direct E　→ inliers=2279，sv_ratio=1.0000，Pitch=<strong style="color:#16a34a;">−76.0°</strong><br>
+        F→E　　　→ inliers=1140，sv_ratio=1.0000，Pitch=<strong style="color:#16a34a;">−72.4°</strong><br>
+        <br>
+        <strong>人工標記點（120 pts，全20對）：</strong><br>
+        Direct E　→ inliers=60，sv_ratio=1.0000，Pitch=<strong style="color:#16a34a;">−82.0°</strong><br>
+        F→E　　　→ inliers=43，sv_ratio=1.0000，Pitch=<strong style="color:#16a34a;">−84.0°</strong>
+      </div>
+      <div class="callout callout-blue">
+        <div class="callout-icon">📊</div>
+        <div class="callout-body">
+          <strong>結論：Direct E 優於 F→E。</strong>
+          兩種資料來源下，Direct E 的 inlier 數量都比 F→E 多（RoMa：2279 vs 1140；人工：60 vs 43），Pitch 方向兩者都正確。
+          F→E 多了一個中間步驟（F matrix → K 矩陣轉換 → 強制奇異值對齊），數值誤差累積使 inlier 減少。
+          <strong>建議直接用 findEssentialMat，不需要先算 F 再轉換。</strong>
+        </div>
       </div>
     </div>
   </div>
