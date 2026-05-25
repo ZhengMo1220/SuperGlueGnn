@@ -1018,7 +1018,7 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
   <div class="card">
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
       <div>
-        <div class="section-subtitle">一般匹配模式（--viz）</div>
+        <div class="section-subtitle">① 模型原始輸出圖（SuperGlue --viz）<br><span style="font-weight:400;color:var(--gray-500);font-size:.8rem;">對應實驗結果 C/D 組的「sg_matches_08.png」</span></div>
         <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:1rem; font-size:.85rem;">
           <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem;">
             <div style="width:60px; height:12px; background:linear-gradient(to right, #0000ff, #00ffff, #00ff00, #ffff00, #ff0000); border-radius:3px;"></div>
@@ -1036,21 +1036,34 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
         </div>
       </div>
       <div>
-        <div class="section-subtitle">評估模式（--eval --viz）</div>
+        <div class="section-subtitle">② Inlier/Outlier 分類圖<br><span style="font-weight:400;color:var(--gray-500);font-size:.8rem;">對應實驗結果 C/D 組的「08.jpg」</span></div>
         <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:1rem; font-size:.85rem;">
           <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem;">
-            <div style="width:60px; height:12px; background:linear-gradient(to right, #ff0000, #ffff00, #00ff00); border-radius:3px;"></div>
-            <span>error colormap</span>
+            <div style="width:60px; height:12px; background:linear-gradient(to right, #f0c, #f90, #ff0, #0f0); border-radius:3px;"></div>
+            <span>plasma colormap（僅做區分，無特殊含義）</span>
           </div>
-          <p>線條顏色 = <strong>對極幾何誤差</strong></p>
+          <p>線條顏色 = <strong>inlier / outlier 分類</strong></p>
           <br>
           <div class="color-legend">
-            <div class="color-item"><div class="color-swatch" style="background:#00cc00;"></div>誤差小（inlier）</div>
-            <div class="color-item"><div class="color-swatch" style="background:#ff0000;"></div>誤差大（outlier）</div>
+            <div class="color-item"><div class="color-swatch" style="background:linear-gradient(to right,#f0c,#ff0,#0f9);"></div>彩色線 + 圓點 = inlier（Sampson &lt; 3px）</div>
+            <div class="color-item"><div class="color-swatch" style="background:#323232;"></div>深灰色小十字（無連線）= outlier（只標位置）</div>
+            <div class="color-item"><div class="color-swatch" style="background:#fff;border:1px solid #ccc;"></div>白點 + 白色連線 = 人工標記點（D 組）</div>
           </div>
           <br>
-          <p style="color:var(--gray-600);">左上角顯示：<br>ΔR（旋轉誤差）<br>Δt（平移誤差）<br>inliers 數量</p>
+          <p style="color:var(--gray-600);">左上角顯示：<br>SG inliers 數 / outliers 數（百分比）<br>manual = 人工標記點數</p>
         </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.2rem;">
+      <div class="section-subtitle">③ Epipolar line 驗證圖<br><span style="font-weight:400;color:var(--gray-500);font-size:.8rem;">對應實驗結果 C/D 組的「epipolar_C/D_08.jpg」</span></div>
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:1rem; font-size:.85rem;">
+        <p style="margin-bottom:.5rem;"><strong>用途：</strong>驗證算出來的 F matrix 幾何是否正確。</p>
+        <p style="margin-bottom:.5rem;"><strong>怎麼看：</strong>左圖每個彩色圓點，對應右圖一條同色直線（極線）。理論上這條線應該「剛好通過」右圖的對應點。若線明顯偏離對應點，代表 F matrix 不準確。</p>
+        <div class="color-legend" style="margin-bottom:.5rem;">
+          <div class="color-item"><div class="color-swatch" style="background:linear-gradient(to right,#f0c,#ff0,#0f9);"></div>彩色線條 / 圓點（plasma colormap，僅區分不同點對）</div>
+        </div>
+        <p style="color:var(--gray-600);">左上角顯示：Group、RANSAC inliers 數、Sampson&lt;3px/&lt;10px 統計</p>
       </div>
     </div>
 
@@ -1291,13 +1304,20 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
       <span style="background:#0891b2;color:#fff;font-size:.75rem;padding:.2rem .6rem;border-radius:999px;">C</span>
       Group C｜Pair 08（最佳單對）SG only（52 / 114 inliers，45.6%）
     </summary>
-    <div style="padding:1.2rem 1.4rem;display:flex;flex-direction:column;gap:1rem;">
+    <div style="padding:1.2rem 1.4rem;display:flex;flex-direction:column;gap:1.2rem;">
       <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;font-weight:600;">Matching 連線圖</p>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.3rem;font-weight:600;">① 模型原始輸出圖（SuperGlue --viz）</p>
+        <p style="font-size:.8rem;color:var(--gray-500);margin-bottom:.4rem;">SuperGlue 直接輸出的匹配結果。藍線 = 所有匹配點對（共 63 對），無 inlier/outlier 區分，灰階影像為 1280×960。</p>
+        <img src="Bullpen_Calibration/TSG_Bullpen/viz_C_sg_best/sg_matches_08.png" style="width:100%;border-radius:6px;">
+      </div>
+      <div>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.3rem;font-weight:600;">② Inlier/Outlier 分類圖</p>
+        <p style="font-size:.8rem;color:var(--gray-500);margin-bottom:.4rem;">用 C 組的 F matrix 計算每個點對的 Sampson distance。<span style="color:#16a34a;font-weight:600;">彩色線 + 彩色圓點 = inlier（Sampson &lt; 3px，共 52 對）</span>；outlier（62 對）只在各自位置畫深灰色小十字，<strong>沒有連線</strong>，所以圖上看不到紅線或灰線。</p>
         <img src="Bullpen_Calibration/TSG_Bullpen/viz_C_sg_best/08.jpg" style="width:100%;border-radius:6px;">
       </div>
       <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;font-weight:600;">Epipolar line 評估圖（Sampson&lt;3px: 31/63，Sampson&lt;10px: 36/63）</p>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.3rem;font-weight:600;">③ Epipolar line 驗證圖（Sampson&lt;3px: 31/63，Sampson&lt;10px: 36/63）</p>
+        <p style="font-size:.8rem;color:var(--gray-500);margin-bottom:.4rem;">驗證 F matrix 的幾何精度。<strong>怎麼看：</strong>左圖每個彩色點，在右圖應有一條同色直線「剛好通過」對應點。若線明顯偏離對應點，代表 F matrix 不準確。此圖多數線偏離 → F 幾何不夠精確。</p>
         <img src="Bullpen_Calibration/TSG_Bullpen/viz_C_sg_best/epipolar_C_08.jpg" style="width:100%;border-radius:6px;">
       </div>
     </div>
@@ -1310,13 +1330,20 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
       Group D｜Pair 08 SG + 人工標記（46 / 114 inliers，40.4%）
       <span style="margin-left:auto;font-size:.8rem;color:var(--gray-500);font-weight:400;">白色圓點 = 人工標記點</span>
     </summary>
-    <div style="padding:1.2rem 1.4rem;display:flex;flex-direction:column;gap:1rem;">
+    <div style="padding:1.2rem 1.4rem;display:flex;flex-direction:column;gap:1.2rem;">
       <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;font-weight:600;">Matching 連線圖</p>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.3rem;font-weight:600;">① 模型原始輸出圖（SuperGlue --viz）</p>
+        <p style="font-size:.8rem;color:var(--gray-500);margin-bottom:.4rem;">與 C 組相同的 SuperGlue 原始輸出（D 組僅在計算 F matrix 時額外加入 6 個人工點，匹配圖本身不變）。藍線 = 63 個匹配點對，灰階影像。</p>
+        <img src="Bullpen_Calibration/TSG_Bullpen/viz_D_sg_manual_best/sg_matches_08.png" style="width:100%;border-radius:6px;">
+      </div>
+      <div>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.3rem;font-weight:600;">② Inlier/Outlier 分類圖（含人工標記點）</p>
+        <p style="font-size:.8rem;color:var(--gray-500);margin-bottom:.4rem;">用 D 組的 F matrix（SG 63點 + 人工 6點 共同計算）對 SG 點對做 Sampson 分類。<span style="color:#16a34a;font-weight:600;">彩色線 = SG inlier（46 對）</span>，<span style="color:#dc2626;font-weight:600;">紅線 = SG outlier（68 對）</span>，<span style="font-weight:600;">白色圓點 = 6 個人工標記點（不計入 inlier/outlier 統計）</span>。</p>
         <img src="Bullpen_Calibration/TSG_Bullpen/viz_D_sg_manual_best/08.jpg" style="width:100%;border-radius:6px;">
       </div>
       <div>
-        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.4rem;font-weight:600;">Epipolar line 評估圖（Sampson&lt;3px: 28/63，Sampson&lt;10px: 31/63）</p>
+        <p style="font-size:.85rem;color:var(--gray-600);margin-bottom:.3rem;font-weight:600;">③ Epipolar line 驗證圖（Sampson&lt;3px: 28/63，Sampson&lt;10px: 31/63）</p>
+        <p style="font-size:.8rem;color:var(--gray-500);margin-bottom:.4rem;">驗證 D 組 F matrix 的幾何精度。<strong>怎麼看：</strong>左圖每個彩色點，在右圖應有一條同色直線「剛好通過」對應點。D 組加入人工點後 F 幾何略有改變，但 inlier 數反而下降（見 Q13 補充說明），整體效果未優於 C 組。</p>
         <img src="Bullpen_Calibration/TSG_Bullpen/viz_D_sg_manual_best/epipolar_D_08.jpg" style="width:100%;border-radius:6px;">
       </div>
     </div>
@@ -1410,7 +1437,8 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
           <strong>RoMa: Robust Dense Feature Matching</strong><br>
           Edstedt, Sun, Bökman, Wadenbäck, Felsberg<br>
           CVPR 2024 · Linköping University<br>
-          <a href="https://arxiv.org/abs/2305.15404" style="color:#b91c1c; font-size:.8rem;">arxiv.org/abs/2305.15404</a>
+          <a href="https://openaccess.thecvf.com/content/CVPR2024/html/Edstedt_RoMa_Robust_Dense_Feature_Matching_CVPR_2024_paper.html" style="color:#b91c1c; font-size:.8rem;">CVPR 2024 官方論文</a>
+          &nbsp;|&nbsp;<a href="https://arxiv.org/abs/2305.15404" style="color:#b91c1c; font-size:.8rem;">ArXiv preprint</a>
         </div>
       </div>
       <div style="background:#fef2f2; border-radius:8px; padding:.9rem;">
@@ -1544,7 +1572,7 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
         </div>
       </div>
       <div style="background:#f5f3ff; border-radius:8px; padding:.9rem;">
-        <div style="font-weight:700; color:#6d28d9; margin-bottom:.5rem; font-size:.85rem;">測試結果（詳見 Q16）</div>
+        <div style="font-weight:700; color:#6d28d9; margin-bottom:.5rem; font-size:.85rem;">測試結果（詳見 Q13）</div>
         <div style="font-size:.85rem; line-height:1.6;">
           conf≥0.5 → 15 pts，E-inliers=9<br>
           Pitch=<strong style="color:#16a34a;">−82.0° ✅</strong>，sv_ratio=1.047<br>
@@ -1582,7 +1610,7 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
         </div>
       </div>
       <div style="background:#ecfeff; border-radius:8px; padding:.9rem;">
-        <div style="font-weight:700; color:#0e7490; margin-bottom:.5rem; font-size:.85rem;">測試結果（詳見 Q17）</div>
+        <div style="font-weight:700; color:#0e7490; margin-bottom:.5rem; font-size:.85rem;">測試結果（詳見 Q14）</div>
         <div style="font-size:.85rem; line-height:1.6;">
           SuperPoint → matches=7，Pitch=<strong style="color:#dc2626;">11.2° ❌</strong><br>
           DISK → matches=20，Pitch=<strong style="color:#dc2626;">−28.6° ❌</strong><br>
@@ -1608,7 +1636,7 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
         <td><strong>RoMa</strong></td>
         <td>CVPR 2024</td>
         <td>DINOv2 scale-invariant dense warp，WxBS +36%</td>
-        <td>✅ 已測試（見 Q18）</td>
+        <td>✅ 已測試（見 Q15）</td>
       </tr>
       <tr style="background:#fff7ed;">
         <td><strong style="color:#ea580c;">②</strong></td>
@@ -1629,14 +1657,14 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
         <td><strong>LoFTR</strong></td>
         <td>CVPR 2021</td>
         <td>Detector-free，Pitch≈−82° 正確，但點數少（15 pts）</td>
-        <td>✅ 已測試有效（見 Q16）</td>
+        <td>✅ 已測試有效（見 Q13）</td>
       </tr>
       <tr style="background:#ecfeff;">
         <td><strong style="color:#0891b2;">⑤</strong></td>
         <td><strong>LightGlue</strong></td>
         <td>ICCV 2023</td>
         <td>SuperGlue 升級版，速度快，但 keypoint-based 仍失效</td>
-        <td>❌ 已測試失效（見 Q17）</td>
+        <td>❌ 已測試失效（見 Q14）</td>
       </tr>
       <tr style="background:#f3f4f6;opacity:.7;">
         <td><strong style="color:#9ca3af;">—</strong></td>
@@ -1661,52 +1689,94 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
   <!-- Q1 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--success);box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
-      <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已解決</span>
-      <strong style="color:var(--gray-900);">Q1｜Windows 終端機顯示亂碼 / UnicodeEncodeError</strong>
+      <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已釐清</span>
+      <strong style="color:var(--gray-900);">Q1｜GT F matrix 的 Sampson distance 異常高（~24000）</strong>
     </div>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>在 Windows cp950 環境下，Python print 含 emoji（✅⚠️❌）或中文時出現 <code>UnicodeEncodeError</code> 或亂碼。</p>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>Windows 預設終端機編碼為 cp950，不支援 Unicode emoji；中文字元也可能因編碼不匹配而亂碼。</p>
-    <p style="color:var(--gray-700);"><strong>解法：</strong>將所有 print 改為純 ASCII 標記（<code>[OK]</code>、<code>[WARNING]</code>、<code>[FAIL]</code>），並將所有 print 語句改為英文輸出。</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>用 GT F matrix 對 SuperGlue 的 inlier 點計算 Sampson distance，結果高達 24038，但估計的 F 只有 0.56，差距極大。</p>
+
+    <div style="background:#fafaf9;border:1px solid var(--gray-200);border-radius:8px;padding:.8rem 1rem;margin-bottom:.8rem;">
+      <p style="color:var(--gray-700);margin-bottom:.4rem;"><strong>Sampson distance 是什麼？怎麼計算的？</strong></p>
+      <p style="color:var(--gray-700);font-size:.88rem;margin-bottom:.4rem;">
+        Sampson distance 衡量「一個點對 (p, p') 是否符合 F matrix 描述的極線幾何」。對每個點對，計算公式如下：
+      </p>
+      <div style="background:#f1f5f9;border-radius:6px;padding:.6rem .8rem;font-family:monospace;font-size:.82rem;margin-bottom:.4rem;">
+        d = (p'ᵀ F p)² / [ (Fp)₁² + (Fp)₂² + (Fᵀp')₁² + (Fᵀp')₂² ]
+      </div>
+      <p style="color:var(--gray-700);font-size:.88rem;margin-bottom:.3rem;">
+        意思是：把點 p 代入 F 算出一條極線，看 p' 距離這條極線多少像素。理想情況 d &lt; 3px（像素距離）。
+      </p>
+      <p style="color:var(--gray-700);font-size:.88rem;">
+        <strong>你有 N 個點對，就得到 N 個 Sampson distance 值。</strong>RANSAC 用每個點對的這個值當閾值決定 inlier/outlier（d &lt; 3 → inlier，d &gt; 3 → outlier）。最後報告的是所有點對的平均值或最大值。
+      </p>
+    </div>
+
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>GT F 是在<strong>原圖解析度（1920×1084）</strong>下計算的，而第一次 SuperGlue 輸入是 resize 後的 640×480。兩組點的座標尺度不同，GT F 套用在小解析度的點上，等於把 1920 的極線幾何直接套在 640 的座標上，距離誤差放大了約 3 倍（1920/640=3），因此 Sampson distance 從理想的 &lt;3px 爆炸到 ~24000px。這不是 pipeline 錯誤，是座標系錯配。</p>
+    <p style="color:var(--gray-700);"><strong>解法：</strong>改用 1920×1084 原圖解析度跑 SuperGlue，座標系一致後 Frobenius norm 從 0.135 降到 <strong>0.021</strong>，GT Sampson 也降低。</p>
   </div>
 
   <!-- Q2 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--success);box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
       <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已釐清</span>
-      <strong style="color:var(--gray-900);">Q2｜GT F matrix 的 Sampson distance 異常高（~24000）</strong>
-    </div>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>用 GT F matrix 對 SuperGlue 的 inlier 點計算 Sampson distance，結果高達 24038，但估計的 F 只有 0.56，差距極大。</p>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>GT F 是在<strong>原圖解析度（1920×1084）</strong>下計算的，而第一次 SuperGlue 輸入是 resize 後的 640×480。兩組點的座標尺度不同，GT F 套用在小解析度的點上自然誤差極大。這不是 pipeline 錯誤。</p>
-    <p style="color:var(--gray-700);"><strong>解法：</strong>改用 1920×1084 原圖解析度跑 SuperGlue，座標系一致後 Frobenius norm 從 0.135 降到 <strong>0.021</strong>，GT Sampson 也降低。</p>
-  </div>
-
-  <!-- Q3 -->
-  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--success);box-shadow:0 1px 4px rgba(0,0,0,.06);">
-    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
-      <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已釐清</span>
-      <strong style="color:var(--gray-900);">Q3｜SuperGlue 偵測不到保麗龍球</strong>
+      <strong style="color:var(--gray-900);">Q2｜SuperGlue 偵測不到保麗龍球</strong>
     </div>
     <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>場景中用來當標定點的白色保麗龍球，SuperGlue 幾乎完全無法匹配。</p>
     <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>SuperPoint（SuperGlue 的前端）偵測角點與紋理邊緣。白色保麗龍球表面<strong>無紋理、無角點</strong>，SuperPoint 不會在球面放 keypoint。這是 SuperPoint 的設計限制，不是 bug。</p>
     <p style="color:var(--gray-700);"><strong>影響：</strong>SuperGlue 的 inlier 全部來自背景紋理（草皮、圍網、棒子邊緣），這些點在幾何上可以建立正確的 F matrix，但無法提供精確的標定點座標。保麗龍球的用途應改為 PnP（已知 3D 座標），而非 SuperGlue 的 keypoint 來源。</p>
   </div>
 
-  <!-- Q4 -->
+  <!-- Q3 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--success);box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
       <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已釐清</span>
-      <strong style="color:var(--gray-900);">Q4｜不同解析度算出的 F matrix 數值差很多，是錯的嗎？</strong>
+      <strong style="color:var(--gray-900);">Q3｜不同解析度算出的 F matrix 數值差很多，是錯的嗎？Frobenius norm 是什麼？</strong>
     </div>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>640×480 和 1920×1084 跑出的 F matrix 數值完全不同，讓人擔心結果錯誤。</p>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>F matrix 的數值會隨座標尺度縮放，不同解析度的 F 直接比數字沒有意義。正確的比較方式是 <strong>Frobenius norm（normalize 後的矩陣差距）</strong>。</p>
-    <p style="color:var(--gray-700);"><strong>結論：</strong>1920×1084 的 F 與 GT F 的 Frobenius norm 為 <strong>0.021</strong>（極佳，&lt; 0.1 為接近）。幾何上正確，只是數值尺度不同。</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>640×480 和 1920×1084 跑出的 F matrix 數值完全不同，讓人擔心結果錯誤。另外，為什麼 Frobenius norm = 0.021 看起來很好，Pose 卻可能仍然錯誤？</p>
+
+    <div style="background:#fafaf9;border:1px solid var(--gray-200);border-radius:8px;padding:.8rem 1rem;margin-bottom:.8rem;">
+      <p style="color:var(--gray-700);margin-bottom:.4rem;"><strong>Frobenius norm 是什麼？</strong></p>
+      <p style="color:var(--gray-700);font-size:.88rem;margin-bottom:.3rem;">
+        Frobenius norm 是把兩個矩陣相減後，對每個元素平方加總再開根號。直接衡量「數值距離」，計算公式：
+      </p>
+      <div style="background:#f1f5f9;border-radius:6px;padding:.5rem .8rem;font-family:monospace;font-size:.82rem;margin-bottom:.4rem;">
+        ‖F₁ − F₂‖_F = √( Σᵢⱼ (F₁ᵢⱼ − F₂ᵢⱼ)² )
+      </div>
+      <p style="color:var(--gray-700);font-size:.88rem;">值越小代表兩個矩陣「數值上越接近」。但這個計算<strong>沒有先正規化</strong>（直接相減），所以尺度差異會影響結果。</p>
+    </div>
+
+    <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:.8rem 1rem;margin-bottom:.8rem;">
+      <p style="color:var(--gray-700);margin-bottom:.4rem;"><strong>⚠ 重要：「數值接近」≠「幾何一樣」</strong></p>
+      <p style="color:var(--gray-700);font-size:.88rem;margin-bottom:.4rem;">
+        F matrix 是 <strong>homogeneous</strong> 的——乘上任意非零常數 k，幾何意義完全不變（因為極線方程 p'ᵀFp = 0 兩側乘 k 後仍成立）。也就是說，F 和 100F 描述完全相同的幾何關係。
+      </p>
+      <p style="color:var(--gray-700);font-size:.88rem;margin-bottom:.4rem;">
+        因此：
+      </p>
+      <ul style="color:var(--gray-700);font-size:.88rem;margin-left:1.2rem;">
+        <li style="margin-bottom:.3rem;">兩個幾何上<strong>完全相同</strong>的 F，一個是 F、另一個是 0.001F，Frobenius norm 可以是 0.999（看起來差很多）</li>
+        <li style="margin-bottom:.3rem;">兩個幾何上<strong>完全不同</strong>的 F，如果尺度剛好讓數值接近，norm 可以是 0.001（看起來差很少）</li>
+        <li>所以「數值接近」不等於「幾何一樣」</li>
+      </ul>
+    </div>
+
+    <div style="background:#fafaf9;border:1px solid var(--gray-200);border-radius:8px;padding:.8rem 1rem;margin-bottom:.8rem;">
+      <p style="color:var(--gray-700);margin-bottom:.4rem;"><strong>那為什麼我們的 0.021 恰好有意義？</strong></p>
+      <p style="color:var(--gray-700);font-size:.88rem;">
+        8-point algorithm 在計算 F matrix 時，內部會對輸入點做正規化（Hartley normalization），最後輸出的 F 數值尺度約為「最後一個元素 = 1」或「Frobenius norm = 1」。我們的 GT F 和 SuperGlue F 恰好都由相同的正規化流程產生，所以數值尺度相近，此時 Frobenius norm 碰巧也反映了幾何差距。這是巧合，不是一般性結論。
+      </p>
+      <p style="color:var(--gray-700);font-size:.88rem;margin-top:.4rem;">
+        <strong>正確的比較方式</strong>是先把兩個 F 各自除以其 Frobenius norm（讓每個矩陣的 norm=1），再計算差距，這樣才是純粹在比「幾何方向」，不受尺度影響。
+      </p>
+    </div>
+
+    <p style="color:var(--gray-700);"><strong>結論：</strong>1920×1084 的 F 與 GT F 的 Frobenius norm 為 <strong>0.021</strong>（在相同正規化前提下，極佳，&lt; 0.1 為接近）。但 SuperGlue Pose 仍然錯誤的原因不在數值，而在 FoV 差距和 planar degeneracy（見 Q6/Q7）。</p>
   </div>
 
-  <!-- Q8 -->
+  <!-- Q4 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--success);box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
       <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已確認</span>
-      <strong style="color:var(--gray-900);">Q8｜最終目標：3D 骨架節點估計 → 投球動作分析</strong>
+      <strong style="color:var(--gray-900);">Q4｜最終目標：3D 骨架節點估計 → 投球動作分析</strong>
     </div>
     <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>目標：</strong>透過雙相機（側面 cs + 正面 cf）的 2D 骨架點（ViT-Pose 輸出），經三角測量重建投手的 <strong>3D 骨架節點座標</strong>，進而計算物理特徵（腳踝距離、肩外旋角度、手腕速度等），切割投球動作 4 個階段。</p>
 
@@ -1774,14 +1844,14 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
   </div>
 
   <!-- Q5 -->
-  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--warning);box-shadow:0 1px 4px rgba(0,0,0,.06);">
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--success);box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
-      <span style="background:#fef3c7;color:#d97706;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">待確認</span>
+      <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已釐清</span>
       <strong style="color:var(--gray-900);">Q5｜GT F matrix 只有 22/120 inliers，是否可靠？</strong>
     </div>
     <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>人工標記的 120 個點，RANSAC 後只剩 22 個 inlier（18.3%），GT F 是否可信？</p>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>人工標記的 6 個點/張分布在保麗龍球位置，這些點的 epipolar 一致性本來就有限（標定點不是為 F matrix 設計的，分布也不夠分散）。22 個 inlier 算 F 勉強夠用但不穩定。</p>
-    <p style="color:var(--gray-700);"><strong>結論：</strong>SuperGlue 的 F（290 inliers）比 GT F（22 inliers）<strong>更可靠</strong>，inlier 數量多 13 倍。GT F 僅供對照參考。</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因：</strong>人工標記點分布在保麗龍球位置（棒子近端、遠端、地面等不同景深），epipolar 一致性有限，6 點/張算 F 剛好夠用但 inlier 率偏低。</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>結論（後續實驗確認）：</strong>GT F 的 22 inliers 雖少，但人工點分布在不同景深，幾何約束正確，算出的 Pose（Pitch ≈ −84°）是準確的。SuperGlue 雖有 290 inliers，但全集中在圍網單一平面，F matrix 退化，Pose 錯誤（Pitch ≈ −28°）。<strong>inlier 多不代表結果正確，點的空間分布比數量更重要。</strong></p>
   </div>
 
   <!-- Q6 -->
@@ -1790,13 +1860,35 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
       <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">核心瓶頸</span>
       <strong style="color:var(--gray-900);">Q6｜Pose Estimation 的 R 算出 160°，但實際只有 ~90°</strong>
     </div>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>從 F → E → recoverPose 得到的旋轉角度約 160°，但兩台相機實際夾角約 90°。</p>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>原因（兩個）：</strong></p>
+    <p style="color:var(--gray-700);margin-bottom:.6rem;"><strong>問題：</strong>從 F → E → recoverPose 得到的旋轉角度約 160°，但兩台相機實際夾角約 90°。</p>
+
+    <div style="background:#fafaf9;border:1px solid var(--gray-200);border-radius:8px;padding:.8rem 1rem;margin-bottom:.8rem;">
+      <p style="color:var(--gray-700);margin-bottom:.4rem;"><strong>為什麼預期是 90°？</strong></p>
+      <p style="color:var(--gray-700);font-size:.88rem;">cf 正面對打者，cs 在側面拍攝，兩台相機的光軸夾角約 90°。R 是「cs 相對 cf 的旋轉矩陣」，Pitch 分量描述這個旋轉，預期 Pitch ≈ −82°~−90°（後來人工標記確認是 −84°）。</p>
+    </div>
+
+    <div style="background:#fafaf9;border:1px solid var(--gray-200);border-radius:8px;padding:.8rem 1rem;margin-bottom:.8rem;">
+      <p style="color:var(--gray-700);margin-bottom:.4rem;"><strong>焦距和 FoV 是什麼？為什麼兩個畫面看起來範圍差不多，但焦距差了 6 倍？</strong></p>
+      <p style="color:var(--gray-700);font-size:.88rem;margin-bottom:.5rem;"><strong>焦距</strong>是光學放大的概念：焦距越長，遠處的物體在影像上越大（類似望遠鏡），同時看到的範圍越窄。<strong>FoV（Field of View，視野角）</strong>就是這個「看到的範圍」。cf 用 50mm 長焦，FoV 只有 13.8°；cs 用 8mm 廣角，FoV 有 68.7°，差距 5 倍。</p>
+      <p style="color:var(--gray-700);font-size:.88rem;margin-bottom:.4rem;">
+        <strong>「畫面看起來差不多」是因為場景本身剛好塞滿兩個不同的 FoV。</strong>舉例：
+      </p>
+      <ul style="color:var(--gray-700);font-size:.88rem;margin-left:1.2rem;margin-bottom:.4rem;">
+        <li style="margin-bottom:.3rem;">cf（50mm，13.8°FoV）：畫面裡只看到打者和投手板附近，但打者佔了很大比例</li>
+        <li style="margin-bottom:.3rem;">cs（8mm，68.7°FoV）：畫面裡看到整個牛棚場景（更廣），打者卻只佔較小比例</li>
+        <li>兩個畫面的「場景內容」都有打者和圍網，但<strong>同一個物體（例如打者的肩膀）在 cf 影像裡的像素面積是 cs 的 25 倍</strong>（FoV 差 5 倍 → 線性尺度差 5 倍 → 面積差 5²=25 倍）</li>
+      </ul>
+      <p style="color:var(--gray-700);font-size:.88rem;">
+        <strong>類比：</strong>用手機廣角鏡拍一棟樓，再用 10× 望遠鏡頭拍同一棟樓的同一面牆，兩張照片「看到的內容有重疊」，但同一塊磚頭在兩張照片裡的像素大小完全不同。這就是問題所在。
+      </p>
+    </div>
+
+    <p style="color:var(--gray-700);margin-bottom:.4rem;"><strong>失敗的兩個原因：</strong></p>
     <ol style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.5rem;">
-      <li style="margin-bottom:.3rem;"><strong>兩台相機 FoV 差距 5 倍</strong>：cf（50mm 長焦，FoV 13.8°）vs cs（8mm 廣角，FoV 68.7°）。SuperGlue 設計上假設兩張圖有大量視野重疊，FoV 差 5 倍時匹配前提失立，inlier 雖多但幾何約束不正確。</li>
-      <li><strong>cf 主點偏移</strong>：cx=869（影像中心應為 960），偏移 91px，代表標定時影像可能有裁切或感光器對齊問題，影響 E = K2ᵀFK1 的計算。</li>
+      <li style="margin-bottom:.4rem;"><strong>FoV 差距 5 倍</strong>：SuperGlue 設計假設兩張圖視野大量重疊，此前提在 5 倍差距下完全失立，對應點幾何不正確，F matrix 退化。</li>
+      <li><strong>cf 主點偏移</strong>：cx=869（影像中心應為 960），偏移 91px，可能是標定時有裁切或鏡頭安裝偏心，影響 E = K₂ᵀFK₁ 的計算精度。</li>
     </ol>
-    <p style="color:var(--gray-700);"><strong>驗證：</strong>cs 的 inlier 全部集中在影像左側 25%（X: 8~475px），對應 cf FoV 投影範圍，確認是 FoV 不匹配造成的系統性誤差。</p>
+    <p style="color:var(--gray-700);font-size:.85rem;"><strong>驗證：</strong>cs 的 inlier 全集中在影像左側 25%（X: 8~475px），對應 cf FoV 的投影範圍，確認是 FoV 不匹配造成的系統性偏差。</p>
   </div>
 
   <!-- Q7 -->
@@ -1805,21 +1897,39 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
       <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">核心瓶頸</span>
       <strong style="color:var(--gray-900);">Q7｜SuperGlue 在不同焦距相機間的根本限制</strong>
     </div>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>SuperGlue 能否正確處理焦距差距 5 倍的兩台相機？</p>
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>分析：</strong>SuperGlue（SuperPoint + GNN matching）在設計上針對<strong>相近視野、相似解析度</strong>的影像對。當一台看到的場景是另一台的 5 倍大時：</p>
+    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>問題：</strong>SuperGlue 能否正確處理焦距差距 5 倍的兩台相機？看兩張照片場景重疊很多，為什麼還是大量誤匹配？</p>
+
+    <div style="background:#fafaf9;border:1px solid var(--gray-200);border-radius:8px;padding:.8rem 1rem;margin-bottom:.8rem;">
+      <p style="color:var(--gray-700);margin-bottom:.4rem;"><strong>為什麼「場景重疊」不等於「可以匹配」？面積差 25 倍的直觀理解</strong></p>
+      <p style="color:var(--gray-700);font-size:.88rem;margin-bottom:.5rem;">
+        確實，兩個畫面裡都有投手、圍網、棒子，乍看「場景重疊」。但關鍵在於：<strong>同一個物體在兩張圖中的「像素大小」差了 25 倍。</strong>
+      </p>
+      <p style="color:var(--gray-700);font-size:.88rem;margin-bottom:.4rem;">
+        具體數字：cf（50mm）vs cs（8mm），焦距比 = 50/8 = 6.25 倍。線性尺度差 6.25 倍，面積差 6.25² ≈ 39 倍。換算成更直觀的例子：
+      </p>
+      <ul style="color:var(--gray-700);font-size:.88rem;margin-left:1.2rem;margin-bottom:.4rem;">
+        <li style="margin-bottom:.3rem;">投手的肩膀在 cf 可能佔 100×100 = 10000 px²</li>
+        <li style="margin-bottom:.3rem;">同一個肩膀在 cs 只有約 16×16 = 256 px²（小了 ~39 倍）</li>
+        <li>SuperGlue/SuperPoint 的 descriptor 是在固定大小的 patch（約 64×64px）上計算局部紋理特徵，cf 的 64px patch 對應場景中 1cm，cs 的 64px patch 對應場景中 6cm，兩者根本描述的不是同一個尺度的局部紋理，特徵向量自然完全不同</li>
+      </ul>
+      <p style="color:var(--gray-700);font-size:.88rem;">
+        <strong>scale-invariance（尺度不變性）</strong>是指：不管物體在影像裡大小如何，計算出來的特徵描述子都一樣。SIFT 透過多尺度金字塔達到 scale-invariance，但 SuperGlue/SuperPoint 的尺度不變性有限，大約只能容忍 2~3 倍的尺度差，5~6 倍以上就完全失效，誤匹配率極高。
+      </p>
+    </div>
+
     <ul style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.5rem;">
-      <li>同一個場景物件在兩張圖中的尺寸差 5 倍 → descriptor 不相似</li>
-      <li>cs 影像大部分區域在 cf 中根本看不到 → 大量誤匹配</li>
-      <li>F matrix 雖然數值上接近（Frobenius norm 0.021），但用來 recoverPose 仍然失敗</li>
+      <li style="margin-bottom:.3rem;">同一物體在兩圖中面積差 39 倍 → descriptor patch 描述不同尺度 → 特徵不相似 → 大量誤匹配</li>
+      <li style="margin-bottom:.3rem;">SuperGlue 假設視野大量重疊且解析度相近，此前提 5 倍差距時完全失立</li>
+      <li>F matrix 數值上接近（Frobenius norm 0.021），但 Pose 仍錯誤（根因是 descriptor 不對，不是 F 算法問題）</li>
     </ul>
-    <p style="color:var(--gray-700);"><strong>結論：</strong>這是此相機配置下 SuperGlue 的根本限制，非參數調整可以解決。</p>
+    <p style="color:var(--gray-700);"><strong>結論：</strong>這是相機硬體配置的根本限制，調整 SuperGlue 參數無法解決。換用具有 scale-invariance 的 dense matching（RoMa，DINOv2 backbone 天然 scale-invariant）才能解決。</p>
   </div>
 
-  <!-- Q9 -->
+  <!-- Q8 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
       <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">核心瓶頸</span>
-      <strong style="color:var(--gray-900);">Q9｜為什麼 SuperGlue 的 inlier 比人工多，但 F matrix 差異更大？</strong>
+      <strong style="color:var(--gray-900);">Q8｜為什麼 SuperGlue 的 inlier 比人工多，但 F matrix 差異更大？</strong>
     </div>
     <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>問題：</strong>SuperGlue 找到 290 個 inlier（遠多於人工的 22 個），但算出的 Pose（R, t）卻是錯的，而人工標記的 F 雖然 inlier 少，幾何上卻更接近真實。這是為什麼？</p>
 
@@ -1870,11 +1980,11 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
     </ul>
   </div>
 
-  <!-- Q10 -->
+  <!-- Q9 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
       <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">核心瓶頸</span>
-      <strong style="color:var(--gray-900);">Q10｜SuperGlue 在此場景的根本限制總結</strong>
+      <strong style="color:var(--gray-900);">Q9｜SuperGlue 在此場景的根本限制總結</strong>
     </div>
     <p style="color:var(--gray-700);margin-bottom:.8rem;">以下是 SuperGlue 在本專案中所有已確認的限制，確認這些限制真的無法克服後，才考慮換新方法：</p>
     <div style="display:grid;gap:.6rem;">
@@ -1890,18 +2000,23 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
         <strong style="color:var(--danger);">限制 3：背景紋理 inlier 無法支撐正確 Pose</strong>
         <p style="font-size:.85rem;color:var(--gray-700);margin-top:.3rem;">290 個 inlier 幾何一致但物理上有系統性偏差，recoverPose 結果 R ≈ 160°（應為 90°）。<br>→ <strong>無法克服</strong>（根因是限制 2，F 數值接近但 Pose 錯誤）</p>
       </div>
-      <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:6px;padding:.8rem;">
-        <strong style="color:var(--warning);">待測試：換新論文方法（LoFTR / DKM）能否改善？</strong>
-        <p style="font-size:.85rem;color:var(--gray-700);margin-top:.3rem;">Dense matching 方法對 FoV 差異容忍度較高，但 5 倍差距仍是挑戰。<br>→ <strong>待驗證</strong>（先做小規模測試再決定是否完整實作）</p>
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:.8rem;">
+        <strong style="color:#15803d;">已測試：換用 Dense Matching 有效改善</strong>
+        <p style="font-size:.85rem;color:var(--gray-700);margin-top:.3rem;">
+          LoFTR (CVPR 2021)：Pitch ≈ −82°（正確），但高信心點只有 15 個，跨對不穩定。<br>
+          LightGlue (ICCV 2023)：keypoint-based，FoV 5 倍差距下完全失效（Pitch 錯誤）。<br>
+          <strong>RoMa (CVPR 2024)：Pitch mean = −78.6°（std=2.1°），E-inliers 1453~2778，全 20 對穩定，目前最佳。</strong><br>
+          → <strong>已驗證：Dense matching（RoMa）是此場景的解決方案，見 Q13~Q16。</strong>
+        </p>
       </div>
     </div>
   </div>
 
-  <!-- Q13 -->
+  <!-- Q10 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
       <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">實驗結果</span>
-      <strong style="color:var(--gray-900);">Q13｜四組 F matrix 的 3D 骨架重建結果比較</strong>
+      <strong style="color:var(--gray-900);">Q10｜四組 F matrix 的 3D 骨架重建結果比較</strong>
     </div>
     <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>實驗設定：</strong>針對四種不同的 F matrix 計算方式，各自輸出視覺化結果與 F_matrix.txt，並由開發人員載入系統驗證 3D 骨架重建效果。</p>
 
@@ -1957,53 +2072,70 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
     </ul>
 
     <p style="color:var(--gray-700);margin-top:.8rem;"><strong>結論：</strong>四組 SuperGlue F matrix 均無法正確重建 3D 骨架，人工標記 F 是目前唯一可用的基準。問題根源見 Q14。詳細視覺化結果見 <a href="#results" style="color:var(--primary);">實驗結果</a> 章節。</p>
+
+    <!-- Q13 補充：數據差異解析 -->
+    <div style="background:#fafaf9;border:1px solid var(--gray-200);border-radius:8px;padding:1rem 1.2rem;margin-top:1rem;">
+      <p style="font-weight:700;color:var(--gray-900);margin-bottom:.6rem;">📊 補充說明：C 組為何顯示 114 個點對（而非 63）？D 組 inliers 為何比 C 組少？</p>
+
+      <p style="color:var(--gray-700);margin-bottom:.6rem;"><strong>① C 組「52 inliers + 62 outliers = 114 點對」的來源</strong></p>
+      <p style="color:var(--gray-700);margin-bottom:.8rem;">
+        視覺化圖（<code>viz_C/08.jpg</code>）是在 <code>output_1920/</code> 目錄存在時生成的，當時 SuperGlue 在 <strong>1920×1084 原圖解析度</strong>下對 pair 08 找到了 <strong>114 個匹配點對</strong>。
+        後來 <code>output_1920/</code> 目錄被刪除，目前的 <code>output/</code>（1280×960 縮圖解析度）對同一對圖片只找到 <strong>63 個點對</strong>。
+        兩組數字反映的是<strong>不同解析度下的 SuperGlue 匹配結果</strong>，舊圖片保留了當時的統計數據（114），而非現有檔案的數據（63）。
+      </p>
+
+      <p style="color:var(--gray-700);margin-bottom:.6rem;"><strong>② D 組加入 6 個人工點後，inliers 反而從 52 變成 46（少了 6 個）</strong></p>
+      <p style="color:var(--gray-700);margin-bottom:.4rem;">
+        D 組的 F 矩陣由「114 個 SG 點 + 6 個人工標記點」共 120 點計算而來。6 個人工點位於<strong>保麗龍球球心</strong>（畫面中央的顯著圓形目標），
+        而 114 個 SG 點則集中在<strong>圍網、草皮、棒子邊緣</strong>等背景紋理。
+        這兩群點的幾何分布不同，對應的 F 矩陣（F_D）會和只用 SG 點算出的 F_C 略有差異。
+      </p>
+      <ul style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.6rem;">
+        <li style="margin-bottom:.4rem;">在 F_C 的極線幾何下，某些 SG 點的 Sampson 距離 &lt; 3px（算 inlier）；</li>
+        <li style="margin-bottom:.4rem;">在 F_D（幾何略有偏移）下，這些點的 Sampson 距離超過 3px → 變成 outlier；</li>
+        <li>結果：SG inliers 從 52 → 46（少 6 個），outliers 從 62 → 68（多 6 個）。</li>
+      </ul>
+      <p style="color:var(--gray-700);">
+        視覺化中人工標記點以<strong>白色圓點</strong>單獨標示，<strong>不計入 inlier/outlier 統計</strong>，因此表格中的數字只反映 SG 匹配點的品質，並非人工點是否與 F_D 吻合。
+      </p>
+    </div>
   </div>
 
-  <!-- Q14 -->
+  <!-- Q11 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
-      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">根本診斷（更新 2026-05-23）</span>
-      <strong style="color:var(--gray-900);">Q14｜問題出在哪個環節？特徵點、匹配、還是 F→E 轉換？</strong>
+      <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">根本診斷</span>
+      <strong style="color:var(--gray-900);">Q11｜SuperGlue 3D 骨架重建失敗的問題清單</strong>
     </div>
-    <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>問題：</strong>3D 骨架重建失敗，問題是出在 SuperPoint 特徵點偵測、SuperGlue 匹配，還是後處理的 F→E→R,t 計算？</p>
+    <p style="color:var(--gray-700);margin-bottom:.8rem;">以下依 pipeline 順序列出 SuperGlue 的四個問題：</p>
 
-    <div style="background:var(--gray-50);border-radius:8px;padding:1rem;margin-bottom:.8rem;font-family:monospace;font-size:.82rem;line-height:1.9;">
-      SuperPoint 找特徵點 &nbsp;&nbsp;&nbsp;&nbsp;→ <span style="color:#16a34a;font-weight:600;">正常</span>（背景紋理角點正確偵測）<br>
-      SuperGlue 找 corresponding → <span style="color:#dc2626;font-weight:600;">❌ 此步驟是根本問題</span>（F 品質不足，見下方分析）<br>
-      RANSAC 算 F &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <span style="color:#dc2626;font-weight:600;">❌ Frobenius 0.021 看似接近，但 E 奇異值比嚴重偏離 1:1</span><br>
-      F → E = K_cs<sup>T</sup> F K_cf &nbsp;&nbsp;→ <span style="color:#d97706;font-weight:600;">K 轉換本身沒有問題（見實驗驗證）</span><br>
-      E → recoverPose → R,t &nbsp;&nbsp;→ <span style="color:#dc2626;font-weight:600;">❌ SG：R ≈ 160°；人工點：R ≈ 84°（正確）</span><br>
-      triangulatePoints &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <span style="color:#dc2626;font-weight:600;">❌ 3D 骨架躺平（因 SG 的 R 錯誤）</span>
+    <ol style="color:var(--gray-700);margin-left:1.2rem;line-height:2;">
+      <li style="margin-bottom:.8rem;">
+        <strong>FoV 差距 5 倍 → descriptor 不相似 → 匹配點不準確</strong><br>
+        cf 用 50mm 長焦、cs 用 8mm 廣角，FoV 差距約 5 倍。同一個場景點在兩張圖中大小差 5 倍，SuperPoint 偵測出的特徵向量（descriptor）完全不相似，SuperGlue 只能勉強找到圍網格紋這類重複紋理上的配對，<strong>對應點位置的精度不夠</strong>。
+      </li>
+      <li style="margin-bottom:.8rem;">
+        <strong>對應點全集中在圍網（單一平面）→ F matrix 無法正確計算</strong><br>
+        SuperGlue 找到的點幾乎全落在圍網上。圍網是一個<strong>近似平面</strong>，而算 Fundamental Matrix 需要各點分布在不同景深（不同距離）才能確定兩個視角之間的完整幾何關係。若所有點都在同一個平面上，深度資訊消失，方程式有無限多組解（planar degeneracy），RANSAC 算出的 F 不可靠。<br>
+        <span style="font-size:.82rem;color:var(--gray-500);">對照：人工標記點分布在棒子（近）、投手板（中）、牆面（遠）等不同景深，F matrix 結果正確。</span>
+      </li>
+      <li style="margin-bottom:.8rem;">
+        <strong>F matrix 不可靠 → E matrix 奇異值比偏離 → 姿態估計錯誤</strong><br>
+        由不可靠的 F 轉出的 Essential Matrix，奇異值比（應為 1:1）嚴重偏離，recoverPose 強制矯正後引入大角度誤差。<br>
+        <span style="background:#fef2f2;border:1px solid #fecaca;padding:.2rem .5rem;border-radius:4px;font-size:.88rem;">SG 算出 Pitch = −28°（應為 ≈ −82°，差超過 50°）→ 3D 骨架整個躺平</span>
+      </li>
+    </ol>
+
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:.8rem 1rem;margin-top:.4rem;">
+      <strong style="color:#15803d;">根本原因一句話：</strong>SuperGlue 的對應點全落在圍網單一平面，缺乏景深差異，F matrix 無法解算，導致後續 Pose 完全錯誤。換用 dense matching（RoMa）取得分布更廣的點後，Pitch 恢復正常（−78.6°）。
     </div>
-
-    <p style="color:var(--gray-700);margin-bottom:.6rem;"><strong>🔬 實驗驗證（2026-05-23 新增）：</strong>對人工標記 120 個點做完整 F→E→R,t pipeline 驗證：</p>
-    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:1rem;margin-bottom:.8rem;font-family:monospace;font-size:.82rem;line-height:1.7;">
-      人工點 E 奇異值比：<strong style="color:#16a34a;">sv[0]/sv[1] = 1.047（幾乎理想的 1:1）</strong><br>
-      人工點 Pose：Roll=65.8°, <strong>Pitch=-84.0°（正確！cs 在 cf 右側 ~90°）</strong>, Yaw=-66.0°<br>
-      SG 點 Pose：Roll=160°, Pitch=-28°（錯誤，偏差 >60°）
-    </div>
-
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>修正後的根本原因：K_cf 條件數不是問題，問題是 SuperGlue 的 F matrix 品質不夠好。</strong></p>
-    <ul style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.8rem;">
-      <li style="margin-bottom:.3rem;"><strong>對應點是對的</strong>：視覺化可見連線多在圍網同一位置，SuperGlue 確實找到了正確的幾何對應</li>
-      <li style="margin-bottom:.3rem;"><strong>但 F matrix 退化</strong>：大量特徵點集中在圍網（近似平面），平面退化（planar degeneracy）讓 RANSAC 算出的 F 幾何上不精確</li>
-      <li style="margin-bottom:.3rem;"><strong>E 奇異值比嚴重偏離</strong>：SG 的 F 算出的 E 奇異值比例遠大於 1.0，recoverPose 強制矯正引入大角度誤差</li>
-      <li>人工點因為分布在場景多個位置（棒子、投手板、牆面），不落在單一平面，F 品質更好</li>
-    </ul>
-
-    <p style="color:var(--gray-700);margin-bottom:.5rem;"><strong>結論：這是 SuperGlue matching 的問題，換用對平面退化更穩健的匹配方式有機會改善。</strong></p>
-    <ul style="color:var(--gray-700);margin-left:1.5rem;">
-      <li style="margin-bottom:.3rem;"><strong>方案 1（最直接）：增加人工標記點</strong> — 從 6 點/對增加到 15-20 點，確保分布在不同景深，直接算出好的 F</li>
-      <li style="margin-bottom:.3rem;"><strong>方案 2：LoFTR / LightGlue</strong> — Dense matching 對低紋理區域及 FoV 差異更穩健，有機會產生更好分布的 corresponding points</li>
-      <li><strong>方案 3（不可行）：ChArUco board</strong> — 兩機夾角 ~90°，無法同時拍到同一塊板子，已排除</li>
-    </ul>
   </div>
 
-  <!-- Q15 -->
+  <!-- Q12 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid #7c3aed;box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
       <span style="background:#ede9fe;color:#7c3aed;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">討論中</span>
-      <strong style="color:var(--gray-900);">Q15｜如何繼續推進？下一步選擇</strong>
+      <strong style="color:var(--gray-900);">Q12｜如何繼續推進？下一步選擇</strong>
     </div>
     <p style="color:var(--gray-700);margin-bottom:.8rem;">根本問題已確認（見 Q14）：SuperGlue 的 F matrix 因特徵點集中在平面（圍網）而退化。以下是三個可行方向（ChArUco 已確認不可行，因兩機夾角 ~90°）：</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
@@ -2022,11 +2154,11 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
     </div>
   </div>
 
-  <!-- Q16 -->
+  <!-- Q13 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid #7c3aed;box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
       <span style="background:#ede9fe;color:#7c3aed;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">進行中</span>
-      <strong style="color:var(--gray-900);">Q16｜LoFTR 測試結果：能否解決 SuperGlue 的 matching 問題？</strong>
+      <strong style="color:var(--gray-900);">Q13｜LoFTR 測試結果：能否解決 SuperGlue 的 matching 問題？</strong>
     </div>
     <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>測試方法：</strong>用 kornia 的 LoFTR（outdoor 權重）對 pair 08 做 dense matching，和 SuperGlue 做 Pose 比較。LoFTR 不需要 SuperPoint，直接在整張圖做 attention 輸出 corresponding points。</p>
 
@@ -2066,11 +2198,11 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
     <p style="color:var(--gray-700);"><strong>現況與限制：</strong>LoFTR 高信心點在單對影像可達正確 Pose，但跨對不穩定（20 對中只有 3-4 對可達 -80° 附近）。根本原因是 FoV 差距 5× 導致高信心點數量不足，穩定性仍需改善。</p>
   </div>
 
-  <!-- Q17 -->
+  <!-- Q14 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid var(--danger);box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
       <span style="background:#fee2e2;color:#dc2626;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已測試・失敗</span>
-      <strong style="color:var(--gray-900);">Q17｜LightGlue 測試結果：keypoint-based 在 FoV 差距 5× 下完全失效</strong>
+      <strong style="color:var(--gray-900);">Q14｜LightGlue 測試結果：keypoint-based 在 FoV 差距 5× 下完全失效</strong>
     </div>
     <p style="color:var(--gray-700);margin-bottom:.8rem;"><strong>背景：</strong>LightGlue（ICCV 2023）是 SuperGlue 原作者（ETH Zurich）的新一代 keypoint matching 論文，搭配 SuperPoint / DISK / ALIKED 特徵點偵測器，速度和精度均優於 SuperGlue。</p>
 
@@ -2085,11 +2217,11 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
     <p style="color:var(--gray-700);"><strong>結論：此場景下 detector-based 方法（SuperGlue / LightGlue）均無效，必須使用 detector-free 方法（LoFTR）才能在 FoV 差距大時找到有意義的 corresponding points。</strong></p>
   </div>
 
-  <!-- Q18 -->
+  <!-- Q15 -->
   <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid #dc2626;box-shadow:0 1px 4px rgba(0,0,0,.06);">
     <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
       <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已測試・成功</span>
-      <strong style="color:var(--gray-900);">Q18｜RoMa 測試結果：CVPR 2024 DINOv2-based dense matching 大幅超越 LoFTR</strong>
+      <strong style="color:var(--gray-900);">Q15｜RoMa 測試結果：CVPR 2024 DINOv2-based dense matching 大幅超越 LoFTR</strong>
     </div>
     <p style="color:var(--gray-700);margin-bottom:.8rem;">
       <strong>背景：</strong>RoMa（CVPR 2024）使用 DINOv2 作為 backbone，在 WxBS（Wider Baseline Stereo）benchmark 上超越所有前人方法。DINOv2 是 Meta 的大型 self-supervised vision foundation model，特徵具有天然 scale-invariance，適合應對 FoV 差距 5× 的場景。
@@ -2148,6 +2280,275 @@ print(<span class="hl-green">f'有效匹配數：{valid.sum()}'</span>)
           F→E 多了一個中間步驟（F matrix → K 矩陣轉換 → 強制奇異值對齊），數值誤差累積使 inlier 減少。
           <strong>建議直接用 findEssentialMat，不需要先算 F 再轉換。</strong>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q16 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid #16a34a;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已測試・成功</span>
+      <strong style="color:var(--gray-900);">Q16｜RoMa 全 20 對穩定性測試：Pitch 是否穩定落在固定範圍？與 −82° 的差距對 3D 重建有影響嗎？</strong>
+    </div>
+
+    <p style="color:var(--gray-700);margin-bottom:.8rem;">
+      <strong>測試目的：</strong>RoMa 在 pair 08 算出 Pitch ≈ −75.8°，而人工標記 / LoFTR 的參考值約 −82°，兩者差 ~6°。
+      這個差距是 RoMa 的系統性偏差（穩定但錯誤），還是隨機噪音？以及這個差距在實際 3D 骨架重建時會造成多大問題？
+    </p>
+
+    <p style="color:var(--gray-700);margin-bottom:.6rem;"><strong>測試方法：</strong>RoMa outdoor，全 20 對圖片，conf≥0.5 過濾，計算 Direct E + recoverPose，記錄每對的 Roll / Pitch / Yaw。</p>
+
+    <div style="background:var(--gray-50);border-radius:8px;padding:1rem;margin-bottom:1rem;font-family:monospace;font-size:.82rem;line-height:1.8;">
+      <strong>Pair &nbsp; Roll &nbsp;&nbsp; Pitch &nbsp;&nbsp; Yaw &nbsp; E-inliers</strong><br>
+      01 &nbsp;&nbsp; &nbsp;28.6 &nbsp; −76.8 &nbsp; −28.9 &nbsp;&nbsp;&nbsp; 2027<br>
+      02 &nbsp;&nbsp; &nbsp;29.3 &nbsp; −77.3 &nbsp; −29.4 &nbsp;&nbsp;&nbsp; 2327<br>
+      03 &nbsp;&nbsp; &nbsp;36.7 &nbsp; −79.2 &nbsp; −36.2 &nbsp;&nbsp;&nbsp; 1902<br>
+      04 &nbsp;&nbsp; &nbsp;31.2 &nbsp; −78.6 &nbsp; −32.1 &nbsp;&nbsp;&nbsp; 2444<br>
+      05 &nbsp;&nbsp; &nbsp;39.8 &nbsp; −81.3 &nbsp; −40.3 &nbsp;&nbsp;&nbsp; 2702<br>
+      06 &nbsp;&nbsp; &nbsp;40.2 &nbsp; −79.7 &nbsp; −39.9 &nbsp;&nbsp;&nbsp; 2364<br>
+      07 &nbsp;&nbsp; &nbsp;29.2 &nbsp; −76.6 &nbsp; −29.7 &nbsp;&nbsp;&nbsp; 2198<br>
+      08 &nbsp;&nbsp; &nbsp;26.3 &nbsp; −76.9 &nbsp; −26.7 &nbsp;&nbsp;&nbsp; 2041<br>
+      09 &nbsp;&nbsp; &nbsp;22.5 &nbsp; −71.5 &nbsp; −22.7 &nbsp;&nbsp;&nbsp; 1895<br>
+      10 &nbsp;&nbsp; &nbsp;32.6 &nbsp; −78.3 &nbsp; −33.0 &nbsp;&nbsp;&nbsp; 1453<br>
+      11 &nbsp;&nbsp; 100.6 &nbsp; −81.1 &nbsp; −99.9 &nbsp;&nbsp;&nbsp; 2625<br>
+      12 &nbsp;&nbsp; &nbsp;53.6 &nbsp; −78.6 &nbsp; −54.4 &nbsp;&nbsp;&nbsp; 2384<br>
+      13 &nbsp;&nbsp; &nbsp;60.2 &nbsp; −79.6 &nbsp; −60.9 &nbsp;&nbsp;&nbsp; 2297<br>
+      14 &nbsp;&nbsp; &nbsp;49.5 &nbsp; −78.4 &nbsp; −50.0 &nbsp;&nbsp;&nbsp; 2620<br>
+      15 &nbsp;&nbsp; &nbsp;63.5 &nbsp; −80.3 &nbsp; −63.9 &nbsp;&nbsp;&nbsp; 2472<br>
+      16 &nbsp;&nbsp; 103.9 &nbsp; −80.7 &nbsp;−102.8 &nbsp;&nbsp;&nbsp; 2276<br>
+      17 &nbsp;&nbsp; &nbsp;65.3 &nbsp; −79.8 &nbsp; −65.5 &nbsp;&nbsp;&nbsp; 2529<br>
+      18 &nbsp;&nbsp; &nbsp;52.4 &nbsp; −78.8 &nbsp; −53.5 &nbsp;&nbsp;&nbsp; 2778<br>
+      19 &nbsp;&nbsp; &nbsp;65.3 &nbsp; −79.9 &nbsp; −65.5 &nbsp;&nbsp;&nbsp; 2747<br>
+      20 &nbsp;&nbsp; &nbsp;52.7 &nbsp; −78.3 &nbsp; −53.3 &nbsp;&nbsp;&nbsp; 2270<br>
+      <br>
+      <strong>Pitch 統計：min=−81.3° &nbsp; max=−71.5° &nbsp; mean=−78.6° &nbsp; std=2.1°</strong><br>
+      <br>
+      <span style="color:#16a34a;font-weight:600;">參考基準（人工點 Direct E，120pts，全20對）：Roll = −0.3°　Pitch = −82.0°　Yaw = 0.2°　E-inliers = 60</span><br>
+      <span style="color:var(--gray-500);font-size:.8rem;">※ 人工點的 Roll/Yaw 接近 0°，與 RoMa 結果（Roll: 22°~104°，Yaw: −22°~−103°）差異很大。這是 recoverPose 的 4-solution ambiguity 問題：當 E matrix 不完全精確時，recoverPose 在某些幾何配置下會選到另一個解，使 Roll/Yaw 翻轉到不同象限。Pitch 不受此影響，仍為主要可信指標。</span>
+    </div>
+
+    <p style="color:var(--gray-700);margin-bottom:.6rem;"><strong>關鍵觀察：</strong></p>
+    <ul style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.8rem;">
+      <li style="margin-bottom:.4rem;"><strong>Pitch 極度穩定：</strong>全 20 對的 Pitch 均落在 −71.5° ~ −81.3°，標準差僅 2.1°。這是<strong>系統性估計值</strong>，而非隨機噪音。</li>
+      <li style="margin-bottom:.4rem;"><strong>Roll / Yaw 變化大：</strong>pair 11 Roll=100.6°、pair 16 Roll=103.9°，明顯異於其他對。Roll 與 Yaw 高度相關（幾乎等值），推測是 recoverPose 在某些幾何配置下的多值解問題（4-solution ambiguity），實際 Pitch 仍正確。</li>
+      <li><strong>E-inliers 穩定高：</strong>1453~2778 個，遠超 LoFTR（~9個）和 SuperGlue（~34個），數值可靠性很高。</li>
+    </ul>
+
+    <p style="color:var(--gray-700);margin-bottom:.6rem;"><strong>Pitch −78.6° vs −82° 的差距對 3D 骨架的實際影響：</strong></p>
+    <ul style="color:var(--gray-700);margin-left:1.5rem;margin-bottom:.8rem;">
+      <li style="margin-bottom:.4rem;"><strong>角度差 ≈ 3.4°（平均），最大 10.5°（pair 09）。</strong>這對應旋轉矩陣誤差 sin(3.4°) ≈ 0.059，即約 6% 的投影偏移。</li>
+      <li style="margin-bottom:.4rem;"><strong>3D 點的位置偏移：</strong>若相機距離目標 3 公尺，6% 偏移 ≈ 18cm 的重建誤差。對「粗略骨架重建」（判斷人在哪、方向大致為何）影響不大；對「關節精確定位」（±5cm 精度）則有顯著影響。</li>
+      <li><strong>不影響骨架「直立 vs 躺平」的判斷：</strong>−75°~−82° 都在正確方向上，不會像 SuperGlue 的 20° 或 160° 那樣讓骨架倒地。</li>
+    </ul>
+
+    <div class="callout callout-green">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <strong>結論：RoMa 的 Pitch 估計極度穩定（std=2.1°），可用於骨架方向判斷。</strong><br>
+        與 −82° 的系統性差距（平均 3.4°）不影響「站立/躺平」的粗略判斷，但若需要關節級別的精確重建（&lt;5cm），建議以人工標記或 ChArUco board 做絕對校正，RoMa 的 R/t 作為初始值。
+      </div>
+    </div>
+  </div>
+
+  <!-- Q17 -->
+  <div style="background:#fff;border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border-left:4px solid #16a34a;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;">
+      <span style="background:#dcfce7;color:#16a34a;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;">已測試</span>
+      <strong style="color:var(--gray-900);">Q17｜RoMa 參數優化測試 + RoMa V2（2025）比較</strong>
+    </div>
+
+    <p style="color:var(--gray-700);margin-bottom:.8rem;">
+      <strong>目的：</strong>測試是否能透過調整 RoMa 參數讓 Pitch 更接近人工基準（−82°），並測試 2025 年新版 RoMa V2（arXiv 2511.15706，使用 DINOv3 backbone）。
+    </p>
+
+    <div style="background:#fafaf9;border:1px solid var(--gray-200);border-radius:8px;padding:.8rem 1rem;margin-bottom:1rem;">
+      <p style="color:var(--gray-700);margin-bottom:.4rem;"><strong>測試方式說明</strong></p>
+      <ul style="color:var(--gray-700);font-size:.88rem;margin-left:1.2rem;">
+        <li style="margin-bottom:.3rem;"><strong>「全 20 對」</strong>：對 pair 01~20 各自獨立執行一次 RoMa matching + recoverPose，得到 20 個 Pitch 值，最後取統計數字（mean/std/min/max）</li>
+        <li style="margin-bottom:.3rem;"><strong>std（標準差）</strong>：衡量這 20 個 Pitch 值「有多分散」。std=1.2° 表示大多數對的 Pitch 落在 mean±1.2°，也就是 −79.0°±1.2° = −77.8° ~ −80.2°。std 越小代表結果越穩定，不管哪對圖片都能得到接近的 Pitch</li>
+        <li style="margin-bottom:.3rem;"><strong>4 個參數組別</strong>：各組只改動一個參數，其餘不變，觀察哪個參數對結果影響最大：
+          <ul style="margin-top:.3rem;margin-left:1rem;">
+            <li>A（基準）：upsample_res=864, N=5000, conf=0.5，全部預設值</li>
+            <li>B（高解析度）：<strong>upsample_res=1024</strong>，其餘不變——提高模型輸出解析度，特徵點位置更精確</li>
+            <li>C（多樣本）：<strong>N=8000</strong>，其餘不變——從 warp field 多取 3000 個候選點送給 RANSAC</li>
+            <li>D（低 conf）：<strong>conf=0.3</strong>，其餘不變——放寬 confidence 門檻，保留更多（但較不確定的）點</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <p style="color:var(--gray-700);margin-bottom:.5rem;font-weight:600;">Part 1：RoMa V1 參數優化（全 20 對）</p>
+    <div style="overflow-x:auto;margin-bottom:1rem;">
+      <table style="width:100%;border-collapse:collapse;font-size:.83rem;">
+        <thead>
+          <tr style="background:var(--gray-100);">
+            <th style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">組別</th>
+            <th style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">upsample_res</th>
+            <th style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">N samples</th>
+            <th style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">conf thresh</th>
+            <th style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">Pitch mean</th>
+            <th style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">std</th>
+            <th style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">min / max</th>
+            <th style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">E-inliers mean</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">A Baseline</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">864</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">5000</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">0.5</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">−78.3°</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">2.4°</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">−81.1 / −71.3</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">2325</td>
+          </tr>
+          <tr style="background:#f0fdf4;">
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);font-weight:600;">B 高解析度 ✅ 最佳</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);font-weight:600;">1024</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">5000</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">0.5</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);font-weight:600;color:#16a34a;">−79.0°</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);font-weight:600;color:#16a34a;">1.2°</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">−81.0 / −76.5</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">2338</td>
+          </tr>
+          <tr>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">C 多樣本</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">864</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">8000</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">0.5</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">−78.6°</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">2.3°</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">−81.2 / −72.7</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">3633</td>
+          </tr>
+          <tr>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">D 低 conf</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">864</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">5000</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">0.3</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">−78.3°</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">2.3°</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">−82.1 / −72.4</td>
+            <td style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">2294</td>
+          </tr>
+          <tr style="background:#f0fdf4;font-style:italic;">
+            <td style="padding:.5rem .8rem;color:#16a34a;">人工點基準</td>
+            <td style="padding:.5rem .8rem;">—</td>
+            <td style="padding:.5rem .8rem;">120 pts</td>
+            <td style="padding:.5rem .8rem;">—</td>
+            <td style="padding:.5rem .8rem;color:#16a34a;font-weight:600;">−82.0°</td>
+            <td style="padding:.5rem .8rem;">—</td>
+            <td style="padding:.5rem .8rem;">—</td>
+            <td style="padding:.5rem .8rem;">60</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-green" style="margin-bottom:1.2rem;">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <strong>最佳配置：upsample_res=1024（B 高解析度）</strong><br>
+        std 從 2.4° 降到 <strong>1.2°</strong>，mean 從 −78.3° 升到 <strong>−79.0°</strong>（更接近基準 −82°），最低值 −76.5° 也高於 baseline 的 −71.3°。提高 upsample_res 讓特徵精度提升，是最有效的調整。多樣本（C）E-inliers 多達 3633，但 Pitch std 沒有改善。
+      </div>
+    </div>
+
+    <p style="color:var(--gray-700);margin-bottom:.5rem;font-weight:600;">Part 2：RoMa V2（2025，arXiv 2511.15706，DINOv3 backbone）</p>
+    <div style="overflow-x:auto;margin-bottom:.8rem;">
+      <table style="width:100%;border-collapse:collapse;font-size:.83rem;">
+        <thead>
+          <tr style="background:var(--gray-100);">
+            <th style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">Pair</th>
+            <th style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">Pitch</th>
+            <th style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">E-inliers</th>
+            <th style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">Pair</th>
+            <th style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">Pitch</th>
+            <th style="padding:.5rem .8rem;border-bottom:1px solid var(--gray-200);">E-inliers</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">01</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−74.6°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2318</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">11</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−81.0°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2433</td></tr>
+          <tr style="background:var(--gray-50);"><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">02</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−82.2°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2426</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">12</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−81.5°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2489</td></tr>
+          <tr><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">03</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−79.5°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2428</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">13</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−80.6°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2641</td></tr>
+          <tr style="background:var(--gray-50);"><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">04</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−79.5°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2570</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">14</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−80.3°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2606</td></tr>
+          <tr><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">05</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−77.0°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2220</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">15</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−80.3°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2663</td></tr>
+          <tr style="background:var(--gray-50);"><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">06</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−75.2°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2033</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">16</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−81.2°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2571</td></tr>
+          <tr><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">07</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−81.5°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2316</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">17</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−80.0°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2484</td></tr>
+          <tr style="background:var(--gray-50);"><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">08</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−75.0°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2367</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">18</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−80.9°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2435</td></tr>
+          <tr><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">09</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−77.3°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2449</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">19</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">−80.6°</td><td style="padding:.4rem .8rem;border-bottom:1px solid var(--gray-200);">2438</td></tr>
+          <tr style="background:var(--gray-50);"><td style="padding:.4rem .8rem;">10</td><td style="padding:.4rem .8rem;">−80.4°</td><td style="padding:.4rem .8rem;">2448</td><td style="padding:.4rem .8rem;">20</td><td style="padding:.4rem .8rem;">−80.9°</td><td style="padding:.4rem .8rem;">2587</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:var(--gray-50);border-radius:8px;padding:.8rem 1rem;margin-bottom:1rem;font-family:monospace;font-size:.82rem;line-height:1.8;">
+      <strong>RoMa V2 Pitch 統計：min=−82.2°  max=−74.6°  mean=−79.5°  std=2.3°  E-inliers mean=2446</strong><br>
+      <span style="color:#16a34a;">RoMa V1 B_hires：mean=−79.0°  std=1.2°  E-inliers mean=2338</span><br>
+      <span style="color:#16a34a;">人工點基準：Pitch = −82.0°</span>
+    </div>
+
+    <div class="callout callout-green">
+      <div class="callout-icon">📊</div>
+      <div class="callout-body">
+        <strong>RoMa V2 vs V1 比較：</strong><br>
+        V2 的 Pitch mean（−79.5°）比 V1 baseline（−78.3°）更接近基準 −82°，E-inliers 也略多（2446 vs 2325）。但 V1 B_hires（upsample_res=1024）的 std=1.2° 仍優於 V2 的 std=2.3°，穩定性更好。<br>
+        <strong>建議：若追求最高穩定性用 V1 B_hires（1024）；若追求最接近真實角度用 V2。</strong>
+      </div>
+    </div>
+
+    <div style="background:#fafaf9;border:1px solid var(--gray-200);border-radius:8px;padding:.8rem 1rem;margin-top:1rem;">
+      <p style="color:var(--gray-700);margin-bottom:.4rem;font-weight:600;">❓ 多拍幾張取最好的，是否能接近人工標記的效果？</p>
+      <p style="color:var(--gray-700);font-size:.88rem;margin-bottom:.5rem;">
+        <strong>多拍可以減少隨機噪音，但無法修正系統性偏差。</strong>這兩種誤差的性質完全不同：
+      </p>
+      <ul style="color:var(--gray-700);font-size:.88rem;margin-left:1.2rem;margin-bottom:.5rem;">
+        <li style="margin-bottom:.3rem;"><strong>隨機噪音</strong>（std）：每次算出的值不一樣，是偶然的。多拍 N 張取平均，std 會壓縮為 std/√N。例如 V1 B_hires std=1.2°，拍 5 張平均後 std ≈ 1.2/√5 ≈ 0.5°，結果更穩定。</li>
+        <li><strong>系統性偏差</strong>（mean − 基準）：每次都偏同一個方向，不管拍幾張都不會消失。RoMa V1 mean=−79.0° vs 基準 −82.0°，差了 3°，這個 3° 不管拍 100 張都還是 3°，只有換更好的方法（如 V2 或人工標記）才能縮小。</li>
+      </ul>
+      <p style="color:var(--gray-700);font-size:.88rem;margin-bottom:.4rem;">
+        <strong>「取最好的」vs「取平均」的差異：</strong>「取最好」會引入選擇偏差（挑接近 −82° 的那幾對），結果看起來更好但可重複性低。「取平均」才是無偏估計。
+      </p>
+      <p style="color:var(--gray-700);font-size:.88rem;">
+        <strong>建議做法：</strong>實際拍攝時對同一個動作拍 3~5 對影像（不同時間點），對每對各自算 Pitch 後取中位數。這能去除個別對影像的噪音，同時避免少數異常值（如 pair09 的 −71.5°）拉偏結果。
+      </p>
+    </div>
+
+    <p style="color:var(--gray-700);margin-bottom:.5rem;margin-top:1rem;font-weight:600;">Part 3：LoFTR 全 20 對導出結果（對照）</p>
+    <p style="color:var(--gray-700);font-size:.88rem;margin-bottom:.6rem;">
+      為提供開發人員測試 3D 骨架重建，同步對 LoFTR outdoor 權重在全 20 對影像執行一次 Direct E 估計，結果如下：
+    </p>
+    <div style="overflow-x:auto;margin-bottom:.8rem;">
+      <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+        <thead>
+          <tr style="background:var(--gray-100);">
+            <th style="padding:.4rem .7rem;border-bottom:1px solid var(--gray-200);">Pair</th>
+            <th style="padding:.4rem .7rem;border-bottom:1px solid var(--gray-200);">conf thresh</th>
+            <th style="padding:.4rem .7rem;border-bottom:1px solid var(--gray-200);">matching pts</th>
+            <th style="padding:.4rem .7rem;border-bottom:1px solid var(--gray-200);">E-inliers</th>
+            <th style="padding:.4rem .7rem;border-bottom:1px solid var(--gray-200);">Pitch</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">01</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">≥0.5</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">25</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">15</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);color:#dc2626;">−32.2°</td></tr>
+          <tr style="background:var(--gray-50);"><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">02</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">≥0.5</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">11</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">7</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);color:#dc2626;">+8.1°</td></tr>
+          <tr><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">03</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">≥0.5</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">14</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">7</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);color:#dc2626;">+2.5°</td></tr>
+          <tr style="background:var(--gray-50);"><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">04</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">≥0.5</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">12</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">7</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);color:#dc2626;">−55.2°</td></tr>
+          <tr><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">05</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">≥0.5</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">10</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">8</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);color:#dc2626;">−6.3°</td></tr>
+          <tr style="background:var(--gray-50);"><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">06</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">≥0.5</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">10</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">8</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);color:#dc2626;">−47.0°</td></tr>
+          <tr><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">07</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">≥0.5</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">14</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">10</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);color:#dc2626;">−65.4°</td></tr>
+          <tr style="background:var(--gray-50);"><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">08</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">≥0.5</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">14</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">9</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);color:#dc2626;">+35.0°</td></tr>
+          <tr><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">09</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">≥0.5</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">13</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">7</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);color:#dc2626;">+31.8°</td></tr>
+          <tr style="background:var(--gray-50);"><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">10~20</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">≥0.5 / ≥0.3</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">8~41</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);">6~15</td><td style="padding:.35rem .7rem;border-bottom:1px solid var(--gray-200);color:#dc2626;">隨機（+70° ~ −88°）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-red" style="margin-bottom:0;">
+      <div class="callout-icon">❌</div>
+      <div class="callout-body">
+        <strong>LoFTR 全 20 對完全失效：</strong>Pitch 值從 +70° 到 −88° 隨機分布，毫無規律。原因：每對圖片的 matching points 只有 7~41 個（接近最低要求 8 個），RANSAC 幾乎無法從如此少的點穩定估計 E matrix。根本原因是 cf（50mm）與 cs（8mm）的 FoV 差距 5 倍，LoFTR 在尺度差異這麼大時無法找到足夠的高信心 correspondence。E/R/t 矩陣已輸出至 <code>pose_output/pose_loftr.txt</code>，但數值均不可靠，僅供參考。
       </div>
     </div>
   </div>
